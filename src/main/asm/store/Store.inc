@@ -27,12 +27,14 @@ section '.data' data readable writeable align 16
 	valueSize dq 0
 	;newElementMsg db 'New Element',0
 
-;newFileHandle
+;newReadFileHandle
+;newWriteFileHandle
 ;storeContent
 ;retrieveContent
 ;contentLength
 ;closeHandles
 ;handlesList
+;closeHandle
 ;fileStore			; Struc
 	;.handle
 	;.open
