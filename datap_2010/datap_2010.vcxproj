@@ -18,6 +18,9 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Main.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{E989C0DD-CFD5-4AD2-80EC-B12BF2FAE995}</ProjectGuid>
     <RootNamespace>datap_2010</RootNamespace>

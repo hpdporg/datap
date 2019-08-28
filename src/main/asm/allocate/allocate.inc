@@ -26,30 +26,31 @@ section '.data' data readable writeable align 16
 	bytesWritten dq 0
 	valueSize dq 0
 	;newElementMsg db 'New Element',0
-	storage.filePathAddr dq 0
+	linear.filePathAddr dq 0
 
 section '.text' code readable writeable executable align 16
 
 
-; storage.defineFilePath
-; storage.newFile
+; linear.defineFilePath
+; linear.newFile
 
 allocate:
 namespace allocate
-.linearAllocate:
+allocate.linear:
 	push rbp 
 	mov rbp, rsp 
-	sub rsp, (8*2);+(8*0)
+	sub rsp, (8*3);+(8*0)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
-	label storage.newFile.handleAddr qword at rbp-8  
-	label storage.newFile.filePath qword at rbp-16
+	label linear.handleAddr qword at rbp-8  
+	label linear.size qword at rbp-16
+	label linear.heapAddress qword at rbp-24
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
 
-	mov [storage.newFile.filePath], rcx
+	mov [linear.size], rcx
 
 	and rsp, -32
 	push rbx 
@@ -65,21 +66,21 @@ namespace allocate
 
 
 
-	sub rsp, 8*4
+	sub rsp, 8*8
 	call [GetProcessHeap]
-	mov [list.new.heapAddress], rax
-	add rsp, 8*4
+	mov [linear.heapAddress], rax
+	add rsp, 8*8
 	
 
-	sub rsp, 8*4
-	mov r8, rcx		
+	sub rsp, 8*8
+	mov r8, [linear.size]	
 	mov rdx, 000001000b
-	mov rcx, [linearAllocate.heapAddress]
+	mov rcx, [linear.heapAddress]
 	call [ HeapAlloc] 
-	mov [linearAllocate.handleAllocatedMemory], rax
-	add rsp, 8*4
+	mov [linear.handleAddr], rax
+	add rsp, 8*8
 
-	mov rax, [linearAllocate.handleAllocatedMemory]
+	mov rax, [linear.handleAddr]
 
 
 	add rsp, 8	
