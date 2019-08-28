@@ -1,5 +1,2 @@
-set include=include
-
-fasmg datap.asm datap.obj
-
-.\Build_2010.bat
+set include=..\external\fasmg\include
+..\external\fasmg\fasmg.exe ..\src\main\asm\datap.asm ..\src\main\asm\datap.obj
