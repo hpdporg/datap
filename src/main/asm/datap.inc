@@ -1,3 +1,3 @@
-;include 'store/store.inc'
+include 'store/store.inc'
 
 

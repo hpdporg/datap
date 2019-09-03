@@ -2,4 +2,4 @@ set include=include
 
 fasmg datap.asm datap.obj
 
-.\Build_2010.bat
+.\Build_2017.bat
