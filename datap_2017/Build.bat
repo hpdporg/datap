@@ -1,0 +1,1 @@
+msbuild datap.sln /p:Configuration=Release

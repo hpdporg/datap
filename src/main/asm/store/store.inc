@@ -1,5 +1,6 @@
 
 
+
 section '.data' data readable writeable align 16
 
 
@@ -26,11 +27,66 @@ section '.data' data readable writeable align 16
 	bytesWritten dq 0
 	valueSize dq 0
 	;newElementMsg db 'New Element',0
+	storage.filePathAddr dq 0
 
 section '.text' code readable writeable executable align 16
 
+
+; storage.defineFilePath
+; storage.newFile
+
 storage:
-.newFile:
+.defineFilePath:
+	push rbp 
+	mov rbp, rsp 
+	sub rsp, (8*2);+(8*0)
+
+	;mov rcx, [rbp+8] 
+	;mov rdx, [rbp+12] 
+	label storage.newFile.handleAddr qword at rbp-8  
+	label storage.newFile.filePath qword at rbp-16
+	;virtual at rbp-64
+	;	.list List
+	;end virtual	
+
+	mov [storage.newFile.filePath], rcx
+
+	and rsp, -32
+	push rbx 
+	push rbp 
+	push rdi 
+	push rsi
+	push rsp 
+	push r12 
+	push r13 
+	push r14 
+	push r15
+	sub rsp, 8
+
+	mov rcx, [storage.newFile.filePath]
+	mov [storage.filepathAddr], rcx
+
+
+
+	mov rax, [storage.filepathAddr]
+
+	add rsp, 8	
+	pop r15 
+	pop r14 
+	pop r13 
+	pop r12 
+	pop rsp 
+	pop rsi 
+	pop rdi 
+	pop rbp 
+	pop rbx
+
+	mov rsp, rbp
+	pop rbp
+
+	retn 0
+
+storage.newFile:
 	push rbp 
 	mov rbp, rsp 
 	sub rsp, (8*2);+(8*0)
@@ -58,7 +114,23 @@ storage:
 	sub rsp, 8
 
 
-	newFile [storage.newFile.fileNameAddr],[storage.newFile.handleAddr]
+	sub rsp, 8*8
+	mov qword [rsp+6*8], 0					;hTemplateFile
+	mov qword [rsp+5*8], 128 				;dwFlagsandAttributes
+	mov qword [rsp+4*8], 000000100b 			;dwCreationDisposition
+	mov r9, 0 						;lpSecurityAttributes
+	mov r8, 000000010b 					;dwShareMode
+	mov rdx, 10100000000000000000000100000101b		;dwDesiredAccess
+	mov rcx, fileNameAddr
+	call [CreateFile]
+	add rsp, 8*8
+	mov handleAddr, rax
+
+	mov rcx, handleAddr
+	sub rsp, 8*4
+	call [SetEndOfFile]
+	add rsp, 8*4
+
 
 	mov rax, [storage.newFile.handleAddr]
 
