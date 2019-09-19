@@ -1,17 +1,21 @@
-﻿Build started 8/27/2019 11:21:21 AM.
+﻿Build started 9/19/2019 5:00:01 PM.
      1>Project "C:\Users\lsall\datap\datap_2010\datap_2010.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
-         Creating "x64\Release\datap_2010.unsuccessfulbuild" because "AlwaysCreate" was specified.
+         Touching "x64\Release\datap.unsuccessfulbuild".
        PreBuildEvent:
-         C:\Users\lsall\datap\datap_2010\..\src\main\asm\make_2010.cmd
+         C:\Users\lsall\datap\datap_2010\..\src\main\asm\make.cmd
          :VCEnd
          flat assembler  version g.i4pue
-         3 passes, 315 bytes.
+         4 passes, 0.7 seconds, 6291 bytes.
+       PostBuildEvent:
+         copy C:\Users\lsall\datap\datap_2010\..\src\main\asm\datap.obj C:\Users\lsall\datap\datap_2010\\datapTests\x64\Release\
+         :VCEnd
+                 1 file(s) copied.
        FinalizeBuildStatus:
-         Deleting file "x64\Release\datap_2010.unsuccessfulbuild".
-         Touching "x64\Release\datap_2010.lastbuildstate".
+         Deleting file "x64\Release\datap.unsuccessfulbuild".
+         Touching "x64\Release\datap.lastbuildstate".
      1>Done Building Project "C:\Users\lsall\datap\datap_2010\datap_2010.vcxproj" (build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:00.65
+Time Elapsed 00:00:01.32

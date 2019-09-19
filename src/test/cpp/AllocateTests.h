@@ -5,9 +5,7 @@
 
 
 
-extern "C" {
-	extern void* linearAllocate(int size);
-}
+
 
 
 #endif

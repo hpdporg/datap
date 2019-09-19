@@ -6,6 +6,7 @@ format MS64 COFF
 
 include 'Exports.inc'
 
+
 include 'datap.inc'
 
 
@@ -32,8 +33,8 @@ start:
        sub rsp, 8*12;8;7;8;9
        and rsp, -32
 
-	newFile filename1,[handAddr]
-	writeFile [handAddr],entry1,4,[alloc3]
+	;newFile filename1,[handAddr]
+	;writeFile [handAddr],entry1,4,[alloc3]
 
 
 	 mov rcx, 0

@@ -1,3 +1,4 @@
+#include "AsmIncludes.h"
 #include "AllocateTests.h"
 
 TEST(LinearAllocateTest, ReturnsAllocation) {

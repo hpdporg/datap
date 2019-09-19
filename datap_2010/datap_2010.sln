@@ -3,6 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "datap_2010", "datap_2010.vcxproj", "{E989C0DD-CFD5-4AD2-80EC-B12BF2FAE995}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "datapTests", "datapTests\datapTests.vcxproj", "{B7FF8F0B-C380-49DF-B883-7C90FD589FB3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E989C0DD-CFD5-4AD2-80EC-B12BF2FAE995} = {E989C0DD-CFD5-4AD2-80EC-B12BF2FAE995}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -19,6 +24,13 @@ Global
 		{E989C0DD-CFD5-4AD2-80EC-B12BF2FAE995}.Release|Win32.Build.0 = Release|x64
 		{E989C0DD-CFD5-4AD2-80EC-B12BF2FAE995}.Release|x64.ActiveCfg = Release|x64
 		{E989C0DD-CFD5-4AD2-80EC-B12BF2FAE995}.Release|x64.Build.0 = Release|x64
+		{B7FF8F0B-C380-49DF-B883-7C90FD589FB3}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B7FF8F0B-C380-49DF-B883-7C90FD589FB3}.Debug|Win32.Build.0 = Debug|Win32
+		{B7FF8F0B-C380-49DF-B883-7C90FD589FB3}.Debug|x64.ActiveCfg = Debug|Win32
+		{B7FF8F0B-C380-49DF-B883-7C90FD589FB3}.Release|Win32.ActiveCfg = Release|Win32
+		{B7FF8F0B-C380-49DF-B883-7C90FD589FB3}.Release|Win32.Build.0 = Release|Win32
+		{B7FF8F0B-C380-49DF-B883-7C90FD589FB3}.Release|x64.ActiveCfg = Release|x64
+		{B7FF8F0B-C380-49DF-B883-7C90FD589FB3}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
