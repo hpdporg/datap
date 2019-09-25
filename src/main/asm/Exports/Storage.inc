@@ -1,7 +1,13 @@
 extrn '__imp_CreateFileA' as CreateFile:qword
 extrn '__imp_SetEndOfFile' as SetEndOfFile:qword
 extrn '__imp_WriteFile' as WriteFile:qword
+extrn '__imp_GetFileSize' as GetFileSize:qword
+extrn '__imp_ReadFile' as ReadFile:qword
+extrn '__imp_CloseHandle' as CloseHandle:qword
 
 ;public storage.newFile as 'newFile'
 ;public storage.writeFile as 'writeFile'
 
+public storage.new as 'newStorage'
+public storage.defineRecordPath as 'defineRecordPath'
+public storage.retrieve as 'retrieve'

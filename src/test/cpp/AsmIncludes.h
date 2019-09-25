@@ -1,6 +1,7 @@
 #ifndef ASM_INCLUDES_H
 #define ASM_INCLUDES_H
 
+#include <Windows.h>
 
 
 typedef struct ListItem {
@@ -26,11 +27,23 @@ typedef struct List {
 	void* itemMatch;
 } List;
 
+typedef struct Record {
+	void* allocAddr;
+	_int64	allocSize;
+	char* name;
+	char* location;
+	char* builtLocation;
+	HANDLE handle;
+} Record;
 
+
+///extern char* pathSepLettersChar;
 extern "C" {
 
 	// Letters
 	char* numAsLetters(_int64 num);
+	char* appendLetters(char* letters1, char* appendingLetters);
+	
 
 	// Allocate
 	void* linearAllocate(int size);
@@ -46,6 +59,11 @@ extern "C" {
 	void* getPriorItem(List* list);
 	void* getNextItemMatch(List* list, void* itemMatch);
 	void* getNextItemMatchComp(List* list, void* itemMatch, _int64 comp);
+
+	//Storage
+	Record* newStorage();
+	Record* defineRecordPath(Record* record, char* name, char* location);
+	Record* retrieve(Record* record);
 }
 
 

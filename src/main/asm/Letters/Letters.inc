@@ -3,6 +3,7 @@ section '.data' data readable writeable
 
 	
 	letterTerminator db 0
+	pathSepLetters db '\',0
 
 		
 section '.text' code readable writeable executable ;align 16
@@ -346,6 +347,10 @@ letters.appendLetters:
 
 	mov rcx, [appendLetters.lettersLengthSum]
 	add rcx, 1b							; Trailing 0
+	sub rsp, 8*8
+	call allocate.linear
+	add rsp, 8*8
+	mov [appendLetters.appendedLetters], rax
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;allocate rcx, appendLetters.appendedLetters
 
 	mov rsi, [appendLetters.letters]

@@ -11,6 +11,7 @@ section '.data' data readable writeable align 16
 		.allocSize dq 0		; Size of allocation (base 8)
 		.name dq 0		; Record name with extension
 		.location dq 0		; Path
+		.builtLocation dq 0	; Built Path
 		.handle dq 0
 	end struc
 
@@ -101,6 +102,10 @@ storage.new:
 	mov rax, 0
 	mov [rbx], rax
 	mov rbx, [new.handleAllocatedMemory]
+	add rbx, Record.builtLocation
+	mov rax, 0
+	mov [rbx], rax
+	mov rbx, [new.handleAllocatedMemory]
 	add rbx, Record.handle
 	mov rax, 0
 	mov [rbx], rax
@@ -142,7 +147,7 @@ storage.new:
 storage.retrieve:
 	push rbp 
 	mov rbp, rsp 
-	sub rsp, (8*5);+(8*6)
+	sub rsp, (8*6);+(8*6)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
@@ -150,14 +155,14 @@ storage.retrieve:
 	label retrieve.handleAllocatedMemory qword at rbp-16
 	label retrieve.list qword at rbp-24 
 	label retrieve.item qword at rbp-32
-	label retrieve.prevItem qword at rbp-40
+	label retrieve.recordAddr qword at rbp-40
+	label retrieve.sizeRetrieved qword at rbp-48
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
 
 
-	mov [retrieve.list], rcx
-	mov [retrieve.item], rdx
+	mov [retrieve.recordAddr], rcx
 
 
 	and rsp, -32
@@ -172,6 +177,86 @@ storage.retrieve:
 	push r15
 	sub rsp, 8
 
+	sub rsp, 8*8
+	mov qword [rsp+6*8], 0					;hTemplateFile
+	mov qword [rsp+5*8], 128 				;dwFlagsandAttributes
+	mov qword [rsp+4*8], 000000100b 			;dwCreationDisposition
+	mov r9, 0 						;lpSecurityAttributes
+	mov r8, 000000010b 					;dwShareMode
+	mov rdx, 10100000000000000000000100000101b		;dwDesiredAccess
+	mov rbx, [retrieve.recordAddr]
+	add rbx, Record.builtLocation
+	mov rcx, [rbx]
+	call [CreateFile]
+	add rsp, 8*8
+	mov rbx, [retrieve.recordAddr]
+	add rbx, Record.handle
+	mov [rbx], rax
+
+	mov rbx, [retrieve.recordAddr]
+	add rbx, Record.handle
+	mov rcx, [rbx]
+	sub rsp, 8*4
+	call [SetEndOfFile]
+	add rsp, 8*4
+
+
+	sub rsp, 8*8
+	mov rdx, 0				; File size high
+	mov rbx, [retrieve.recordAddr]
+	add rbx, Record.handle
+	mov rcx, [rbx]
+	call [GetFileSize]
+	add rsp, 8*8
+	mov rbx, [retrieve.recordAddr]
+	add rbx, Record.allocSize
+	mov rcx, 0
+	mov ecx, eax
+	mov [rbx], rcx
+
+	sub rsp, 8*4
+	call [GetProcessHeap]
+	mov [retrieve.heapAddress], rax
+	add rsp, 8*4
+	
+
+	sub rsp, 8*4
+	mov rbx, [retrieve.recordAddr]
+	add rbx, Record.allocSize
+	mov r8, [rbx]	
+	mov rdx, 000001000b
+	mov rcx, [retrieve.heapAddress]
+	call [ HeapAlloc] 
+	mov rbx, [retrieve.recordAddr]
+	add rbx, Record.allocAddr
+	mov [rbx], rax
+	add rsp, 8*4
+
+
+
+	sub rsp, 8*8
+	mov r10, 0
+	mov [rsp+4*8], r10
+	mov r9, retrieve.sizeRetrieved
+	mov rbx, [retrieve.recordAddr]
+	add rbx, Record.allocSize
+	mov r8, [rbx]
+	mov rbx, [retrieve.recordAddr]
+	add rbx, Record.handle
+	mov rdx, [rbx]
+	mov rbx, [retrieve.recordAddr]
+	add rbx, Record.allocAddr
+	mov rcx, [rbx]
+	call [ReadFile]
+	add rsp, 8*8
+
+	sub rsp, 8*8
+	mov rdx, 0				; File size high
+	mov rbx, [retrieve.recordAddr]
+	add rbx, Record.handle
+	mov rcx, [rbx]
+	call [CloseHandle]
+	add rsp, 8*8
 
 
 
@@ -179,9 +264,7 @@ storage.retrieve:
 
 
 
-
-
-	;mov rax, [retrieve.handleAllocatedMemory]
+	mov rax, [retrieve.recordAddr]
 
 
 	retrieve.end:
@@ -242,6 +325,24 @@ storage.defineRecordPath:
 	add rbx, Record.location
 	mov r8, [defineRecordPath.location]
 	mov [rbx], r8	
+
+
+	sub rsp, 8*8
+	mov rdx, pathSepLetters
+	mov rcx, [defineRecordPath.location]
+	call letters.appendLetters
+	add rsp, 8*8
+
+	sub rsp, 8*8
+	mov rdx, [defineRecordPath.name]
+	mov rcx, rax
+	call letters.appendLetters
+	add rsp, 8*8
+
+	mov rbx, [defineRecordPath.recordAddr]
+	add rbx, Record.builtLocation
+	mov [rbx], rax
+
 
 	mov rax, [defineRecordPath.recordAddr]
 
