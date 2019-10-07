@@ -36,6 +36,14 @@ typedef struct Record {
 	HANDLE handle;
 } Record;
 
+typedef struct Match {
+	_int64	flags;
+	_int64	transformFlags;
+	List* containsRangeList;
+	_int64 subRangeStartIndex;
+	_int64 subRangeEndIndex;
+} Match;
+
 
 ///extern char* pathSepLettersChar;
 extern "C" {
@@ -66,6 +74,9 @@ extern "C" {
 	Record* retrieve(Record* record);
 	Record* storeLetters(Record* record, char* letters);
 	Record* restoreLetters(Record* record, char* letters);
+
+	//Match
+	Match* newMatch();
 }
 
 
