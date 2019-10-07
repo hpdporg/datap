@@ -7,6 +7,12 @@ TEST(LettersTests, NumberReturnedAsLetters) {
 	EXPECT_STREQ("428",letters);
 }
 
+TEST(LettersTests, LetterLengthAsExpected) {
+	_int64 length = letterLength("abcd123");
+	fprintf(stdout, "\nOutput: %d\n", length);
+	EXPECT_EQ(length,7);
+}
+
 
 TEST(LettersTests, ReturnsAppendedAllocation) {
 	char* letters = numAsLetters(428);

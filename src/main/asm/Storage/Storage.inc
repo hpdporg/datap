@@ -237,18 +237,25 @@ storage.retrieve:
 	sub rsp, 8*8
 	mov r10, 0
 	mov [rsp+4*8], r10
-	mov r9, retrieve.sizeRetrieved
+	lea r9, [retrieve.sizeRetrieved]
 	mov rbx, [retrieve.recordAddr]
 	add rbx, Record.allocSize
 	mov r8, [rbx]
 	mov rbx, [retrieve.recordAddr]
-	add rbx, Record.handle
+	add rbx, Record.allocAddr
 	mov rdx, [rbx]
 	mov rbx, [retrieve.recordAddr]
-	add rbx, Record.allocAddr
+	add rbx, Record.handle
 	mov rcx, [rbx]
 	call [ReadFile]
 	add rsp, 8*8
+
+	sub rsp, 8*8
+	call [GetLastError]
+	add rsp, 8*8
+	mov r12, rax
+
+
 
 	sub rsp, 8*8
 	mov rdx, 0				; File size high
@@ -268,6 +275,391 @@ storage.retrieve:
 
 
 	retrieve.end:
+
+
+	add rsp, 8	
+	pop r15 
+	pop r14 
+	pop r13 
+	pop r12 
+	pop rsp 
+	pop rsi 
+	pop rdi 
+	pop rbp 
+	pop rbx
+
+	mov rsp, rbp
+	pop rbp
+
+	retn 0
+
+storage.storeLetters:
+	push rbp 
+	mov rbp, rsp 
+	sub rsp, (8*6);+(8*6)
+
+	;mov rcx, [rbp+8] 
+	;mov rdx, [rbp+12] 
+	label storeLetters.heapAddress qword at rbp-8  
+	label storeLetters.handleAllocatedMemory qword at rbp-16
+	label storeLetters.letterLength qword at rbp-24 
+	label storeLetters.sizeWritten qword at rbp-32
+	label storeLetters.recordAddr qword at rbp-40
+	label storeLetters.letters qword at rbp-48
+	;virtual at rbp-64
+	;	.list List
+	;end virtual	
+
+
+	mov [storeLetters.recordAddr], rcx
+	mov [storeLetters.letters], rdx
+
+
+	and rsp, -32
+	push rbx 
+	push rbp 
+	push rdi 
+	push rsi
+	push rsp 
+	push r12 
+	push r13 
+	push r14 
+	push r15
+	sub rsp, 8
+
+
+	sub rsp, 8*4
+	mov rcx, [storeLetters.letters]
+	call letters.letterLength
+	add rsp, 8*4
+	mov [storeLetters.letterLength], rax
+
+
+	sub rsp, 8*8
+	mov qword [rsp+6*8], 0					;hTemplateFile
+	mov qword [rsp+5*8], 128 				;dwFlagsandAttributes
+	mov qword [rsp+4*8], 000000100b 			;dwCreationDisposition
+	mov r9, 0 						;lpSecurityAttributes
+	mov r8, 000000010b 					;dwShareMode
+	mov rdx, 10100000000000000000000100000101b		;dwDesiredAccess
+	mov rbx, [storeLetters.recordAddr]
+	add rbx, Record.builtLocation
+	mov rcx, [rbx]
+	call [CreateFile]
+	add rsp, 8*8
+	mov rbx, [storeLetters.recordAddr]
+	add rbx, Record.handle
+	mov [rbx], rax
+
+	mov rbx, [storeLetters.recordAddr]
+	add rbx, Record.handle
+	mov rcx, [rbx]
+	sub rsp, 8*4
+	call [SetEndOfFile]
+	add rsp, 8*4
+
+	sub rsp, 8*8
+	mov rdx, 0				; File size high
+	mov rbx, [storeLetters.recordAddr]
+	add rbx, Record.handle
+	mov rcx, [rbx]
+	call [GetFileSize]
+	add rsp, 8*8
+	mov rbx, [storeLetters.recordAddr]
+	add rbx, Record.allocSize
+	mov rcx, 0
+	mov ecx, eax
+	mov [rbx], rcx
+
+	sub rsp, 8*8
+	mov qword [rsp+4*8], 0
+	lea r9, [storeLetters.sizeWritten]
+	mov r8, [storeLetters.letterLength]
+	mov rdx, [storeLetters.letters]
+	mov rbx, [storeLetters.recordAddr]
+	add rbx, Record.handle
+	mov rcx, [rbx]
+	call [WriteFile]
+	add rsp, 8*8
+
+
+	mov rbx, [storeLetters.recordAddr]
+	add rbx, Record.allocSize
+	mov rcx, [rbx]
+	mov rdx, [storeLetters.letterLength]
+	add rcx, rdx
+	mov [rbx], rcx
+
+	
+
+	sub rsp, 8*8
+	mov rdx, 0				; File size high
+	mov rbx, [storeLetters.recordAddr]
+	add rbx, Record.handle
+	mov rcx, [rbx]
+	call [CloseHandle]
+	add rsp, 8*8
+
+
+
+
+	mov rax, [storeLetters.recordAddr]
+
+
+	storeLetters.end:
+
+
+	add rsp, 8	
+	pop r15 
+	pop r14 
+	pop r13 
+	pop r12 
+	pop rsp 
+	pop rsi 
+	pop rdi 
+	pop rbp 
+	pop rbx
+
+	mov rsp, rbp
+	pop rbp
+
+	retn 0
+
+; Replaces contents
+
+storage.restoreLetters:
+	push rbp 
+	mov rbp, rsp 
+	sub rsp, (8*6);+(8*6)
+
+	;mov rcx, [rbp+8] 
+	;mov rdx, [rbp+12] 
+	label restoreLetters.heapAddress qword at rbp-8  
+	label restoreLetters.handleAllocatedMemory qword at rbp-16
+	label restoreLetters.letterLength qword at rbp-24 
+	label restoreLetters.sizeWritten qword at rbp-32
+	label restoreLetters.recordAddr qword at rbp-40
+	label restoreLetters.letters qword at rbp-48
+	;virtual at rbp-64
+	;	.list List
+	;end virtual	
+
+
+	mov [restoreLetters.recordAddr], rcx
+	mov [restoreLetters.letters], rdx
+
+
+	and rsp, -32
+	push rbx 
+	push rbp 
+	push rdi 
+	push rsi
+	push rsp 
+	push r12 
+	push r13 
+	push r14 
+	push r15
+	sub rsp, 8
+
+
+	sub rsp, 8*4
+	mov rcx, [restoreLetters.letters]
+	call letters.letterLength
+	add rsp, 8*4
+	mov [restoreLetters.letterLength], rax
+
+
+	mov rbx, [restoreLetters.recordAddr]
+	add rbx, Record.builtLocation
+	mov rcx, [rbx]
+	sub rsp, 8*4
+	call [DeleteFile]
+	add rsp, 8*4
+
+	sub rsp, 8*8
+	mov qword [rsp+6*8], 0					;hTemplateFile
+	mov qword [rsp+5*8], 128 				;dwFlagsandAttributes
+	mov qword [rsp+4*8], 000000100b 			;dwCreationDisposition
+	mov r9, 0 						;lpSecurityAttributes
+	mov r8, 000000010b 					;dwShareMode
+	mov rdx, 10100000000000000000000100000101b		;dwDesiredAccess
+	mov rbx, [restoreLetters.recordAddr]
+	add rbx, Record.builtLocation
+	mov rcx, [rbx]
+	call [CreateFile]
+	add rsp, 8*8
+	mov rbx, [restoreLetters.recordAddr]
+	add rbx, Record.handle
+	mov [rbx], rax
+
+
+
+	sub rsp, 8*8
+	mov qword [rsp+4*8], 0
+	lea r9, [restoreLetters.sizeWritten]
+	mov r8, [restoreLetters.letterLength]
+	mov rdx, [restoreLetters.letters]
+	mov rbx, [restoreLetters.recordAddr]
+	add rbx, Record.handle
+	mov rcx, [rbx]
+	call [WriteFile]
+	add rsp, 8*8
+
+
+	mov rbx, [restoreLetters.recordAddr]
+	add rbx, Record.allocSize
+	mov rcx, [rbx]
+	mov rdx, [restoreLetters.letterLength]
+	add rcx, rdx
+	mov [rbx], rcx
+
+	
+
+	sub rsp, 8*8
+	mov rdx, 0				; File size high
+	mov rbx, [restoreLetters.recordAddr]
+	add rbx, Record.handle
+	mov rcx, [rbx]
+	call [CloseHandle]
+	add rsp, 8*8
+
+
+
+
+	mov rax, [restoreLetters.recordAddr]
+
+
+	restoreLetters.end:
+
+
+	add rsp, 8	
+	pop r15 
+	pop r14 
+	pop r13 
+	pop r12 
+	pop rsp 
+	pop rsi 
+	pop rdi 
+	pop rbp 
+	pop rbx
+
+	mov rsp, rbp
+	pop rbp
+
+	retn 0
+
+
+; Replaces file with allocation already in record
+; No letters passed in
+storage.restore:
+	push rbp 
+	mov rbp, rsp 
+	sub rsp, (8*6);+(8*6)
+
+	;mov rcx, [rbp+8] 
+	;mov rdx, [rbp+12] 
+	label restore.heapAddress qword at rbp-8  
+	label restore.handleAllocatedMemory qword at rbp-16
+	label restore.letterLength qword at rbp-24 
+	label restore.sizeWritten qword at rbp-32
+	label restore.recordAddr qword at rbp-40
+	label restore.letters qword at rbp-48
+	;virtual at rbp-64
+	;	.list List
+	;end virtual	
+
+
+	mov [restore.recordAddr], rcx
+	
+
+	and rsp, -32
+	push rbx 
+	push rbp 
+	push rdi 
+	push rsi
+	push rsp 
+	push r12 
+	push r13 
+	push r14 
+	push r15
+	sub rsp, 8
+
+
+	sub rsp, 8*4
+	mov rbx, [restore.recordAddr]
+	add rbx, Record.allocAddr
+	mov rcx, [rbx]
+	call letters.letterLength
+	add rsp, 8*4
+	mov [restore.letterLength], rax
+	mov rbx, [restore.recordAddr]
+	add rbx, Record.allocSize
+	mov [rbx], rax
+
+
+	mov rbx, [restore.recordAddr]
+	add rbx, Record.builtLocation
+	mov rcx, [rbx]
+	sub rsp, 8*4
+	call [DeleteFile]
+	add rsp, 8*4
+
+	sub rsp, 8*8
+	mov qword [rsp+6*8], 0					;hTemplateFile
+	mov qword [rsp+5*8], 128 				;dwFlagsandAttributes
+	mov qword [rsp+4*8], 000000100b 			;dwCreationDisposition
+	mov r9, 0 						;lpSecurityAttributes
+	mov r8, 000000010b 					;dwShareMode
+	mov rdx, 10100000000000000000000100000101b		;dwDesiredAccess
+	mov rbx, [restore.recordAddr]
+	add rbx, Record.builtLocation
+	mov rcx, [rbx]
+	call [CreateFile]
+	add rsp, 8*8
+	mov rbx, [restore.recordAddr]
+	add rbx, Record.handle
+	mov [rbx], rax
+
+
+
+	sub rsp, 8*8
+	mov qword [rsp+4*8], 0
+	lea r9, [restore.sizeWritten]
+	mov r8, [restore.letterLength]
+	mov rbx, [restore.recordAddr]
+	add rbx, Record.allocAddr
+	mov rdx, [rbx]
+	mov rbx, [restore.recordAddr]
+	add rbx, Record.handle
+	mov rcx, [rbx]
+	call [WriteFile]
+	add rsp, 8*8
+
+
+	mov rbx, [restore.recordAddr]
+	add rbx, Record.allocSize
+	mov rcx, [rbx]
+	mov rdx, [restore.letterLength]
+	add rcx, rdx
+	mov [rbx], rcx
+
+	
+
+	sub rsp, 8*8
+	mov rdx, 0				; File size high
+	mov rbx, [restore.recordAddr]
+	add rbx, Record.handle
+	mov rcx, [rbx]
+	call [CloseHandle]
+	add rsp, 8*8
+
+
+
+
+	mov rax, [restore.recordAddr]
+
+
+	restore.end:
 
 
 	add rsp, 8	

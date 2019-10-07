@@ -1,13 +1,14 @@
 #include "AsmIncludes.h"
 #include "StorageTests.h"
+#include "StorageTest.cpp"
 
-TEST(StorageTest, ReturnsRecord) {
+TEST_F(StorageTest, ReturnsRecord) {
 	Record* record = newStorage();
 	fprintf(stdout, "\nOutput: %d\n", (int)record);
 	EXPECT_TRUE((record !=NULL));
 }
 
-TEST(StorageTest, BuildsRecordPath) {
+TEST_F(StorageTest, BuildsRecordPath) {
 	Record* record = newStorage();
 	fprintf(stdout, "\nOutput: %d\n", (int)record);
 	defineRecordPath(record,"TestCSV.csv","..\\..\\..\\src\\resources");
@@ -16,7 +17,7 @@ TEST(StorageTest, BuildsRecordPath) {
 	
 }
 
-TEST(StorageTest, RetrievesRecordFromFilesystem) {
+TEST_F(StorageTest, RetrievesRecordFromFilesystem) {
 	Record* record = newStorage();
 	fprintf(stdout, "\nOutput: %d\n", (int)record);
 	defineRecordPath(record,"TestCSV.csv","..\\..\\..\\..\\src\\resources");
@@ -29,3 +30,42 @@ TEST(StorageTest, RetrievesRecordFromFilesystem) {
 }
 
 
+TEST_F(StorageTest, LettersAppended) {
+	Record* record = newStorage();
+	fprintf(stdout, "\nOutput: %d\n", (int)record);
+	defineRecordPath(record,"TestCSV.csv","..\\..\\..\\..\\src\\resources");
+	fprintf(stdout, "\nOutput: %s\n", (record->builtLocation));	
+	storeLetters(record,"ABC8291");
+	fprintf(stdout, "\nHandle: %d\n", (record->handle));	
+	EXPECT_TRUE(record->handle!= 0);
+	fprintf(stdout, "\nSize: %d\n", (record->allocSize));	
+	EXPECT_TRUE(record->allocSize!= 0);
+}
+
+TEST_F(StorageTest, LettersReplaced) {
+	Record* backupRecord = newStorage();
+	fprintf(stdout, "\nOutput: %d\n", (int)backupRecord);
+	defineRecordPath(backupRecord,"TestCSV_Backup.csv","..\\..\\..\\..\\src\\resources");
+	fprintf(stdout, "\nOutput: %s\n", (backupRecord->builtLocation));	
+	fprintf(stdout,"\nRetrieve: %d \n",retrieve(backupRecord));
+	fprintf(stdout, "\nHandle: %d\n", (backupRecord->handle));	
+	EXPECT_TRUE(backupRecord->handle!= 0);
+	fprintf(stdout, "\nBackup Size: %d\n", (backupRecord->allocSize));	
+	EXPECT_TRUE(backupRecord->allocSize!= 0);
+
+	Record* record = newStorage();
+	fprintf(stdout, "\nOutput: %d\n", (int)record);
+	defineRecordPath(record,"TestCSV_Modify.csv","..\\..\\..\\..\\src\\resources");
+	fprintf(stdout, "\nOutput: %s\n", (record->builtLocation));	
+	restoreLetters(record,(char*)backupRecord->allocAddr);
+	fprintf(stdout,"\nBackup record contents: %s\n",(char*)backupRecord->allocAddr);
+	fprintf(stdout, "\nHandle: %d\n", (record->handle));	
+	EXPECT_TRUE(record->handle!= 0);
+	fprintf(stdout, "\nSize: %d\n", (record->allocSize));	
+	EXPECT_TRUE(record->allocSize!= 0);
+}
+
+//Store List contents? As CSV?
+//Insert in File after match?
+//Replace sequences with other letters
+//Find sequences, put offsets in list?

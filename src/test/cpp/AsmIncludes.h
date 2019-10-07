@@ -43,7 +43,7 @@ extern "C" {
 	// Letters
 	char* numAsLetters(_int64 num);
 	char* appendLetters(char* letters1, char* appendingLetters);
-	
+	_int64 letterLength(char* letters);
 
 	// Allocate
 	void* linearAllocate(int size);
@@ -64,6 +64,8 @@ extern "C" {
 	Record* newStorage();
 	Record* defineRecordPath(Record* record, char* name, char* location);
 	Record* retrieve(Record* record);
+	Record* storeLetters(Record* record, char* letters);
+	Record* restoreLetters(Record* record, char* letters);
 }
 
 

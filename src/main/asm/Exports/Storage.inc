@@ -4,6 +4,7 @@ extrn '__imp_WriteFile' as WriteFile:qword
 extrn '__imp_GetFileSize' as GetFileSize:qword
 extrn '__imp_ReadFile' as ReadFile:qword
 extrn '__imp_CloseHandle' as CloseHandle:qword
+extrn '__imp_DeleteFileA' as DeleteFile:qword
 
 ;public storage.newFile as 'newFile'
 ;public storage.writeFile as 'writeFile'
@@ -11,3 +12,5 @@ extrn '__imp_CloseHandle' as CloseHandle:qword
 public storage.new as 'newStorage'
 public storage.defineRecordPath as 'defineRecordPath'
 public storage.retrieve as 'retrieve'
+public storage.storeLetters as 'storeLetters'
+public storage.restoreLetters as 'restoreLetters'
