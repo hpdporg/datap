@@ -1,3 +1,5 @@
 
-public matching.parse as 'parseMatching'
-public matching.new as 'newMatch'
+
+public matching.new as 'newMatches'
+public matching.processFlags as 'processMatchFlags'
+public matching.get as 'getMatches'

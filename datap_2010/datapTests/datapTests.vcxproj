@@ -117,6 +117,7 @@
     <ClInclude Include="..\..\src\test\cpp\AsmIncludes.h" />
     <ClInclude Include="..\..\src\test\cpp\LettersTests.h" />
     <ClInclude Include="..\..\src\test\cpp\ListTests.h" />
+    <ClInclude Include="..\..\src\test\cpp\MatchingTests.h" />
     <ClInclude Include="..\..\src\test\cpp\StorageTests.h" />
   </ItemGroup>
   <ItemGroup>
@@ -124,6 +125,8 @@
     <ClCompile Include="..\..\src\test\cpp\LettersTests.cpp" />
     <ClCompile Include="..\..\src\test\cpp\ListTests.cpp" />
     <ClCompile Include="..\..\src\test\cpp\Main.cpp" />
+    <ClCompile Include="..\..\src\test\cpp\MatchingTests.cpp" />
+    <ClCompile Include="..\..\src\test\cpp\StorageTest.cpp" />
     <ClCompile Include="..\..\src\test\cpp\StorageTests.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

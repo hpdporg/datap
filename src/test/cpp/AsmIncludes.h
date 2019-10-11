@@ -36,13 +36,49 @@ typedef struct Record {
 	HANDLE handle;
 } Record;
 
-typedef struct Match {
+typedef struct Matches {
 	_int64	flags;
 	_int64	transformFlags;
 	List* containsRangeList;
 	_int64 subRangeStartIndex;
 	_int64 subRangeEndIndex;
-} Match;
+} Matches;
+
+
+typedef struct MatchFlow {
+	_int64	contains;
+	_int64	start;
+	_int64	end;
+	_int64	firstMatch;
+	_int64	everyMatch;
+
+} MatchFlow;
+
+typedef enum MatchesFlags{
+	MATCH_START = 1,
+	MATCH_END = 2,
+	MATCH_FIRST = 4,
+	MATCH_EVERY = 8,
+	MATCH_TRANSFORM = 16,
+	MATCH_SUBRANGE = 32,
+	MATCH_SUBRANGE_START_IND = 64,
+	MATCH_SUBRANGE_END_IND = 128	
+} MatchesFlags;
+
+typedef enum TransformFlags{
+	TRANSFORM_INSENSITIVE_CASE = 1,
+	TRANSFORM_RANGE = 2,
+	TRANSFORM_CONTAINS = 4,
+	TRANSFORM_EXCLUDES = 8,
+	TRANSFORM_CONTAINS_DISCONTINUOUS = 16,
+	TRANSFORM_STARTS_WITH = 32,
+	TRANSFORM_ENDS_WITH = 64,
+	TRANSFORM_CONTAINS_SEQUENTIAL = 128,
+	TRANSFORM_CONTAIN_OPTIONAL_COUNT = 256		
+} TransformFlags;
+
+								
+
 
 
 ///extern char* pathSepLettersChar;
@@ -75,8 +111,10 @@ extern "C" {
 	Record* storeLetters(Record* record, char* letters);
 	Record* restoreLetters(Record* record, char* letters);
 
-	//Match
-	Match* newMatch();
+	//Matches
+	Matches* newMatches();
+	MatchFlow* processMatchFlags(Matches* matches);
+	List* getMatches(Matches* matches, char* letters);
 }
 
 
