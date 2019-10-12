@@ -1,0 +1,8 @@
+Prep boilerplate
+	Replace: Name, desc
+Test
+	Replace queryName
+
+	nextQueryRowResult	n times	
+
+--STOP--

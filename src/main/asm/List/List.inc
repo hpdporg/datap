@@ -272,7 +272,7 @@ list.newItemMatch:
 list.newLastItem:
 	push rbp 
 	mov rbp, rsp 
-	sub rsp, (8*5);+(8*6)
+	sub rsp, (8*6);+(8*6)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
@@ -281,6 +281,7 @@ list.newLastItem:
 	label newLastItem.list qword at rbp-24 
 	label newLastItem.item qword at rbp-32
 	label newLastItem.prevItem qword at rbp-40
+	label newLastItem.priorIndex qword at rbp-48
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
@@ -303,6 +304,11 @@ list.newLastItem:
 	sub rsp, 8
 
 
+
+	mov rbx, [newLastItem.list]
+	add rbx, List.index
+	mov r11, [rbx]
+	mov [newLastItem.priorIndex], r11		; Restore later
 
 	sub rsp, 8*4
 	call [GetProcessHeap]
@@ -351,12 +357,12 @@ list.newLastItem:
 	mov rbx, [newLastItem.list]
 	add rbx, List.firstItem
 	mov rdx, [newLastItem.handleAllocatedMemory]
-	mov [rbx], rdx
+	mov [rbx], rdx						; Define first item
 
 	mov rbx, [newLastItem.list]
 	add rbx, List.indexItem
 	mov rdx, [newLastItem.handleAllocatedMemory]
-	mov [rbx], rdx
+	mov [rbx], rdx						; Define index item
 
 	
 	jmp newLastItem.firstItem
@@ -377,7 +383,7 @@ list.newLastItem:
 	add rdx, List.indexedItemIndex
 	mov r9, [rdx]
 	cmp r8, r9
-	je newLastItem.firstItemExists.nextItem
+	je newLastItem.nextItem				; Keep using prevItem when indices equal
 
 	mov rbx, [newLastItem.list]			; Get first item when indexed is not cached and retrievable.
 	add rbx, List.firstItem
@@ -385,7 +391,7 @@ list.newLastItem:
 	mov [newLastItem.prevItem], rdx
 
 
-	newLastItem.firstItemExists.nextItem:
+	newLastItem.nextItem:
 	mov rbx, [newLastItem.list]
 	mov rdx, rbx
 	add rbx, List.index
@@ -409,7 +415,7 @@ list.newLastItem:
 	add r11, 1b
 	mov [rbx], r11
 
-	jmp newLastItem.firstItemExists.nextItem
+	jmp newLastItem.nextItem
 	newLastItem.lastItemReached:
 
 
@@ -417,9 +423,9 @@ list.newLastItem:
 	mov r8, r9
 	add r9, ListItem.next
 	mov rdx, [newLastItem.handleAllocatedMemory]
-	mov [r9], rdx
+	mov [r9], rdx					; New item as prior item's next
 	add rdx, ListItem.previous
-	mov [rdx], r8
+	mov [rdx], r8					; Prior item as item's previous
 
 
 	newLastItem.firstItem:
@@ -428,13 +434,18 @@ list.newLastItem:
 	add rbx, List.itemsCount
 	mov r11, [rbx]
 	add r11, 1b
-	mov [rbx], r11
+	mov [rbx], r11					; Increment items count
 
+	newLastItem.end:
+
+	mov rbx, [newLastItem.list]
+	add rbx, List.index
+	mov r11, [newLastItem.priorIndex]		; Restore
+	mov [rbx], r11
+	
 
 	mov rax, [newLastItem.handleAllocatedMemory]
 
-
-	newLastItem.end:
 
 
 	add rsp, 8	

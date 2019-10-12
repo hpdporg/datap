@@ -33,9 +33,9 @@ TEST(ListTests, ItemNumbersInList) {
 	fprintf(stdout, "\Item2: %d\n", (int)item2);
 	fprintf(stdout, "\Item3: %d\n", (int)item3);
 	newLastItem(list1,(void*)item1);
-	newLastItem(list1,(void*)item1);
-	newLastItem(list1,(void*)item1);
-	
+	newLastItem(list1,(void*)item2);
+	newLastItem(list1,(void*)item3);
+
 	fprintf(stdout, "\nItems Count: %d\n",list1->itemsCount);
 	EXPECT_TRUE((list1->itemsCount ==3));
 
