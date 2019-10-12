@@ -29,6 +29,7 @@ section '.data' data readable writeable align 16
 		.end dq 0		; End match
 		.firstMatch dq 0	; Contains first Match flow
 		.everyMatch dq 0	; Contains every Match flow
+		.matchIndexCount dq 0	; Required match index count minimum or maximum
 	end struc
 
 
@@ -135,6 +136,7 @@ matching.new:
 	add rbx, Matches.subRangeEndIndex
 	mov rax, 0
 	mov [rbx], rax
+	
 
 
 
@@ -207,7 +209,7 @@ matching.newMatchFlow:
 	
 
 	mov rcx, 0
-	add rcx, MatchFlow.everyMatch
+	add rcx, MatchFlow.matchIndexCount
 	add rcx, 1000b
 
 	sub rsp, 8*4
@@ -239,6 +241,10 @@ matching.newMatchFlow:
 	mov [rbx], rax
 	mov rbx, [newMatchFlow.handleAllocatedMemory]
 	add rbx, MatchFlow.everyMatch
+	mov rax, 0
+	mov [rbx], rax
+	mov rbx, [new.handleAllocatedMemory]
+	add rbx, MatchFlow.matchIndexCount
 	mov rax, 0
 	mov [rbx], rax
 
@@ -288,7 +294,7 @@ matching.processFlags:
 	label processFlags.heapAddress qword at rbp-8  
 	label processFlags.handleAllocatedMemory qword at rbp-16
 	label processFlags.matchFlow qword at rbp-24 
-	label processFlags.sizeWritten qword at rbp-32
+	label processFlags.matchIndexCount qword at rbp-32
 	label processFlags.matchAddr qword at rbp-40
 	label processFlags.letters qword at rbp-48
 	;virtual at rbp-64
@@ -319,6 +325,9 @@ matching.processFlags:
 	mov [processFlags.matchFlow], rax
 
 
+	mov rcx, 0
+	mov [processFlags.matchIndexCount], rcx		; Begin as 0
+
 	mov rbx, [processFlags.matchAddr]
 	add rbx, Matches.flags
 	mov r8, [rbx]
@@ -330,6 +339,10 @@ matching.processFlags:
 	mov rcx, 1b
 	mov [rbx], rcx
 
+	mov rcx, 1b
+	mov rdx, [processFlags.matchIndexCount]
+	add rdx, rcx
+	mov [processFlags.matchIndexCount], rdx		; Increment
 
 
 	.endIndex:
@@ -343,6 +356,11 @@ matching.processFlags:
 	add rbx, MatchFlow.end
 	mov rcx, 1b
 	mov [rbx], rcx
+
+	mov rcx, 1b
+	mov rdx, [processFlags.matchIndexCount]
+	add rdx, rcx
+	mov [processFlags.matchIndexCount], rdx		; Increment
 	
 
 	.matchFirstOrEvery:
@@ -381,23 +399,26 @@ matching.processFlags:
 	add rbx, Matches.flags
 	mov r8, [rbx]
 	bt r8, 100b					; MATCH_TRANSFORM
-	jnc processFlags.end
+	jnc processFlags.defineMatchIndexCounts
 
 	
 	mov rbx, [processFlags.matchAddr]
 	add rbx, Matches.transformFlags
 	mov r8, [rbx]
 	bt r8, 10b					; TRANSFORM_CONTAINS
-	jnc processFlags.end	
+	jnc processFlags.defineMatchIndexCounts	
 
 	mov rbx, [processFlags.matchFlow]
 	add rbx, MatchFlow.contains
 	mov rcx, 1b
 	mov [rbx], rcx
 
+	.defineMatchIndexCounts:
 
-	
-
+	mov rdx, [processFlags.matchIndexCount]
+	mov rbx, [processFlags.matchFlow]
+	add rbx, MatchFlow.matchIndexCount
+	mov [rbx], rdx
 
 	.end:
 
@@ -426,7 +447,7 @@ matching.processFlags:
 matching.get:
 	push rbp 
 	mov rbp, rsp 
-	sub rsp, (8*12);+(8*6)
+	sub rsp, (8*14);+(8*6)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
@@ -442,6 +463,8 @@ matching.get:
 	label get.containsLength qword at rbp-80
 	label get.startMatchFound qword at rbp-88
 	label get.matchFoundCount qword at rbp-96
+	label get.lettersLength qword at rbp-104
+	label get.matchingEnd qword at rbp-112
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
@@ -472,6 +495,13 @@ matching.get:
 	call list.new
 	add rsp, 8*8
 	mov [get.list], rax
+
+
+	sub rsp, 8*8
+	mov rcx, [get.letters]
+	call letters.letterLength
+	add rsp, 8*8
+	mov [get.lettersLength], rax
 
 
 
@@ -507,6 +537,60 @@ matching.get:
 	get.nextMatch:
 
 
+	mov rcx, [get.matchingIndex]
+	mov rdx, [get.lettersLength]
+	cmp rcx, rdx
+	jnl get.endMatching
+
+	mov rbx, [get.matchFlow]
+	add rbx, MatchFlow.firstMatch
+	mov r8, [rbx]
+	bt r8, 0b					; Match firstMatch
+	jnc get.matchEvery
+
+
+	mov rbx, [get.matchFlow]
+	add rbx, MatchFlow.matchIndexCount
+	mov r8, [rbx]
+	mov rdx, [get.matchFoundCount]
+	cmp r8, rdx					; Already reached start & end when required?
+	je get.endMatching
+
+
+	get.matchEvery:
+
+
+	.matchingEndOrStart:
+
+	mov rbx, [get.matchFlow]
+	add rbx, MatchFlow.start
+	mov r8, [rbx]
+	bt r8, 0b					; Match start
+	jnc get.matchEnd				; Only match end
+
+	mov rbx, [get.startMatchFound]
+	mov rcx, 1b
+	cmp rcx, rbx
+	je get.matchEnd
+
+	mov rcx, 0
+	mov [get.matchingEnd], rcx
+
+
+	jmp get.nextContains
+	get.matchEnd:
+
+	mov rbx, [get.matchFlow]
+	add rbx, MatchFlow.end
+	mov r8, [rbx]
+	bt r8, 0b					; Match end
+	jnc get.nextContains				; Only match start
+
+
+	mov rcx, 1b
+	mov [get.matchingEnd], rcx
+
+
 	get.nextContains:
 	mov rbx, [get.containsRangeList]
 	mov r8, rbx
@@ -517,6 +601,7 @@ matching.get:
 	cmp rcx, rdx
 	jnl get.endContains
 
+
 	sub rsp, 8*8
 	mov rcx, [get.containsRangeList]
 	call list.getNextItem
@@ -524,13 +609,19 @@ matching.get:
 	mov [get.containsAddr], rax
 
 
-
-
 	sub rsp, 8*8
 	mov rcx, [get.containsAddr]
 	call letters.letterLength
 	add rsp, 8*8
 	mov [get.containsLength], rax
+
+
+	mov rcx, [get.matchingIndex]
+	mov [get.containsLength], rax
+	add rcx, rax
+	mov rdx, [get.lettersLength]
+	cmp rcx, rdx					; Lengths less than or equal
+	jnle get.nextContains
 
 
 	cld
@@ -547,46 +638,31 @@ matching.get:
 	jnz get.nextMatch				; noMatch
 
 
-	;mov [get.startMatchFound]
+	.matchFound:
 
-	mov rbx, [get.matchFlow]
-	add rbx, MatchFlow.start
-	mov r8, [rbx]
-	bt r8, 0b					; Match contains
-	jnc get.notStartMatch
-
-	mov rdx, [get.startMatchFound]
-	cmp rdx, 0
-	jne get.notStartMatch
-
-	mov rdx, 1b
-	mov [get.startMatchFound], rdx
-
-	mov rdx, [get.matchingIndex]
-
-	;jmp get.newMatchListItem
-	get.notStartMatch:
-
-	mov rbx, [get.matchFlow]
-	add rbx, MatchFlow.end
-	mov r8, [rbx]
-	bt r8, 0b					; Match contains
-	jnc get.newMatchListItem
-
-	mov rdx, [get.startMatchFound]
-	cmp rdx, 0
-	je get.nextMatch
 	
-	mov rdx, [get.matchingIndex]
+
+	mov rdx, [get.matchingEnd]
+	mov rcx, 1b
+	cmp rcx, rdx
+	jne get.matchingStart
+
+	mov rbx, [get.matchingIndex]
 	mov rcx, [get.containsLength]
 	add rbx, rcx
 	mov rdx, rbx
 	
+	jmp get.newMatchListItem
+
+	.matchingStart:	
+
+	mov rdx, [get.matchingIndex]
+
 
 	get.newMatchListItem:
 
 	sub rsp, 8*8
-	;mov rdx, [get.matchingIndex]
+	;mov rdx,[get.containsLength]
 	mov rcx, [get.list]
 	call list.newLastItem
 	add rsp, 8*8
@@ -595,6 +671,24 @@ matching.get:
 	add rbx, 1b
 	mov [get.matchFoundCount], rbx
 
+
+	mov rcx, 1b
+	mov r8, 0
+	mov rbx, [get.startMatchFound]
+	cmp rbx, rcx
+	je get.clearMatchStartFound		; Either way, invert
+
+	mov [get.startMatchFound], rcx
+
+	jmp get.increaseMatchingIndex
+	.clearMatchStartFound:
+
+	mov [get.startMatchFound], r8
+
+
+	.increaseMatchingIndex:
+
+
 	mov rbx, [get.matchingIndex]
 	mov rcx, [get.containsLength]
 	add rbx, rcx
@@ -602,7 +696,6 @@ matching.get:
 
 	jmp get.resetContains
 
-	;get.noMatch:
 
 	get.endContains:
 
@@ -620,26 +713,9 @@ matching.get:
 	add rsp, 8*8
 
 
+	jmp get.nextMatch
 
 
-	mov rbx, [get.matchFoundCount]
-	mov rcx, 0
-	cmp rbx, rcx
-	je get.nextMatch
-	
-
-	mov rbx, [get.matchFlow]
-	add rbx, MatchFlow.everyMatch
-	mov r8, [rbx]
-	bt r8, 0b					; Match every
-	jc get.nextMatch
-
-	mov rbx, [get.matchFlow]
-	add rbx, MatchFlow.firstMatch
-	mov r8, [rbx]
-	bt r8, 0b					; Match firstMatch
-	jc get.endMatching
-	
 
 
 

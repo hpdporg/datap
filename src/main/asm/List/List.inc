@@ -508,7 +508,8 @@ list.getNextItem:
 	cmp r8, r9
 	je getNextItem.atIndexedItem
 
-	mov rbx, [getNextItem.list]			; Get first item when indexed is not cached and retrievable.
+
+	mov rbx, [getNextItem.list]			; Start with first item when indexed is not cached and retrievable.
 	add rbx, List.firstItem
 	mov rdx, [rbx]
 	mov [getNextItem.prevItem], rdx
@@ -555,10 +556,31 @@ list.getNextItem:
 	add r11, 1b
 	mov [rbx], r11
 
-	mov rbx, [getNextItem.list]			; Advance index item, index item index
+
+	mov r8, [getNextItem.list] 
+	add r8, List.itemsCount
+	mov r9, [r8]
+	cmp r11, r9
+	jnl getNextItem.maintainIndexedItem
+		
+	mov r9, [getNextItem.item]
+	add r9, ListItem.next
+	mov r10, [r9]
+	mov r13, r10
+	mov rbx, [getNextItem.list]
+	mov rdx, rbx
+	add rbx, List.indexItem
+
+	jmp getNextItem.advanceOrMaintainIndexItem	
+
+	.maintainIndexedItem:				; Do not advance (Helpful when only one item so not cleared)
+
+	mov rbx, [getNextItem.list]			; Define index item, advance index item index
 	mov rdx, rbx
 	add rbx, List.indexItem
 	mov r13, [getNextItem.item]
+
+	.advanceOrMaintainIndexItem:
 	mov [rbx], r13
 	add rdx, List.indexedItemIndex
 	mov [rdx], r11

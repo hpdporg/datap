@@ -66,9 +66,67 @@ TEST(MatchingTest, TextContainsFirstMatch) {
 
 	List* matchResults = getMatches( matches, letters);
 
+	
+
 	while (matchResults->index < matchResults->itemsCount){
 		int matchResult = (int)getNextItem(matchResults);
 		fprintf(stdout,"\nNext result: %d\n",matchResult);
+		if (matchResults->index ==1){	// getNextItem increments index implicitly following call
+			EXPECT_EQ(6,matchResult);
+		}
 	}
+
+	
+
+}
+
+TEST(MatchingTest, TextContainsFirstMatchOnly) {
+	Matches* matches = newMatches();
+	matches->flags = (MATCH_START|MATCH_FIRST|MATCH_TRANSFORM);
+	matches->transformFlags = TRANSFORM_CONTAINS;
+
+	char* contains1 = (char*)"Ma";
+	newLastItem(matches->containsRangeList, contains1);
+
+	char* letters = (char*)"HAS a Match SomwMaehere";
+
+	List* matchResults = getMatches( matches, letters);
+
+	while (matchResults->index < matchResults->itemsCount){
+		int matchResult = (int)getNextItem(matchResults);
+		fprintf(stdout,"\nNext result: %d\n",matchResult);
+		if (matchResults->index ==1){	// getNextItem increments index implicitly following call
+			EXPECT_EQ(6,matchResult);
+		}
+	}
+
+	EXPECT_EQ(1,matchResults->itemsCount);
+
+}
+
+TEST(MatchingTest, TextContainsFirstSecondMatch) {
+	Matches* matches = newMatches();
+	matches->flags = (MATCH_START|MATCH_EVERY|MATCH_TRANSFORM);
+	matches->transformFlags = TRANSFORM_CONTAINS;
+
+	char* contains1 = (char*)"Ma";
+	newLastItem(matches->containsRangeList, contains1);
+
+	char* letters = (char*)"HAS a Match SomwMaehere";
+
+	List* matchResults = getMatches( matches, letters);
+
+	while (matchResults->index < matchResults->itemsCount){
+		int matchResult = (int)getNextItem(matchResults);
+		fprintf(stdout,"\nNext result: %d\n",matchResult);
+		if (matchResults->index ==1){	// getNextItem increments index implicitly following call
+			EXPECT_EQ(6,matchResult);
+		}
+		if (matchResults->index ==2){	// getNextItem increments index implicitly following call
+			EXPECT_EQ(16,matchResult);
+		}
+	}
+
+	EXPECT_EQ(2,matchResults->itemsCount);
 
 }
