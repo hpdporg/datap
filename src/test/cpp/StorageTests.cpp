@@ -11,7 +11,7 @@ TEST_F(StorageTest, ReturnsRecord) {
 TEST_F(StorageTest, BuildsRecordPath) {
 	Record* record = newStorage();
 	fprintf(stdout, "\nOutput: %d\n", (int)record);
-	defineRecordPath(record,"TestCSV.csv","..\\..\\..\\src\\resources");
+	defineRecordPath(record,(char*)"TestCSV.csv", (char*)"..\\..\\..\\src\\resources");
 	fprintf(stdout, "\nOutput: %s\n", (record->builtLocation));
 	EXPECT_STREQ("..\\..\\..\\src\\resources\\TestCSV.csv",(record->builtLocation));
 	
@@ -20,7 +20,7 @@ TEST_F(StorageTest, BuildsRecordPath) {
 TEST_F(StorageTest, RetrievesRecordFromFilesystem) {
 	Record* record = newStorage();
 	fprintf(stdout, "\nOutput: %d\n", (int)record);
-	defineRecordPath(record,"TestCSV.csv","..\\..\\..\\..\\src\\resources");
+	defineRecordPath(record, (char*)"TestCSV.csv", (char*)"..\\..\\..\\..\\src\\resources");
 	fprintf(stdout, "\nOutput: %s\n", (record->builtLocation));	
 	retrieve(record);
 	fprintf(stdout, "\nHandle: %d\n", (record->handle));	
@@ -33,9 +33,9 @@ TEST_F(StorageTest, RetrievesRecordFromFilesystem) {
 TEST_F(StorageTest, LettersAppended) {
 	Record* record = newStorage();
 	fprintf(stdout, "\nOutput: %d\n", (int)record);
-	defineRecordPath(record,"TestCSV.csv","..\\..\\..\\..\\src\\resources");
+	defineRecordPath(record, (char*)"TestCSV.csv", (char*)"..\\..\\..\\..\\src\\resources");
 	fprintf(stdout, "\nOutput: %s\n", (record->builtLocation));	
-	storeLetters(record,"ABC8291");
+	storeLetters(record, (char*)"ABC8291");
 	fprintf(stdout, "\nHandle: %d\n", (record->handle));	
 	EXPECT_TRUE(record->handle!= 0);
 	fprintf(stdout, "\nSize: %d\n", (record->allocSize));	
@@ -45,7 +45,7 @@ TEST_F(StorageTest, LettersAppended) {
 TEST_F(StorageTest, LettersReplaced) {
 	Record* backupRecord = newStorage();
 	fprintf(stdout, "\nOutput: %d\n", (int)backupRecord);
-	defineRecordPath(backupRecord,"TestCSV_Backup.csv","..\\..\\..\\..\\src\\resources");
+	defineRecordPath(backupRecord, (char*)"TestCSV_Backup.csv", (char*)"..\\..\\..\\..\\src\\resources");
 	fprintf(stdout, "\nOutput: %s\n", (backupRecord->builtLocation));	
 	fprintf(stdout,"\nRetrieve: %d \n",retrieve(backupRecord));
 	fprintf(stdout, "\nHandle: %d\n", (backupRecord->handle));	
@@ -55,7 +55,7 @@ TEST_F(StorageTest, LettersReplaced) {
 
 	Record* record = newStorage();
 	fprintf(stdout, "\nOutput: %d\n", (int)record);
-	defineRecordPath(record,"TestCSV_Modify.csv","..\\..\\..\\..\\src\\resources");
+	defineRecordPath(record, (char*)"TestCSV_Modify.csv", (char*)"..\\..\\..\\..\\src\\resources");
 	fprintf(stdout, "\nOutput: %s\n", (record->builtLocation));	
 	restoreLetters(record,(char*)backupRecord->allocAddr);
 	fprintf(stdout,"\nBackup record contents: %s\n",(char*)backupRecord->allocAddr);

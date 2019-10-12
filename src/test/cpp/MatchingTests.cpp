@@ -9,7 +9,7 @@ TEST(MatchingTest, ReturnsMatchAllocation) {
 }
 
 
-MatchFlow* processMatchFlags();
+
 
 TEST(MatchingTest, MatchStartEndFlowParsedFromFlags) {
 	Matches* matches = newMatches();
@@ -59,10 +59,10 @@ TEST(MatchingTest, TextContainsFirstMatch) {
 	matches->flags = (MATCH_START|MATCH_FIRST|MATCH_TRANSFORM);
 	matches->transformFlags = TRANSFORM_CONTAINS;
 
-	char* contains1 = "Ma";
+	char* contains1 = (char*)"Ma";
 	newLastItem(matches->containsRangeList, contains1);
 
-	char* letters = "HAS a Match Somwehere";
+	char* letters = (char*)"HAS a Match Somwehere";
 
 	List* matchResults = getMatches( matches, letters);
 

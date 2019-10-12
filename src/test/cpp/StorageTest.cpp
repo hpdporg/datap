@@ -7,7 +7,7 @@ class StorageTest : public ::testing::Test {
   void SetUp() override {
     Record* record = newStorage();
 	fprintf(stdout, "\Restoring test data: %d\n", (int)record);
-	defineRecordPath(record,"TestCSV.csv","..\\..\\..\\..\\src\\resources");
+	defineRecordPath(record, (char*)"TestCSV.csv", (char*)"..\\..\\..\\..\\src\\resources");
 	fprintf(stdout, "\nLoc: %s\n", (record->builtLocation));	
 	restoreLetters(record,(char*)"Header1,Header2,Header3,Header4\r\nVal1_1,Val2_1,Val3_1,Val4_1\r\nVal1_2,Val2_2,Val3_2,Val4_2");
 	fprintf(stdout,"\nBackup record contents: %s\n",(char*)record->allocAddr);
@@ -16,7 +16,7 @@ class StorageTest : public ::testing::Test {
 
 	Record* record2 = newStorage();
 	fprintf(stdout, "\Restoring test data: %d\n", (int)record2);
-	defineRecordPath(record2,"TestCSV_Backup.csv","..\\..\\..\\..\\src\\resources");
+	defineRecordPath(record2, (char*)"TestCSV_Backup.csv", (char*)"..\\..\\..\\..\\src\\resources");
 	fprintf(stdout, "\nLoc: %s\n", (record2->builtLocation));	
 	restoreLetters(record2,(char*)"Header1,Header2,Header3,Header4\r\nVal1_1,Val2_1,Val3_1,Val4_1\r\nVal1_2,Val2_2,Val3_2,Val4_2");
 	fprintf(stdout,"\nBackup record2 contents: %s\n",(char*)record2->allocAddr);
@@ -25,7 +25,7 @@ class StorageTest : public ::testing::Test {
 
 	Record* record3 = newStorage();
 	fprintf(stdout, "\Restoring test data: %d\n", (int)record3);
-	defineRecordPath(record3,"TestCSV_Modify.csv","..\\..\\..\\..\\src\\resources");
+	defineRecordPath(record3, (char*)"TestCSV_Modify.csv", (char*)"..\\..\\..\\..\\src\\resources");
 	fprintf(stdout, "\nLoc: %s\n", (record3->builtLocation));	
 	restoreLetters(record3,(char*)"Header1,Header2,Header3,Header4\r\nVal1_1,Val2_1,Val3_1,Val4_1\r\nVal1_2,Val2_2,Val3_2,Val4_2");
 	fprintf(stdout,"\nBackup record3 contents: %s\n",(char*)record3->allocAddr);
@@ -39,7 +39,7 @@ class StorageTest : public ::testing::Test {
    void TearDown() override {
 	  Record* record = newStorage();
 	fprintf(stdout, "\Restoring test data: %d\n", (int)record);
-	defineRecordPath(record,"TestCSV.csv","..\\..\\..\\..\\src\\resources");
+	defineRecordPath(record, (char*)"TestCSV.csv", (char*)"..\\..\\..\\..\\src\\resources");
 	fprintf(stdout, "\nLoc: %s\n", (record->builtLocation));	
 	restoreLetters(record,(char*)"Header1,Header2,Header3,Header4\r\nVal1_1,Val2_1,Val3_1,Val4_1\r\nVal1_2,Val2_2,Val3_2,Val4_2");
 	fprintf(stdout,"\nBackup record contents: %s\n",(char*)record->allocAddr);
@@ -48,7 +48,7 @@ class StorageTest : public ::testing::Test {
 
 	Record* record2 = newStorage();
 	fprintf(stdout, "\Restoring test data: %d\n", (int)record2);
-	defineRecordPath(record2,"TestCSV_Backup.csv","..\\..\\..\\..\\src\\resources");
+	defineRecordPath(record2, (char*)"TestCSV_Backup.csv", (char*)"..\\..\\..\\..\\src\\resources");
 	fprintf(stdout, "\nLoc: %s\n", (record2->builtLocation));	
 	restoreLetters(record2,(char*)"Header1,Header2,Header3,Header4\r\nVal1_1,Val2_1,Val3_1,Val4_1\r\nVal1_2,Val2_2,Val3_2,Val4_2");
 	fprintf(stdout,"\nBackup record2 contents: %s\n",(char*)record2->allocAddr);
@@ -57,7 +57,7 @@ class StorageTest : public ::testing::Test {
 
 	Record* record3 = newStorage();
 	fprintf(stdout, "\Restoring test data: %d\n", (int)record3);
-	defineRecordPath(record3,"TestCSV_Modify.csv","..\\..\\..\\..\\src\\resources");
+	defineRecordPath(record3, (char*)"TestCSV_Modify.csv", (char*)"..\\..\\..\\..\\src\\resources");
 	fprintf(stdout, "\nLoc: %s\n", (record3->builtLocation));	
 	restoreLetters(record3,(char*)"Header1,Header2,Header3,Header4\r\nVal1_1,Val2_1,Val3_1,Val4_1\r\nVal1_2,Val2_2,Val3_2,Val4_2");
 	fprintf(stdout,"\nBackup record3 contents: %s\n",(char*)record3->allocAddr);

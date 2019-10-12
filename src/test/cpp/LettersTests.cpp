@@ -8,7 +8,7 @@ TEST(LettersTests, NumberReturnedAsLetters) {
 }
 
 TEST(LettersTests, LetterLengthAsExpected) {
-	_int64 length = letterLength("abcd123");
+	_int64 length = letterLength((char*)"abcd123");
 	fprintf(stdout, "\nOutput: %d\n", length);
 	EXPECT_EQ(length,7);
 }
@@ -25,7 +25,7 @@ TEST(LettersTests, ReturnsAppendedAllocation) {
 }
 
 TEST(LettersTests, ReturnsBuiltPath) {	
-	char* pathSepLettersChar = "\\";
+	char* pathSepLettersChar = (char*)"\\";
 	char* letters = numAsLetters(428);
 	fprintf(stdout, "\nOutput: %s\n", letters);
 	fprintf(stdout, "\nOutput: %s\n", pathSepLettersChar);

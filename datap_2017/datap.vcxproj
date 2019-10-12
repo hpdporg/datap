@@ -126,7 +126,7 @@
       <Command>$(SolutionDir)..\src\main\asm\make.cmd</Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>copy $(SolutionDir)$(Platform)\$(Configuration)\datap.lib $(SolutionDir)\output\$(Platform)\$(Configuration)\</Command>
+      <Command>copy $(SolutionDir)..\src\main\asm\datap.obj $(SolutionDir)\datapTests\$(Platform)\$(Configuration)\</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
