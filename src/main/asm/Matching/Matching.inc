@@ -691,8 +691,9 @@ matching.get:
 
 	mov rbx, [get.matchingIndex]
 	mov rcx, [get.containsLength]
+	sub rcx, 1b
 	add rbx, rcx
-	mov [get.matchingIndex], rbx		; Increase by 1 when no match, containsLength when match
+	mov [get.matchingIndex], rbx		; Increase by 1 when no match, containsLength-1 when match
 
 	jmp get.resetContains
 
@@ -702,7 +703,7 @@ matching.get:
 	mov rbx, [get.matchingIndex]
 	mov rcx, 1b
 	add rbx, rcx
-	mov [get.matchingIndex], rbx		; Increase by 1 when no match, containsLength when match
+	mov [get.matchingIndex], rbx		; Increase by 1 when no match, containsLength-1 when match
 
 	get.resetContains:
 	
