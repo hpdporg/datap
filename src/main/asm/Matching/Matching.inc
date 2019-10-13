@@ -30,6 +30,7 @@ section '.data' data readable writeable align 16
 		.firstMatch dq 0	; Contains first Match flow
 		.everyMatch dq 0	; Contains every Match flow
 		.matchIndexCount dq 0	; Required match index count minimum or maximum
+		.startEndLength dq 0	; Start and ends matched i.e. length
 	end struc
 
 
@@ -209,7 +210,7 @@ matching.newMatchFlow:
 	
 
 	mov rcx, 0
-	add rcx, MatchFlow.matchIndexCount
+	add rcx, MatchFlow.startEndLength
 	add rcx, 1000b
 
 	sub rsp, 8*4
@@ -243,10 +244,15 @@ matching.newMatchFlow:
 	add rbx, MatchFlow.everyMatch
 	mov rax, 0
 	mov [rbx], rax
-	mov rbx, [new.handleAllocatedMemory]
+	mov rbx, [newMatchFlow.handleAllocatedMemory]
 	add rbx, MatchFlow.matchIndexCount
 	mov rax, 0
 	mov [rbx], rax
+	mov rbx, [newMatchFlow.handleAllocatedMemory]
+	add rbx, MatchFlow.startEndLength
+	mov rax, 0
+	mov [rbx], rax
+
 
 
 
@@ -356,6 +362,20 @@ matching.processFlags:
 	add rbx, MatchFlow.end
 	mov rcx, 1b
 	mov [rbx], rcx
+
+	mov rdx, [processFlags.matchFlow]
+	add rdx, MatchFlow.start
+	mov r8, [rdx]
+	cmp r8, 0
+	je processFlags.endOnly
+
+	mov rbx, [processFlags.matchFlow]
+	add rbx, MatchFlow.startEndLength		; MATCH start and end (length of contains)
+	mov rcx, 1b
+	mov [rbx], rcx
+
+
+	.endOnly:
 
 	mov rcx, 1b
 	mov rdx, [processFlags.matchIndexCount]
@@ -649,6 +669,7 @@ matching.get:
 
 	mov rbx, [get.matchingIndex]
 	mov rcx, [get.containsLength]
+	sub rcx, 1b
 	add rbx, rcx
 	mov rdx, rbx
 	
@@ -671,6 +692,30 @@ matching.get:
 	add rbx, 1b
 	mov [get.matchFoundCount], rbx
 
+	mov rbx, [get.matchFlow]
+	add rbx, MatchFlow.startEndLength
+	mov r8, [rbx]
+	bt r8, 0b					; Match start end length
+	jnc get.notMatchingStartEndLength		
+
+	sub rsp, 8*8
+	mov rbx, [get.matchingIndex]
+	mov rcx, [get.containsLength]
+	sub rcx, 1b
+	add rbx, rcx
+	mov rdx, rbx
+	mov rcx, [get.list]
+	call list.newLastItem
+	add rsp, 8*8
+
+	mov rbx, [get.matchFoundCount]
+	add rbx, 1b
+	mov [get.matchFoundCount], rbx
+
+	mov rcx, 1b
+	mov [get.startMatchFound], rcx
+
+	.notMatchingStartEndLength:
 
 	mov rcx, 1b
 	mov r8, 0
@@ -691,9 +736,8 @@ matching.get:
 
 	mov rbx, [get.matchingIndex]
 	mov rcx, [get.containsLength]
-	sub rcx, 1b
 	add rbx, rcx
-	mov [get.matchingIndex], rbx		; Increase by 1 when no match, containsLength-1 when match
+	mov [get.matchingIndex], rbx		; Increase by 1 when no match, containsLength when match
 
 	jmp get.resetContains
 
@@ -703,7 +747,7 @@ matching.get:
 	mov rbx, [get.matchingIndex]
 	mov rcx, 1b
 	add rbx, rcx
-	mov [get.matchingIndex], rbx		; Increase by 1 when no match, containsLength-1 when match
+	mov [get.matchingIndex], rbx		; Increase by 1 when no match, containsLength when match
 
 	get.resetContains:
 	

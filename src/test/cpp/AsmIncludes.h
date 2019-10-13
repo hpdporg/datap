@@ -52,6 +52,7 @@ typedef struct MatchFlow {
 	_int64	firstMatch;
 	_int64	everyMatch;
 	_int64	matchIndexCount; 
+	_int64	startEndLength; 
 } MatchFlow;
 
 typedef enum MatchesFlags{
