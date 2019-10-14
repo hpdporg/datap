@@ -393,6 +393,110 @@ letters.appendLetters:
 
 	retn 0
 
+letters.betweenIndices:
+	push rbp 
+	mov rbp, rsp 
+	sub rsp, (8*7);+(8*6)
+
+	;mov rcx, [rbp+8] 
+	;mov rdx, [rbp+12] 
+	label betweenIndices.letters qword at rbp-8 
+	label betweenIndices.lettersLength qword at rbp-16
+	label betweenIndices.linearAllocationSize qword at rbp-24
+	label betweenIndices.newLetters qword at rbp-32
+	label betweenIndices.newLettersLength qword at rbp-40
+	label betweenIndices.lettersLengthSum qword at rbp-48
+	label betweenIndices.appendedLetters qword at rbp-56
+	;label betweenIndices.lettersBufferForward qword at rbp-64
+	;virtual at rbp-64
+	;	.list List
+	;end virtual	
+
+
+	mov [betweenIndices.letters], rcx
+	mov [betweenIndices.newLetters], rdx
+
+
+	and rsp, -32
+	push rbx 
+	push rbp 
+	push rdi 
+	push rsi
+	push rsp 
+	push r12 
+	push r13 
+	push r14 
+	push r15
+	sub rsp, 8
+
+
+	
+	sub rsp, 8*8
+	mov rcx, [betweenIndices.letters]	
+	call letterLength
+	add rsp, 8*8
+	mov [betweenIndices.lettersLength], rax
+
+	sub rsp, 8*8
+	mov rcx, [betweenIndices.newLetters]	
+	call letterLength
+	add rsp, 8*8
+	mov [betweenIndices.newLettersLength], rax
+
+	mov rax, [betweenIndices.lettersLength]
+	mov rcx, [betweenIndices.newLettersLength]
+
+	add rax, rcx
+	mov [betweenIndices.lettersLengthSum], rax
+
+	mov rcx, [betweenIndices.lettersLengthSum]
+	add rcx, 1b							; Trailing 0
+	sub rsp, 8*8
+	call allocate.linear
+	add rsp, 8*8
+	mov [betweenIndices.appendedLetters], rax
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;allocate rcx, betweenIndices.appendedLetters
+
+	mov rsi, [betweenIndices.letters]
+	mov rdi, [betweenIndices.appendedLetters]
+	cld
+	mov rcx, [betweenIndices.lettersLength]
+	rep movsb
+
+	mov rsi, [betweenIndices.newLetters]
+	mov rdi, [betweenIndices.appendedLetters]
+	add rdi, [betweenIndices.lettersLength]
+	cld
+	mov rcx, [betweenIndices.newLettersLength]
+	rep movsb
+
+	mov rsi, letterTerminator
+	mov rdi, [betweenIndices.appendedLetters]
+	add rdi, [betweenIndices.lettersLength]
+	add rdi, [betweenIndices.newLettersLength]
+	mov rcx, 1
+	cld
+	rep movsb
+
+
+	mov rax, [betweenIndices.appendedLetters]
+
+	add rsp, 8	
+	pop r15 
+	pop r14 
+	pop r13 
+	pop r12 
+	pop rsp 
+	pop rsi 
+	pop rdi 
+	pop rbp 
+	pop rbx
+
+	mov rsp, rbp
+	pop rbp
+
+	retn 0
+
 
 end namespace
 
