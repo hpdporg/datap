@@ -325,6 +325,16 @@ letters.appendLetters:
 	push r15
 	sub rsp, 8
 
+	mov rcx, [appendLetters.letters]
+	cmp rcx, 0					; Not appending on anything
+	jne appendLetters.lettersNotZero
+
+	mov rdx, [appendLetters.newLetters]
+	mov [appendLetters.appendedLetters], rdx
+	jmp appendLetters.end
+
+
+	.lettersNotZero:
 
 	
 	sub rsp, 8*8
@@ -374,8 +384,124 @@ letters.appendLetters:
 	cld
 	rep movsb
 
+	.end:
 
 	mov rax, [appendLetters.appendedLetters]
+
+	add rsp, 8	
+	pop r15 
+	pop r14 
+	pop r13 
+	pop r12 
+	pop rsp 
+	pop rsi 
+	pop rdi 
+	pop rbp 
+	pop rbx
+
+	mov rsp, rbp
+	pop rbp
+
+	retn 0
+
+; Expects StartIndex, EndIndex as next two Items in indicesList
+; Will not resetIndex on indicesList in case there are more unrelated Items in List
+
+letters.betweenIndices:
+	push rbp 
+	mov rbp, rsp 
+	sub rsp, (8*11);+(8*6)
+
+	;mov rcx, [rbp+8] 
+	;mov rdx, [rbp+12] 
+	label betweenIndices.letters qword at rbp-8 
+	label betweenIndices.lettersLength qword at rbp-16
+	label betweenIndices.linearAllocationSize qword at rbp-24
+	label betweenIndices.newLetters qword at rbp-32
+	label betweenIndices.newLettersLength qword at rbp-40
+	label betweenIndices.lettersLengthSum qword at rbp-48
+	label betweenIndices.indicesList qword at rbp-56
+	label betweenIndices.lettersBetween qword at rbp-64
+	label betweenIndices.startIndex qword at rbp-72
+	label betweenIndices.endIndex qword at rbp-80
+	label betweenIndices.betweenLength qword at rbp-88
+	;virtual at rbp-64
+	;	.list List
+	;end virtual	
+
+
+	mov [betweenIndices.letters], rcx
+	mov [betweenIndices.indicesList], rdx
+
+
+	and rsp, -32
+	push rbx 
+	push rbp 
+	push rdi 
+	push rsi
+	push rsp 
+	push r12 
+	push r13 
+	push r14 
+	push r15
+	sub rsp, 8
+
+
+	
+	sub rsp, 8*8
+	mov rcx, [betweenIndices.letters]	
+	call letterLength
+	add rsp, 8*8
+	mov [betweenIndices.lettersLength], rax
+
+	sub rsp, 8*8
+	mov rcx, [betweenIndices.indicesList]
+	call list.getNextItem
+	add rsp, 8*8	
+	mov [betweenIndices.startIndex], rax
+
+	sub rsp, 8*8
+	mov rcx, [betweenIndices.indicesList]
+	call list.getNextItem
+	add rsp, 8*8	
+	mov [betweenIndices.endIndex], rax
+
+	mov r8, [betweenIndices.endIndex]
+	mov r9, [betweenIndices.startIndex]
+	sub r8, r9
+	add r8, 1b
+	mov [betweenIndices.betweenLength], r8
+
+
+	mov rcx, [betweenIndices.betweenLength]
+	add rcx, 1b							; Trailing 0
+	sub rsp, 8*8
+	call allocate.linear
+	add rsp, 8*8
+	mov [betweenIndices.lettersBetween], rax
+
+
+	mov rsi, [betweenIndices.letters]
+	mov r9, [betweenIndices.startIndex]
+	add rsi, r9
+
+	mov rdi, [betweenIndices.lettersBetween]
+	mov rcx, [betweenIndices.betweenLength]
+	cld
+	rep movsb
+
+	
+
+	mov rsi, letterTerminator
+	mov rdi, [betweenIndices.lettersBetween]
+	add rdi, [betweenIndices.betweenLength]
+	mov rcx, 1
+	cld
+	rep movsb
+
+
+
+	mov rax, [betweenIndices.lettersBetween]
 
 	add rsp, 8	
 	pop r15 

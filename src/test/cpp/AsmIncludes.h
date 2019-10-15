@@ -52,6 +52,7 @@ typedef struct MatchFlow {
 	_int64	firstMatch;
 	_int64	everyMatch;
 	_int64	matchIndexCount; 
+	_int64	startEndLength; 
 } MatchFlow;
 
 typedef enum MatchesFlags{
@@ -88,6 +89,7 @@ extern "C" {
 	char* numAsLetters(_int64 num);
 	char* appendLetters(char* letters1, char* appendingLetters);
 	_int64 letterLength(char* letters);
+	char* lettersBetweenIndices(char* letters, List* indicesList);
 
 	// Allocate
 	void* linearAllocate(int size);

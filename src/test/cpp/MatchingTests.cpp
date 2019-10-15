@@ -54,6 +54,21 @@ TEST(MatchingTest, MatchContainsFlowParsedFromFlags) {
 	EXPECT_EQ(1,matchFlow->contains);
 }
 
+TEST(MatchingTest, MatchStartEndLengthFlowParsedFromFlags) {
+	Matches* matches = newMatches();
+	matches->flags = (MATCH_START | MATCH_END | MATCH_TRANSFORM);
+	matches->transformFlags = TRANSFORM_CONTAINS;
+
+
+	MatchFlow* matchFlow = processMatchFlags(matches);
+	fprintf(stdout, "\nOutput: %d\n", (int)matchFlow);
+	EXPECT_EQ(1,matchFlow->start);
+	EXPECT_EQ(1,matchFlow->end);
+	EXPECT_EQ(1,matchFlow->startEndLength);
+	EXPECT_EQ(0,matchFlow->firstMatch);
+	EXPECT_EQ(1,matchFlow->contains);
+}
+
 TEST(MatchingTest, TextContainsFirstMatch) {
 	Matches* matches = newMatches();
 	matches->flags = (MATCH_START|MATCH_FIRST|MATCH_TRANSFORM);

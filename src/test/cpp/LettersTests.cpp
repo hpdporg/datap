@@ -33,3 +33,17 @@ TEST(LettersTests, ReturnsBuiltPath) {
 	fprintf(stdout, "\nOutput: %s\n", appendedLetters);
 	EXPECT_STREQ("428\\",appendedLetters);
 }
+
+TEST(LettersTests, ReturnsLettersBetweenIndices) {	
+
+	char* letters = "Letters123";
+	List* indicesList = newList();
+	_int64 index1 = 4;
+	_int64 index2 = 7;
+	newLastItem(indicesList, (void*)index1);
+	newLastItem(indicesList, (void*)index2);
+
+	char* lettersBetween = lettersBetweenIndices(letters,indicesList);
+	fprintf(stdout, "\nLetters between: %s\n", lettersBetween);
+	EXPECT_STREQ("ers1",lettersBetween);
+}
