@@ -20,7 +20,7 @@ namespace replacement
 replacement.lettersWithList:
 	push rbp 
 	mov rbp, rsp 
-	sub rsp, (8*32);+(8*6)
+	sub rsp, (8*20);+(8*6)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
@@ -41,8 +41,10 @@ replacement.lettersWithList:
 	label lettersWithList.startIndex qword at rbp-120
 	label lettersWithList.endIndex qword at rbp-128
 	label lettersWithList.lettersIndex qword at rbp-136
-	label lettersWithList.newLetters qword at rbp-140
-	label lettersWithList.nextListVal qword at rbp-148
+	label lettersWithList.newLetters qword at rbp-144
+	label lettersWithList.nextListVal qword at rbp-152
+	label lettersWithList.lettersBetweenIndices qword at rbp-160
+	
 	
 	;virtual at rbp-64
 	;	.list List
@@ -105,34 +107,65 @@ replacement.lettersWithList:
 	jnl lettersWithList.appendListVal
 
 
+	mov rbx, [lettersWithList.matchResultsList]
+	add rbx, List.index
+	mov rcx, [rbx]
+	sub rcx, 10b
+	mov [rbx], rcx						; Go back so between Indices can use start/end indices
+
 	sub rsp, 8*8
 	mov rdx, [lettersWithList.matchResultsList]
 	mov rcx, [lettersWithList.letters]
 	call letters.betweenIndices
 	add rsp, 8*8
+	mov [lettersWithList.lettersBetweenIndices], rax
 	
 	sub rsp, 8*8
-	mov rdx, rax
+	mov rdx, [lettersWithList.lettersBetweenIndices]
 	mov rcx, [lettersWithList.newLetters]
 	call letters.appendLetters
 	add rsp, 8*8
+	mov [lettersWithList.newLetters], rax
+
+	sub rsp, 8*8
+	mov rcx, [lettersWithList.lettersBetweenIndices]
+	call letters.lettersLength
+	add rsp, 8*8
+	mov r8, [lettersWithList.lettersIndex]
+	add r8, rax
+	mov [lettersWithList.lettersIndex], r8
 
 
 
 	jmp lettersWithList.nextMatchResult
 	.appendListVal:
 
+
+
+
 	sub rsp, 8*8
 	mov rcx, [lettersWithList.list]
 	call list.getNextItem
 	add rsp, 8*8
-	mov rax, [lettersWithList.nextListVal]
+	mov [lettersWithList.nextListVal], rax
+
+
 
 	sub rsp, 8*8
 	mov rdx, [lettersWithList.nextListVal]
 	mov rcx, [lettersWithList.newLetters]
 	call letters.appendLetters
 	add rsp, 8*8
+	mov [lettersWithList.newLetters], rax
+
+
+	sub rsp, 8*8
+	mov rcx, [lettersWithList.nextListVal]
+	call letters.lettersLength
+	add rsp, 8*8
+	mov r8, [lettersWithList.lettersIndex]
+	add r8, rax
+	mov [lettersWithList.lettersIndex], r8
 
 
 
