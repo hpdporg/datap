@@ -79,7 +79,10 @@ typedef enum TransformFlags{
 } TransformFlags;
 
 								
-
+typedef enum ReplaceFlags{
+	REPLACE_BETWEEN = 1,
+	REPLACE_INSERT = 2
+} ReplaceFlags;
 
 
 ///extern char* pathSepLettersChar;
@@ -117,6 +120,11 @@ extern "C" {
 	Matches* newMatches();
 	MatchFlow* processMatchFlags(Matches* matches);
 	List* getMatches(Matches* matches, char* letters);
+
+
+	//Replacement
+	char* replaceLettersWithList(ReplaceFlags flags, char* letters, List* list, List* matchResultsList);
+
 }
 
 

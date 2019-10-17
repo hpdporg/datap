@@ -31,7 +31,7 @@ replacement.lettersWithList:
 	label lettersWithList.matchAddr qword at rbp-40
 	label lettersWithList.letters qword at rbp-48
 	label lettersWithList.flags qword at rbp-56
-	label lettersWithList.letters qword at rbp-64
+	label lettersWithList.lettersAlloc qword at rbp-64
 	label lettersWithList.matchingIndex qword at rbp-72
 	label lettersWithList.matchResultsList qword at rbp-80
 	label lettersWithList.startMatchFound qword at rbp-88
@@ -90,13 +90,13 @@ replacement.lettersWithList:
 	jnl lettersWithList.endMatchResultsList
 	
 	sub rsp, 8*8
-	mov rcx, [lettersWithList.list]
+	mov rcx, [lettersWithList.matchResultsList]
 	call list.getNextItem
 	add rsp, 8*8
 	mov [lettersWithList.startIndex], rax
 
 	sub rsp, 8*8
-	mov rcx, [lettersWithList.list]
+	mov rcx, [lettersWithList.matchResultsList]
 	call list.getNextItem
 	add rsp, 8*8
 	mov [lettersWithList.endIndex], rax
@@ -129,7 +129,7 @@ replacement.lettersWithList:
 
 	sub rsp, 8*8
 	mov rcx, [lettersWithList.lettersBetweenIndices]
-	call letters.lettersLength
+	call letters.letterLength
 	add rsp, 8*8
 	mov r8, [lettersWithList.lettersIndex]
 	add r8, rax
@@ -140,7 +140,21 @@ replacement.lettersWithList:
 	jmp lettersWithList.nextMatchResult
 	.appendListVal:
 
+	mov rbx, [lettersWithList.list]
+	mov r9, rbx
+	add rbx, List.index
+	add r9, List.itemsCount
+	mov rcx, [rbx]
+	mov rdx, [r9]
+	cmp rcx, rdx
+	jl lettersWithList.getNextListVal
 
+	sub rsp, 8*8
+	mov rcx, [lettersWithList.list]
+	call list.resetIndex
+	add rsp, 8*8
+
+	.getNextListVal:
 
 
 	sub rsp, 8*8
@@ -161,7 +175,7 @@ replacement.lettersWithList:
 
 	sub rsp, 8*8
 	mov rcx, [lettersWithList.nextListVal]
-	call letters.lettersLength
+	call letters.letterLength
 	add rsp, 8*8
 	mov r8, [lettersWithList.lettersIndex]
 	add r8, rax
