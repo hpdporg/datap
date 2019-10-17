@@ -92,7 +92,8 @@ extern "C" {
 	char* numAsLetters(_int64 num);
 	char* appendLetters(char* letters1, char* appendingLetters);
 	_int64 letterLength(char* letters);
-	char* lettersBetweenIndices(char* letters, List* indicesList);
+	char* lettersBetweenListsIndices(char* letters, List* indicesList);
+	char* lettersBetweenIndices(char* letters, _int64 startIndex, _int64 endIndex);
 
 	// Allocate
 	void* linearAllocate(int size);

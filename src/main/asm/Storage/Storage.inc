@@ -754,6 +754,102 @@ storage.defineRecordPath:
 
 	retn 0
 
+storage.retrieveRecordNames:
+	push rbp 
+	mov rbp, rsp 
+	sub rsp, (8*8);+(8*6)
+
+	;mov rcx, [rbp+8] 
+	;mov rdx, [rbp+12] 
+	label retrieveRecordNames.heapAddress qword at rbp-8  
+	label retrieveRecordNames.handleAllocatedMemory qword at rbp-16
+	label retrieveRecordNames.list qword at rbp-24 
+	label retrieveRecordNames.item qword at rbp-32
+	label retrieveRecordNames.recordAddr qword at rbp-40
+	label retrieveRecordNames.sizeRetrieved qword at rbp-48
+	label retrieveRecordNames.w32FindData qword at rbp-56
+	label retrieveRecordNames.locationContentsLetters qword at rbp-64
+	;virtual at rbp-64
+	;	.list List
+	;end virtual	
+
+
+	mov [retrieveRecordNames.recordAddr], rcx
+
+
+	and rsp, -32
+	push rbx 
+	push rbp 
+	push rdi 
+	push rsi
+	push rsp 
+	push r12 
+	push r13 
+	push r14 
+	push r15
+	sub rsp, 8
+
+	;Sizes w32_find_Data
+	;  DWORD    dwFileAttributes;		4
+	;  FILETIME ftCreationTime;		8
+	;  FILETIME ftLastAccessTime;		8
+	;  FILETIME ftLastWriteTime;		8
+	;  DWORD    nFileSizeHigh;		4
+	;  DWORD    nFileSizeLow;		4
+	;  DWORD    dwReserved0;		4
+	;  DWORD    dwReserved1;		4
+	;  CHAR     cFileName[MAX_PATH];	1
+
+	
+
+	sub rsp, 8*8
+	mov rdx, directoryContentsLetters
+	mov rbx, [retrieveRecordNames.recordAddr]
+	add rbx, Record.location
+	mov rcx, [rbx]
+	call letters.appendLetters
+	add rsp, 8*8
+	mov [retrieveRecordNames.locationContentsLetters], rax
+
+
+	sub rsp, 8*8
+	mov rcx, 64
+	call linear.allocate
+	add rsp, 8*8
+	mov [retrieveRecordNames.w32FindData], rax
+
+
+	sub rsp, 8*8
+	mov rdx, [retrieveRecordNames.w32FindData]
+	mov rcx,[retrieveRecordNames.locationContentsLetters]
+	call [FindFirstFile]
+	add rsp, 8*8
+
+	;INVALID_HANDLE_VALUE
+
+
+	mov rax, [retrieveRecordNames.recordAddr]
+
+
+	retrieveRecordNames.end:
+
+
+	add rsp, 8	
+	pop r15 
+	pop r14 
+	pop r13 
+	pop r12 
+	pop rsp 
+	pop rsi 
+	pop rdi 
+	pop rbp 
+	pop rbx
+
+	mov rsp, rbp
+	pop rbp
+
+	retn 0
+
 storage.newFile:
 	push rbp 
 	mov rbp, rsp 

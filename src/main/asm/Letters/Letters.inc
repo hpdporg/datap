@@ -4,6 +4,7 @@ section '.data' data readable writeable
 	
 	letterTerminator db 0
 	pathSepLetters db '\',0
+	directoryContentsLetters db '\*',0
 
 		
 section '.text' code readable writeable executable ;align 16
@@ -407,6 +408,121 @@ letters.appendLetters:
 ; Expects StartIndex, EndIndex as next two Items in indicesList
 ; Will not resetIndex on indicesList in case there are more unrelated Items in List
 
+letters.betweenListsIndices:
+	push rbp 
+	mov rbp, rsp 
+	sub rsp, (8*11);+(8*6)
+
+	;mov rcx, [rbp+8] 
+	;mov rdx, [rbp+12] 
+	label betweenListsIndices.letters qword at rbp-8 
+	label betweenListsIndices.lettersLength qword at rbp-16
+	label betweenListsIndices.linearAllocationSize qword at rbp-24
+	label betweenListsIndices.newLetters qword at rbp-32
+	label betweenListsIndices.newLettersLength qword at rbp-40
+	label betweenListsIndices.lettersLengthSum qword at rbp-48
+	label betweenListsIndices.indicesList qword at rbp-56
+	label betweenListsIndices.lettersBetween qword at rbp-64
+	label betweenListsIndices.startIndex qword at rbp-72
+	label betweenListsIndices.endIndex qword at rbp-80
+	label betweenListsIndices.betweenLength qword at rbp-88
+	;virtual at rbp-64
+	;	.list List
+	;end virtual	
+
+
+	mov [betweenListsIndices.letters], rcx
+	mov [betweenListsIndices.indicesList], rdx
+
+
+	and rsp, -32
+	push rbx 
+	push rbp 
+	push rdi 
+	push rsi
+	push rsp 
+	push r12 
+	push r13 
+	push r14 
+	push r15
+	sub rsp, 8
+
+
+	
+	sub rsp, 8*8
+	mov rcx, [betweenListsIndices.letters]	
+	call letterLength
+	add rsp, 8*8
+	mov [betweenListsIndices.lettersLength], rax
+
+	sub rsp, 8*8
+	mov rcx, [betweenListsIndices.indicesList]
+	call list.getNextItem
+	add rsp, 8*8	
+	mov [betweenListsIndices.startIndex], rax
+
+	sub rsp, 8*8
+	mov rcx, [betweenListsIndices.indicesList]
+	call list.getNextItem
+	add rsp, 8*8	
+	mov [betweenListsIndices.endIndex], rax
+
+	mov r8, [betweenListsIndices.endIndex]
+	mov r9, [betweenListsIndices.startIndex]
+	sub r8, r9
+	add r8, 1b
+	mov [betweenListsIndices.betweenLength], r8
+
+
+	mov rcx, [betweenListsIndices.betweenLength]
+	add rcx, 1b							; Trailing 0
+	sub rsp, 8*8
+	call allocate.linear
+	add rsp, 8*8
+	mov [betweenListsIndices.lettersBetween], rax
+
+
+	mov rsi, [betweenListsIndices.letters]
+	mov r9, [betweenListsIndices.startIndex]
+	add rsi, r9
+
+	mov rdi, [betweenListsIndices.lettersBetween]
+	mov rcx, [betweenListsIndices.betweenLength]
+	cld
+	rep movsb
+
+	
+
+	mov rsi, letterTerminator
+	mov rdi, [betweenListsIndices.lettersBetween]
+	add rdi, [betweenListsIndices.betweenLength]
+	mov rcx, 1
+	cld
+	rep movsb
+
+
+
+	mov rax, [betweenListsIndices.lettersBetween]
+
+	add rsp, 8	
+	pop r15 
+	pop r14 
+	pop r13 
+	pop r12 
+	pop rsp 
+	pop rsi 
+	pop rdi 
+	pop rbp 
+	pop rbx
+
+	mov rsp, rbp
+	pop rbp
+
+	retn 0
+
+; Expects StartIndex, EndIndex as params
+
+
 letters.betweenIndices:
 	push rbp 
 	mov rbp, rsp 
@@ -431,7 +547,8 @@ letters.betweenIndices:
 
 
 	mov [betweenIndices.letters], rcx
-	mov [betweenIndices.indicesList], rdx
+	mov [betweenIndices.startIndex], rdx
+	mov [betweenIndices.endIndex], r8
 
 
 	and rsp, -32
@@ -454,17 +571,8 @@ letters.betweenIndices:
 	add rsp, 8*8
 	mov [betweenIndices.lettersLength], rax
 
-	sub rsp, 8*8
-	mov rcx, [betweenIndices.indicesList]
-	call list.getNextItem
-	add rsp, 8*8	
-	mov [betweenIndices.startIndex], rax
 
-	sub rsp, 8*8
-	mov rcx, [betweenIndices.indicesList]
-	call list.getNextItem
-	add rsp, 8*8	
-	mov [betweenIndices.endIndex], rax
+
 
 	mov r8, [betweenIndices.endIndex]
 	mov r9, [betweenIndices.startIndex]

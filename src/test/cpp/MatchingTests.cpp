@@ -153,6 +153,7 @@ TEST(MatchingTest, TextContainsEveryStartEndMatch) {
 
 	char* contains1 = (char*)"Ma";
 	newLastItem(matches->containsRangeList, contains1);
+	//newLastItem(matches->containsRangeList, contains1);
 
 	char* letters = (char*)"HAS a Match SomwMaehere";
 
@@ -175,6 +176,26 @@ TEST(MatchingTest, TextContainsEveryStartEndMatch) {
 		}
 	}
 
+
+	resetIndex(matchResults);	//There is a bug here in List
+	_int64 result = 0;
+		result = (_int64)getNextItem(matchResults);
+	result = (_int64)getNextItem(matchResults);
+	matchResults->index = matchResults->index -2;
+	fprintf(stdout, "\Ind: %d ",matchResults->index);
+	result = (_int64)getNextItem(matchResults);
+	fprintf(stdout, "\Ind: %d ",matchResults->index);
+	result = (_int64)getNextItem(matchResults);
+	fprintf(stdout, "\Ind: %d ",matchResults->index);
+		result = (_int64)getNextItem(matchResults);
+	result = (_int64)getNextItem(matchResults);
+	matchResults->index = matchResults->index -3;
+	fprintf(stdout, "\Ind: %d ",matchResults->index);
+		result = (_int64)getNextItem(matchResults);
+		fprintf(stdout, "\nResu1: %d ",result);
+	result = (_int64)getNextItem(matchResults);
+
+	fprintf(stdout, "\nResu2: %d ",result);
 	EXPECT_EQ(4, matchResults->itemsCount);
 
 }

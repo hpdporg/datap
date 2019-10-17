@@ -5,6 +5,9 @@ extrn '__imp_GetFileSize' as GetFileSize:qword
 extrn '__imp_ReadFile' as ReadFile:qword
 extrn '__imp_CloseHandle' as CloseHandle:qword
 extrn '__imp_DeleteFileA' as DeleteFile:qword
+extrn '__imp_FindFirstFileA' as FindFirstFile:qword
+extrn '__imp_FindNextFileA' as FindNextFile:qword
+
 
 ;public storage.newFile as 'newFile'
 ;public storage.writeFile as 'writeFile'

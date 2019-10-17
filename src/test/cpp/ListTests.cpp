@@ -55,3 +55,52 @@ TEST(ListTests, ItemNumbersInList) {
 	}
 
 }
+
+
+TEST(ListTests, ListIndexCanBeDecreasedToZero) {
+	List* list = newList();
+	_int64 item1 = 1;
+	_int64 item2 = 2;
+	_int64 item3 = 3;
+	_int64 item4 = 4;
+	newLastItem(list,(void*)item1);
+	newLastItem(list,(void*)item2);
+	newLastItem(list,(void*)item3);
+	newLastItem(list,(void*)item4);
+
+	_int64 result = 0;
+	result = (_int64)getNextItem(list);
+	result = (_int64)getNextItem(list);
+	list->index = 0;	
+	result = (_int64)getNextItem(list);
+	result = (_int64)getNextItem(list);
+
+	fprintf(stdout,"\nResult: %d\n",result);
+	EXPECT_EQ(2,result);
+
+
+}
+
+TEST(ListTests, ListIndexCanBeDecreased) {
+	List* list = newList();
+	_int64 item1 = 1;
+	_int64 item2 = 2;
+	_int64 item3 = 3;
+	_int64 item4 = 4;
+	newLastItem(list,(void*)item1);
+	newLastItem(list,(void*)item2);
+	newLastItem(list,(void*)item3);
+	newLastItem(list,(void*)item4);
+
+	_int64 result = 0;
+	result = (_int64)getNextItem(list);
+	result = (_int64)getNextItem(list);
+	list->index = 1;	
+	result = (_int64)getNextItem(list);
+	result = (_int64)getNextItem(list);
+
+	fprintf(stdout,"\nResult: %d\n",result);
+	EXPECT_EQ(3,result);
+
+
+}

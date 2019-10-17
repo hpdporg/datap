@@ -1,4 +1,5 @@
 public letters.numAsLetters as 'numAsLetters'
 public letters.appendLetters as 'appendLetters'
 public letters.letterLength as 'letterLength'
+public letters.betweenListsIndices as 'lettersBetweenListsIndices'
 public letters.betweenIndices as 'lettersBetweenIndices'

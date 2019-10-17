@@ -34,7 +34,7 @@ TEST(LettersTests, ReturnsBuiltPath) {
 	EXPECT_STREQ("428\\",appendedLetters);
 }
 
-TEST(LettersTests, ReturnsLettersBetweenIndices) {	
+TEST(LettersTests, ReturnsLettersBetweenListsIndices) {	
 
 	char* letters = "Letters123";
 	List* indicesList = newList();
@@ -43,7 +43,19 @@ TEST(LettersTests, ReturnsLettersBetweenIndices) {
 	newLastItem(indicesList, (void*)index1);
 	newLastItem(indicesList, (void*)index2);
 
-	char* lettersBetween = lettersBetweenIndices(letters,indicesList);
+	char* lettersBetween = lettersBetweenListsIndices(letters,indicesList);
+	fprintf(stdout, "\nLetters between: %s\n", lettersBetween);
+	EXPECT_STREQ("ers1",lettersBetween);
+}
+
+TEST(LettersTests, ReturnsLettersBetweenIndices) {	
+
+	char* letters = "Letters123";
+	
+	_int64 index1 = 4;
+	_int64 index2 = 7;
+
+	char* lettersBetween = lettersBetweenIndices(letters,index1,index2);
 	fprintf(stdout, "\nLetters between: %s\n", lettersBetween);
 	EXPECT_STREQ("ers1",lettersBetween);
 }
