@@ -16,11 +16,12 @@ TEST(ReplacementTest, ReplaceEveryOccurence) {
 	List* matchResults = getMatches(matches, letters);
 
 	List* replacementVals = newList();
-	char* replaceVal = "RV8U";
+	char* replaceVal = (char*)"RV8U";
 	newLastItem(replacementVals, replaceVal);
 
 	char* newLetters = replaceLettersWithList(REPLACE_BETWEEN,letters, replacementVals, matchResults);
 
+		//fprintf(stdout, "\nDebugReplaced letters: %d\n", (int)newLetters);
 	fprintf(stdout, "\nReplaced letters: %s\n", newLetters);
 
 	

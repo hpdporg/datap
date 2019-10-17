@@ -74,10 +74,15 @@ replacement.lettersWithList:
 	mov [lettersWithList.lettersIndex], rcx		; Begin as 0
 	mov [lettersWithList.newLetters], rcx
 
-	mov rbx, [lettersWithList.flags]
+
+	
+
+	mov r8, [lettersWithList.flags]
 	bt r8, 0b					; REPLACE between
 	jnc lettersWithList.replaceInsert		; Replace as insert at indices
 	
+
+
 
 	.nextMatchResult:
 	mov rbx, [lettersWithList.matchResultsList]
@@ -100,6 +105,8 @@ replacement.lettersWithList:
 	call list.getNextItem
 	add rsp, 8*8
 	mov [lettersWithList.endIndex], rax
+
+
 
 	mov rcx, [lettersWithList.lettersIndex]
 	mov rdx, [lettersWithList.startIndex]
@@ -182,6 +189,7 @@ replacement.lettersWithList:
 	mov [lettersWithList.lettersIndex], r8
 
 
+	
 
 	jmp lettersWithList.nextMatchResult
 	.endMatchResultsList:
@@ -191,7 +199,7 @@ replacement.lettersWithList:
 
 
 
-	mov rax, [lettersWithList.newLetters]
+	mov rax, [lettersWithList.newLetters];[lettersWithList.nextListVal];debug
 
 
 	lettersWithList.end:
