@@ -36,7 +36,7 @@ TEST(LettersTests, ReturnsBuiltPath) {
 
 TEST(LettersTests, ReturnsLettersBetweenListsIndices) {	
 
-	char* letters = "Letters123";
+	char* letters = (char*)"Letters123";
 	List* indicesList = newList();
 	_int64 index1 = 4;
 	_int64 index2 = 7;
@@ -50,7 +50,7 @@ TEST(LettersTests, ReturnsLettersBetweenListsIndices) {
 
 TEST(LettersTests, ReturnsLettersBetweenIndices) {	
 
-	char* letters = "Letters123";
+	char* letters = (char*)"Letters123";
 	
 	_int64 index1 = 4;
 	_int64 index2 = 7;
