@@ -474,7 +474,7 @@ list.getNextItem:
 	;mov rdx, [rbp+12] 
 	label getNextItem.heapAddress qword at rbp-8  
 	label getNextItem.handleAllocatedMemory qword at rbp-16
-	label getNextItem.list qword at rbp-24 
+	label getNextItem.listAddress qword at rbp-24 
 	label getNextItem.item qword at rbp-32
 	label getNextItem.prevItem qword at rbp-40
 	label getNextItem.prevItemIndex qword at rbp-48
@@ -483,7 +483,7 @@ list.getNextItem:
 	;end virtual	
 
 
-	mov [getNextItem.list], rcx
+	mov [getNextItem.listAddress], rcx
 
 
 
@@ -500,105 +500,220 @@ list.getNextItem:
 	sub rsp, 8
 
 
-
-	mov rcx, 0
-	mov [getNextItem.prevItemIndex], rcx		; Begin as 0
-
-	mov rbx, [getNextItem.list]
-	add rbx, List.indexItem
-	mov rdx, [rbx]
-	mov [getNextItem.prevItem], rdx
+	mov [getNextItem.listAddress], rcx
 
 
-	mov rbx, [getNextItem.list]
-	mov rdx, rbx
-	add rbx, List.index
-	mov r8, [rbx]
-	add rdx, List.indexedItemIndex
-	mov r9, [rdx]
-	cmp r8, r9
-	je getNextItem.atIndexedItem
-
-
-	mov rbx, [getNextItem.list]			; Start with first item when indexed is not cached and retrievable.
-	add rbx, List.firstItem
-	mov rdx, [rbx]
-	mov [getNextItem.prevItem], rdx
-
-	mov rbx, [getNextItem.list]
-	add rbx, List.index
-	mov rcx, [rbx]
-	cmp rcx, 0
-	jne getNextItem.nextItem
-
-	getNextItem.atIndexedItem:
-
-	mov rbx, [getNextItem.prevItem]
-	mov [getNextItem.item], rbx		
-
-	jmp getNextItem.lastItemReached
-
-	getNextItem.nextItem:
-	mov rbx, [getNextItem.list]
-	add rbx, List.index
-	mov rcx, [rbx]
-	mov rdx, [getNextItem.prevItemIndex]
-	cmp rcx, rdx
-	jne getNextItem.lastItemReached
-
-
-	mov r9, [getNextItem.prevItem]
-	add r9, ListItem.next
-	mov r10, [r9]
-	mov [getNextItem.item], r10
-
-	mov r11, [getNextItem.prevItemIndex]
-	add r11, 1b
-	mov [getNextItem.prevItemIndex], r11		; Increase prior item index
+	mov rbx, [getNextItem.listAddress]
 	
-	jmp getNextItem.nextItem
+	;mov rcx, rbx;[rbx+List.index]
+	mov r8, List.index
+	add r8, rbx
+	mov rcx, [r8]
+	mov rax, 0
+	cmp rcx, rax
+	je getNextItem.retrieveFromFirstItem
 
-	getNextItem.lastItemReached:
+	;mov rdx, [rbx+List.indexedItemIndex]
+	mov rdx, List.indexedItemIndex
+	add rdx, rbx
+	mov rdx, [rdx]
+	mov rax, 0
+
+	cmp rdx, rax
+	je getNextItem.retrieveFromFirstItem
+
+	;cmp rcx, rax
+	;jne retrieveFromFirstItem
+
+	;mov rcx, [rbx+List.indexItem]
+	mov rcx, List.indexItem
+	add rcx, rbx
+	mov rcx, [rcx]
+	mov rax, 0
+
+	cmp rcx, rax
+	je getNextItem.retrieveFromFirstItem		
 
 
-	mov rbx, [getNextItem.list]			; Advance List index
-	add rbx, List.index
-	mov r11, [rbx]
-	add r11, 1b
-	mov [rbx], r11
+	;mov rdx, [rbx+List.indexedItemIndex]
+	mov rdx, List.indexedItemIndex
+	add rdx, rbx
+	mov rdx, [rdx]
+	;mov rcx, [rbx+List.index]
+	mov rcx, List.index
+	add rcx, rbx
+	mov rcx, [rcx]
+	cmp rcx, rdx
+
+	jne getNextItem.retrieveFromFirstItem
 
 
-	mov r8, [getNextItem.list] 
-	add r8, List.itemsCount
-	mov r9, [r8]
-	cmp r11, r9
-	jnl getNextItem.maintainIndexedItem
-		
-	mov r9, [getNextItem.item]
+
+
+	;jne retrieveFromFirstItem
+	;mov rax, [rbx+List.index]
+	mov rax, List.index
+	add rax, rbx
+	mov rax, [rax]
+	add rax, 1
+	mov rbx, [getNextItem.listAddress]
+	mov r8, rbx
+	add r8, List.indexedItemIndex
+	mov qword [r8], rax
+	sub rax, 1
+	mov rbx, [getNextItem.listAddress]
+	;mov rdx, [rbx+List.indexItem]
+	mov rdx, List.indexItem
+	add rdx, rbx
+	mov rdx, [rdx]
+	mov r9, rdx
 	add r9, ListItem.next
-	mov r10, [r9]
-	mov r13, r10
-	mov rbx, [getNextItem.list]
+	mov rcx, [r9]
+	mov rbx, [getNextItem.listAddress]
+	mov r9, rbx
+	add r9, List.indexItem
+	mov qword [r9], rcx	
+
+	jmp getNextItem.itemReached
+
+	.retrieveFromFirstItem:
+
+	mov rbx, [getNextItem.listAddress]
+	mov r9, rbx
+	add r9, List.index
+	mov rcx, [r9]
+	mov rax, 0
+	mov r9, rbx
+	add r9, List.firstItem
+	mov rdx, [r9]
+	
+	cmp rcx, rax
+	je getNextItem.itemReached
+
+	.itemNotReached:
+
+	mov r9, rdx
+	add r9, ListItem.next
+	mov rbx, [r9]
 	mov rdx, rbx
-	add rbx, List.indexItem
+	add rax, 1
+	
+	cmp rax, rcx
+	jne getNextItem.itemNotReached 
 
-	jmp getNextItem.advanceOrMaintainIndexItem	
 
-	.maintainIndexedItem:				; Do not advance (Helpful when only one item so not cleared)
+	.itemReached:
 
-	mov rbx, [getNextItem.list]			; Define index item, advance index item index
-	mov rdx, rbx
-	add rbx, List.indexItem
-	mov r13, [getNextItem.item]
+	add rax, 1
+	mov rbx, [getNextItem.listAddress]
+	mov r9, rbx
+	add r9, List.index
+	mov qword [r9], rax
+	mov r10, rdx
+	add r10, ListItem.item
+	mov rax, [r10]
+	
 
-	.advanceOrMaintainIndexItem:
-	mov [rbx], r13
-	add rdx, List.indexedItemIndex
-	mov [rdx], r11
 
-	mov r12, [getNextItem.item]			; Get List Item's item
-	add r12, ListItem.item
-	mov rax, [r12]
+
+	;mov rcx, 0
+	;mov [getNextItem.prevItemIndex], rcx		; Begin as 0
+
+	;mov rbx, [getNextItem.list]
+	;add rbx, List.indexItem
+	;mov rdx, [rbx]
+	;mov [getNextItem.prevItem], rdx
+
+
+	;mov rbx, [getNextItem.list]
+	;mov rdx, rbx
+	;add rbx, List.index
+	;mov r8, [rbx]
+	;add rdx, List.indexedItemIndex
+	;mov r9, [rdx]
+	;cmp r8, r9
+	;je getNextItem.atIndexedItem
+
+
+	;mov rbx, [getNextItem.list]			; Start with first item when indexed is not cached and retrievable.
+	;add rbx, List.firstItem
+	;mov rdx, [rbx]
+	;mov [getNextItem.prevItem], rdx
+
+	;mov rbx, [getNextItem.list]
+	;add rbx, List.index
+	;mov rcx, [rbx]
+	;cmp rcx, 0
+	;jne getNextItem.nextItem
+
+	;getNextItem.atIndexedItem:
+
+	;mov rbx, [getNextItem.prevItem]
+	;mov [getNextItem.item], rbx		
+
+	;jmp getNextItem.lastItemReached
+
+	;getNextItem.nextItem:
+	;mov rbx, [getNextItem.list]
+	;add rbx, List.index
+	;mov rcx, [rbx]
+	;mov rdx, [getNextItem.prevItemIndex]
+	;cmp rcx, rdx
+	;jne getNextItem.lastItemReached
+
+
+	;mov r9, [getNextItem.prevItem]
+	;add r9, ListItem.next
+	;mov r10, [r9]
+	;mov [getNextItem.item], r10
+
+	;mov r11, [getNextItem.prevItemIndex]
+	;add r11, 1b
+	;mov [getNextItem.prevItemIndex], r11		; Increase prior item index
+	
+	;jmp getNextItem.nextItem
+
+	;getNextItem.lastItemReached:
+
+
+	;mov rbx, [getNextItem.list]			; Advance List index
+	;add rbx, List.index
+	;mov r11, [rbx]
+	;add r11, 1b
+	;mov [rbx], r11
+
+
+	;mov r8, [getNextItem.list] 
+	;add r8, List.itemsCount
+	;mov r9, [r8]
+	;cmp r11, r9
+	;jnl getNextItem.maintainIndexedItem
+		
+	;mov r9, [getNextItem.item]
+	;add r9, ListItem.next
+	;mov r10, [r9]
+	;mov r13, r10
+	;mov rbx, [getNextItem.list]
+	;mov rdx, rbx
+	;add rbx, List.indexItem
+
+	;jmp getNextItem.advanceOrMaintainIndexItem	
+
+	;.maintainIndexedItem:				; Do not advance (Helpful when only one item so not cleared)
+
+	;mov rbx, [getNextItem.list]			; Define index item, advance index item index
+	;mov rdx, rbx
+	;add rbx, List.indexItem
+	;mov r13, [getNextItem.item]
+
+	;.advanceOrMaintainIndexItem:
+	;mov [rbx], r13
+	;add rdx, List.indexedItemIndex
+	;mov [rdx], r11
+
+	;mov r12, [getNextItem.item]			; Get List Item's item
+	;add r12, ListItem.item
+	;mov rax, [r12]
 
 	add rsp, 8	
 	pop r15 

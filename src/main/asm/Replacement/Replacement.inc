@@ -94,7 +94,7 @@ replacement.lettersWithList:
 	.nextMatchResult:
 	mov rcx, [lettersWithList.lettersIndex]
 	mov rdx, [lettersWithList.lettersLength]
-	cmp rcx, 18;rdx
+	cmp rcx, rdx
 	jnl lettersWithList.endMatchResultsList
 	
 	mov rbx,  [lettersWithList.matchResultsList]
@@ -107,13 +107,13 @@ replacement.lettersWithList:
 	jl lettersWithList.replacingOrNotReplacingVal
 
 	mov r10, [lettersWithList.lettersLength]
+	mov r11,  [lettersWithList.lettersIndex]
+	add r10, r11
 	add r10, 1b								; Decreased later
-	mov [lettersWithList.endIndex], r10
+	mov [lettersWithList.startIndex], r10
 
 
 
-	mov rax, 189
-	jmp lettersWithList.end
 	jmp lettersWithList.nonReplacedVal
 
 	.replacingOrNotReplacingVal:
@@ -128,14 +128,6 @@ replacement.lettersWithList:
 	add rsp, 8*8
 	mov [lettersWithList.startIndex], rax
 
-mov rbx,  [lettersWithList.matchResultsList]
-	mov r8, rbx
-	add rbx, List.index
-	mov rax, [rbx]
-mov rax, [lettersWithList.startIndex];[lettersWithList.lettersIndex]
-	mov r8, [lettersWithList.lettersIndex]
-	cmp r8, 16
-	je lettersWithList.end;MatchResultsList
 
 	sub rsp, 8*8
 	mov rcx, [lettersWithList.matchResultsList]
@@ -202,37 +194,24 @@ mov rax, [lettersWithList.startIndex];[lettersWithList.lettersIndex]
 	mov rbx, [lettersWithList.list]
 	mov r9, rbx
 	add rbx, List.index
-	mov rcx, 0
-	mov [rbx], rcx
-	;add r9, List.itemsCount
-	;mov rcx, [rbx]
-	;mov rdx, [r9]
-	;cmp rcx, rdx
-	;jl lettersWithList.getNextListVal
+	add r9, List.itemsCount
+	mov rcx, [rbx]
+	mov rdx, [r9]
+	cmp rcx, rdx
+	jl lettersWithList.getNextListVal
 
-	;sub rsp, 8*8
-	;mov rcx, [lettersWithList.list]
-	;call list.resetIndex
-	;add rsp, 8*8
+	sub rsp, 8*8
+	mov rcx, [lettersWithList.list]
+	call list.resetIndex
+	add rsp, 8*8
 
 	.getNextListVal:
-
-	mov rdx, [lettersWithList.nextListVal]
-	cmp rdx, 0
-	jne lettersWithList.dbg
 
 	sub rsp, 8*8
 	mov rcx, [lettersWithList.list]
 	call list.getNextItem
 	add rsp, 8*8
 	mov [lettersWithList.nextListVal], rax
-
-
-	.dbg:
-
-
-
-
 
 
 	sub rsp, 8*8
@@ -250,19 +229,6 @@ mov rax, [lettersWithList.startIndex];[lettersWithList.lettersIndex]
 	mov [lettersWithList.lettersIndex], rdx
 
 
-
-
-	;sub rsp, 8*8
-	;mov rcx, [lettersWithList.nextListVal]
-	;call letters.letterLength
-	;add rsp, 8*8
-	;mov r8, [lettersWithList.lettersIndex]
-	;add r8, rax
-	;mov [lettersWithList.lettersIndex], r8
-
-
-	;mov rax, 28929
-	;jmp lettersWithList.end
 	
 
 	jmp lettersWithList.nextMatchResult
@@ -273,7 +239,6 @@ mov rax, [lettersWithList.startIndex];[lettersWithList.lettersIndex]
 
 
 	mov rax, [lettersWithList.newLetters]
-	;mov rax, [lettersWithList.lettersIndex];[lettersWithList.newLetters];[lettersWithList.nextListVal];debug
 
 
 	lettersWithList.end:

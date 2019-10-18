@@ -814,7 +814,7 @@ storage.retrieveRecordNames:
 
 	sub rsp, 8*8
 	mov rcx, 64
-	call linear.allocate
+	call allocate.linear
 	add rsp, 8*8
 	mov [retrieveRecordNames.w32FindData], rax
 
