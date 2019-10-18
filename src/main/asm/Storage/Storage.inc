@@ -763,7 +763,7 @@ storage.retrieveRecordNames:
 	;mov rdx, [rbp+12] 
 	label retrieveRecordNames.heapAddress qword at rbp-8  
 	label retrieveRecordNames.handleAllocatedMemory qword at rbp-16
-	label retrieveRecordNames.list qword at rbp-24 
+	label retrieveRecordNames.handle qword at rbp-24 
 	label retrieveRecordNames.item qword at rbp-32
 	label retrieveRecordNames.recordAddr qword at rbp-40
 	label retrieveRecordNames.sizeRetrieved qword at rbp-48
@@ -824,8 +824,32 @@ storage.retrieveRecordNames:
 	mov rcx,[retrieveRecordNames.locationContentsLetters]
 	call [FindFirstFile]
 	add rsp, 8*8
+	mov [retrieveRecordNames.handle], rax
+	mov r9, 0
+	sub r9, 1b
+	cmp rax, r9
+	jne retrieveRecordNames.noError ; INVALID_HANDLE_VALUE
+	mov rax, 0
+	jmp retrieveRecordNames.end	
 
-	;INVALID_HANDLE_VALUE
+	.noError:
+
+	.nextFile:
+
+	sub rsp, 8*8
+	mov rdx, [retrieveRecordNames.w32FindData]
+	mov rcx, [retrieveRecordNames.handle]
+	call [FindNextFile]
+	add rsp, 8*8
+	mov r9, rax
+	cmp r9, 0
+	je retrieveRecordNames.endFiles
+
+
+
+	jmp retrieveRecordNames.nextFile
+	.endFiles:
+
 
 
 	mov rax, [retrieveRecordNames.recordAddr]
