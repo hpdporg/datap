@@ -116,11 +116,13 @@ extern "C" {
 	Record* retrieve(Record* record);
 	Record* storeLetters(Record* record, char* letters);
 	Record* restoreLetters(Record* record, char* letters);
+	List* retrieveRecordNames(Record* record);
 
 	//Matches
 	Matches* newMatches();
 	MatchFlow* processMatchFlags(Matches* matches);
 	List* getMatches(Matches* matches, char* letters);
+	List* lettersSame(char* letters, char* containsLetters);
 
 
 	//Replacement

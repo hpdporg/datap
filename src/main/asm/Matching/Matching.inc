@@ -795,6 +795,228 @@ matching.get:
 
 	retn 0
 
+; Returns match results with 0 items when letters not same
+; Returns greater than 0 items in List results when match
+
+matching.lettersSame:
+	push rbp 
+	mov rbp, rsp 
+	sub rsp, (8*14);+(8*6)
+
+	;mov rcx, [rbp+8] 
+	;mov rdx, [rbp+12] 
+	label lettersSame.heapAddress qword at rbp-8  
+	label lettersSame.handleAllocatedMemory qword at rbp-16
+	label lettersSame.matchFlow qword at rbp-24 
+	label lettersSame.list qword at rbp-32
+	label lettersSame.matches qword at rbp-40
+	label lettersSame.letters qword at rbp-48
+	label lettersSame.containsRangeList qword at rbp-56
+	label lettersSame.containsAddr qword at rbp-64
+	label lettersSame.matchingIndex qword at rbp-72
+	label lettersSame.containLetters qword at rbp-80
+	label lettersSame.startMatchFound qword at rbp-88
+	label lettersSame.matchFoundCount qword at rbp-96
+	label lettersSame.lettersLength qword at rbp-104
+	label lettersSame.matchingEnd qword at rbp-112
+	;virtual at rbp-64
+	;	.list List
+	;end virtual	
+
+
+	mov [lettersSame.letters], rcx
+	mov [lettersSame.containLetters], rdx
+
+
+	and rsp, -32
+	push rbx 
+	push rbp 
+	push rdi 
+	push rsi
+	push rsp 
+	push r12 
+	push r13 
+	push r14 
+	push r15
+	sub rsp, 8
+
+	sub rsp, 8*8
+	call new
+	add rsp, 8*8
+	mov [lettersSame.matches], rax
+
+	mov rbx, [lettersSame.matches]
+	add rbx, Matches.flags
+	mov r8, 10001b
+	mov [rbx], r8
+
+	mov rbx, [lettersSame.matches]
+	add rbx, Matches.transformFlags
+	mov r8, 100b
+	mov [rbx], r8
+
+	sub rsp, 8*8
+	mov rdx, [lettersSame.containLetters]
+	mov rbx, [lettersSame.matches]
+	add rbx, Matches.containsRangeList
+	mov rcx, [rbx]
+	call list.newLastItem
+	add rsp, 8*8
+
+
+	sub rsp, 8*8
+	mov rdx, [lettersSame.letters]
+	mov rcx, [lettersSame.matches]
+	call get
+	add rsp, 8*8
+	mov rax, rax
+
+
+	lettersSame.end:
+
+
+	add rsp, 8	
+	pop r15 
+	pop r14 
+	pop r13 
+	pop r12 
+	pop rsp 
+	pop rsi 
+	pop rdi 
+	pop rbp 
+	pop rbx
+
+	mov rsp, rbp
+	pop rbp
+
+	retn 0
+
+
+; Returns match results with 0 items when letters not same, and not same lengths
+; Returns greater than 0 items in List results when match
+
+matching.lettersSameExact:
+	push rbp 
+	mov rbp, rsp 
+	sub rsp, (8*14);+(8*6)
+
+	;mov rcx, [rbp+8] 
+	;mov rdx, [rbp+12] 
+	label lettersSameExact.heapAddress qword at rbp-8  
+	label lettersSameExact.handleAllocatedMemory qword at rbp-16
+	label lettersSameExact.matchFlow qword at rbp-24 
+	label lettersSameExact.list qword at rbp-32
+	label lettersSameExact.matches qword at rbp-40
+	label lettersSameExact.letters qword at rbp-48
+	label lettersSameExact.containsRangeList qword at rbp-56
+	label lettersSameExact.containsAddr qword at rbp-64
+	label lettersSameExact.matchingIndex qword at rbp-72
+	label lettersSameExact.containLetters qword at rbp-80
+	label lettersSameExact.length1 qword at rbp-88
+	label lettersSameExact.length2 qword at rbp-96
+	label lettersSameExact.lettersLength qword at rbp-104
+	label lettersSameExact.matchingEnd qword at rbp-112
+	;virtual at rbp-64
+	;	.list List
+	;end virtual	
+
+
+	mov [lettersSameExact.letters], rcx
+	mov [lettersSameExact.containLetters], rdx
+
+
+	and rsp, -32
+	push rbx 
+	push rbp 
+	push rdi 
+	push rsi
+	push rsp 
+	push r12 
+	push r13 
+	push r14 
+	push r15
+	sub rsp, 8
+
+	sub rsp, 8*8
+	mov rcx, [lettersSameExact.letters]
+	call letters.letterLength
+	add rsp, 8*8
+	mov [lettersSameExact.length1], rax
+
+	sub rsp, 8*8
+	mov rcx, [lettersSameExact.containLetters]
+	call letters.letterLength
+	add rsp, 8*8
+	mov [lettersSameExact.length2], rax
+
+	
+	mov rcx, [lettersSameExact.length1]
+	mov rdx, [lettersSameExact.length2]
+	cmp rcx, rdx
+	je lettersSameExact.sameLength
+
+	sub rsp, 8*8
+	call list.new
+	add rsp, 8*8
+
+
+	jmp lettersSameExact.end
+
+
+	.sameLength:
+
+
+	sub rsp, 8*8
+	call new
+	add rsp, 8*8
+	mov [lettersSameExact.matches], rax
+
+	mov rbx, [lettersSameExact.matches]
+	add rbx, Matches.flags
+	mov r8, 10001b
+	mov [rbx], r8
+
+	mov rbx, [lettersSameExact.matches]
+	add rbx, Matches.transformFlags
+	mov r8, 100b
+	mov [rbx], r8
+
+	sub rsp, 8*8
+	mov rdx, [lettersSameExact.containLetters]
+	mov rbx, [lettersSameExact.matches]
+	add rbx, Matches.containsRangeList
+	mov rcx, [rbx]
+	call list.newLastItem
+	add rsp, 8*8
+
+
+	sub rsp, 8*8
+	mov rdx, [lettersSameExact.letters]
+	mov rcx, [lettersSameExact.matches]
+	call get
+	add rsp, 8*8
+	mov rax, rax
+
+
+	lettersSameExact.end:
+
+
+	add rsp, 8	
+	pop r15 
+	pop r14 
+	pop r13 
+	pop r12 
+	pop rsp 
+	pop rsi 
+	pop rdi 
+	pop rbp 
+	pop rbx
+
+	mov rsp, rbp
+	pop rbp
+
+	retn 0
+
 
 
 end namespace

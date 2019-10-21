@@ -65,6 +65,23 @@ TEST_F(StorageTest, LettersReplaced) {
 	EXPECT_TRUE(record->allocSize!= 0);
 }
 
+TEST_F(StorageTest, RetrievesRecordNames) {
+	Record* record = newStorage();
+	record->location = (char*)"..\\..\\..\\..\\src\\resources";
+
+	fprintf(stdout,"\nRetrieving: \n");
+	List* recordNames = retrieveRecordNames(record);
+
+	fprintf(stdout,"\nRecords retrieved: %d\n",recordNames->itemsCount);
+	while (recordNames->index < recordNames->itemsCount){
+		char* nextRecord = (char*)getNextItem(recordNames);
+		fprintf(stdout,"\nNext record: %s\n",nextRecord);
+	}
+	
+	//EXPECT_STREQ("..\\..\\..\\src\\resources\\TestCSV.csv",(record->builtLocation));
+	
+}
+
 //Store List contents? As CSV?
 //Insert in File after match?
 //Replace sequences with other letters

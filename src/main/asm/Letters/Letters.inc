@@ -5,7 +5,8 @@ section '.data' data readable writeable
 	letterTerminator db 0
 	pathSepLetters db '\',0
 	directoryContentsLetters db '\*',0
-
+	currentDirLetter db '.',0
+	containingDirLetters db '..',0
 		
 section '.text' code readable writeable executable ;align 16
 
@@ -610,6 +611,97 @@ letters.betweenIndices:
 
 
 	mov rax, [betweenIndices.lettersBetween]
+
+	add rsp, 8	
+	pop r15 
+	pop r14 
+	pop r13 
+	pop r12 
+	pop rsp 
+	pop rsi 
+	pop rdi 
+	pop rbp 
+	pop rbx
+
+	mov rsp, rbp
+	pop rbp
+
+	retn 0
+
+
+letters.copyLetters:
+	push rbp 
+	mov rbp, rsp 
+	sub rsp, (8*7);+(8*6)
+
+	;mov rcx, [rbp+8] 
+	;mov rdx, [rbp+12] 
+	label copyLetters.letters qword at rbp-8 
+	label copyLetters.lettersLength qword at rbp-16
+	label copyLetters.linearAllocationSize qword at rbp-24
+	label copyLetters.newLetters qword at rbp-32
+	label copyLetters.newLettersLength qword at rbp-40
+	label copyLetters.lettersLengthSum qword at rbp-48
+	label copyLetters.appendedLetters qword at rbp-56
+	;label copyLetters.lettersBufferForward qword at rbp-64
+	;virtual at rbp-64
+	;	.list List
+	;end virtual	
+
+
+	mov [copyLetters.letters], rcx
+
+
+
+	and rsp, -32
+	push rbx 
+	push rbp 
+	push rdi 
+	push rsi
+	push rsp 
+	push r12 
+	push r13 
+	push r14 
+	push r15
+	sub rsp, 8
+
+
+
+	
+	sub rsp, 8*8
+	mov rcx, [copyLetters.letters]	
+	call letterLength
+	add rsp, 8*8
+	mov [copyLetters.lettersLength], rax
+
+	
+
+	mov rcx, [copyLetters.lettersLength]
+	add rcx, 1b							; Trailing 0
+	sub rsp, 8*8
+	call allocate.linear
+	add rsp, 8*8
+	mov [copyLetters.newLetters], rax
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;allocate rcx, copyLetters.newLetters
+
+	mov rsi, [copyLetters.letters]
+	mov rdi, [copyLetters.newLetters]
+	cld
+	mov rcx, [copyLetters.lettersLength]
+	rep movsb
+
+
+
+	mov rsi, letterTerminator
+	mov rdi, [copyLetters.newLetters]
+	add rdi, [copyLetters.lettersLength]
+	mov rcx, 1
+	cld
+	rep movsb
+
+	.end:
+
+	mov rax, [copyLetters.newLetters]
 
 	add rsp, 8	
 	pop r15 

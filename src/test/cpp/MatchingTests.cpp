@@ -180,3 +180,27 @@ TEST(MatchingTest, TextContainsEveryStartEndMatch) {
 	EXPECT_EQ(4, matchResults->itemsCount);
 
 }
+
+TEST(MatchingTest, MatchesSameLetters) {
+	char* letters = "ABDAJL221";
+	char* comparisonLetters = "ABDAJL221";
+	
+	fprintf(stdout, "\nLetters: %s\n", letters);
+	fprintf(stdout, "\nComparison Letters: %s\n", comparisonLetters);
+	List* matchResults = lettersSame(letters, comparisonLetters);
+	fprintf(stdout, "\nItems count: %d\n", matchResults->itemsCount);
+	EXPECT_EQ(1,matchResults->itemsCount);
+
+}
+
+TEST(MatchingTest, DoesNotMatchSameLetters) {
+	char* letters = "ABDAJL221";
+	char* comparisonLetters = "ABD29AJL221";
+	
+	fprintf(stdout, "\nLetters: %s\n", letters);
+	fprintf(stdout, "\nComparison Letters: %s\n", comparisonLetters);
+	List* matchResults = lettersSame(letters, comparisonLetters);
+	fprintf(stdout, "\nItems count: %d\n", matchResults->itemsCount);
+	EXPECT_EQ(0,matchResults->itemsCount);
+
+}

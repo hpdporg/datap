@@ -757,7 +757,7 @@ storage.defineRecordPath:
 storage.retrieveRecordNames:
 	push rbp 
 	mov rbp, rsp 
-	sub rsp, (8*8);+(8*6)
+	sub rsp, (8*10);+(8*6)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
@@ -769,6 +769,8 @@ storage.retrieveRecordNames:
 	label retrieveRecordNames.sizeRetrieved qword at rbp-48
 	label retrieveRecordNames.w32FindData qword at rbp-56
 	label retrieveRecordNames.locationContentsLetters qword at rbp-64
+	label retrieveRecordNames.nextFileNameLetters qword at rbp-72
+	label retrieveRecordNames.list qword at rbp-80
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
@@ -800,6 +802,12 @@ storage.retrieveRecordNames:
 	;  DWORD    dwReserved1;		4
 	;  CHAR     cFileName[MAX_PATH];	1
 
+
+
+	sub rsp, 8*8
+	call list.new
+	add rsp, 8*8
+	mov [retrieveRecordNames.list], rax
 	
 
 	sub rsp, 8*8
@@ -819,6 +827,8 @@ storage.retrieveRecordNames:
 	mov [retrieveRecordNames.w32FindData], rax
 
 
+
+
 	sub rsp, 8*8
 	mov rdx, [retrieveRecordNames.w32FindData]
 	mov rcx,[retrieveRecordNames.locationContentsLetters]
@@ -829,10 +839,58 @@ storage.retrieveRecordNames:
 	sub r9, 1b
 	cmp rax, r9
 	jne retrieveRecordNames.noError ; INVALID_HANDLE_VALUE
-	mov rax, 0
-	jmp retrieveRecordNames.end	
+
+	;sub rsp, 8*8
+	;call [GetLastError]
+	;add rsp, 8*8
+	;mov rax, rax
+	
 
 	.noError:
+	;jmp retrieveRecordNames.firstFile	; debug
+
+	sub rsp, 8*8
+	mov rdx, currentDirLetter
+	mov r9, [retrieveRecordNames.w32FindData]
+	add r9, 44
+	mov rcx, r9
+	call matching.lettersSameExact
+	add rsp, 8*8
+	add rax, List.itemsCount
+	mov rcx, [rax]
+	cmp rcx, 0
+	jne retrieveRecordNames.nextFile
+
+	sub rsp, 8*8
+	mov rdx, containingDirLetters
+	mov r9, [retrieveRecordNames.w32FindData]
+	add r9, 44
+	mov rcx, r9
+	call matching.lettersSameExact
+	add rsp, 8*8
+	add rax, List.itemsCount
+	mov rcx, [rax]
+	cmp rcx, 0
+	jne retrieveRecordNames.nextFile
+
+	.firstFile:
+	mov r9, [retrieveRecordNames.w32FindData]
+	add r9, 44
+	mov rcx, r9
+	sub rsp, 8*8
+	call letters.copyLetters
+	mov rdx, rax
+	add rsp, 8*8
+
+	sub rsp, 8*8
+	;mov rdx, rax
+	mov rcx, [retrieveRecordNames.list]
+	call list.newLastItem
+	add rsp, 8*8
+
+
+	;mov r14, 0
+	;mov [retrieveRecordNames.item], r14	;debug
 
 	.nextFile:
 
@@ -847,15 +905,64 @@ storage.retrieveRecordNames:
 
 
 
+	;mov r14, [retrieveRecordNames.item]
+	;add r14, 10b
+	;mov [retrieveRecordNames.item], r14
+	;cmp r14, 101b
+	;jge retrieveRecordNames.end
+
+	;jmp retrieveRecordNames.newLast	; debug
+
+	sub rsp, 8*8
+	mov rdx, currentDirLetter
+	mov r9, [retrieveRecordNames.w32FindData]
+	add r9, 44
+	mov rcx, r9
+	call matching.lettersSameExact				
+	add rsp, 8*8
+	add rax, List.itemsCount
+	mov rcx, [rax]
+	cmp rcx, 0
+	jne retrieveRecordNames.nextFile
+
+	sub rsp, 8*8
+	mov rdx, containingDirLetters
+	mov r9, [retrieveRecordNames.w32FindData]
+	add r9, 44
+	mov rcx, r9
+	call matching.lettersSameExact
+	add rsp, 8*8
+	add rax, List.itemsCount
+	mov rcx, [rax]
+	cmp rcx, 0
+	jne retrieveRecordNames.nextFile
+
+	.newLast:
+	mov r9, [retrieveRecordNames.w32FindData]
+	add r9, 44
+	mov rcx, r9
+	sub rsp, 8*8
+	call letters.copyLetters
+	mov rdx, rax
+	add rsp, 8*8
+
+	sub rsp, 8*8
+	;mov rdx, rax
+	mov rcx, [retrieveRecordNames.list]
+	call list.newLastItem
+	add rsp, 8*8
+
+
+
 	jmp retrieveRecordNames.nextFile
 	.endFiles:
 
 
 
-	mov rax, [retrieveRecordNames.recordAddr]
-
 
 	retrieveRecordNames.end:
+
+	mov rax, [retrieveRecordNames.list]
 
 
 	add rsp, 8	
