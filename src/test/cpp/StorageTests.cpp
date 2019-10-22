@@ -76,9 +76,22 @@ TEST_F(StorageTest, RetrievesRecordNames) {
 	while (recordNames->index < recordNames->itemsCount){
 		char* nextRecord = (char*)getNextItem(recordNames);
 		fprintf(stdout,"\nNext record: %s\n",nextRecord);
+		if (recordNames->index == 1) {	// getNextItem increments index implicitly following call
+			EXPECT_STREQ("resources_backup", nextRecord);
+		}
+		if (recordNames->index == 2) {	// getNextItem increments index implicitly following call
+			EXPECT_STREQ("TestCSV.csv", nextRecord);
+		}
+		if (recordNames->index == 3) {	// getNextItem increments index implicitly following call
+			EXPECT_STREQ("TestCSV_Backup.csv", nextRecord);
+		}
+		if (recordNames->index == 4) {	// getNextItem increments index implicitly following call
+			EXPECT_STREQ("TestCSV_Modify.csv", nextRecord);
+		}
+		
 	}
+	EXPECT_EQ(4, recordNames->itemsCount);
 	
-	//EXPECT_STREQ("..\\..\\..\\src\\resources\\TestCSV.csv",(record->builtLocation));
 	
 }
 
