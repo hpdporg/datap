@@ -29,9 +29,9 @@ TEST(ListTests, ItemNumbersInList) {
 	int item1 = 2;
 	int item2 = 41;
 	int item3 = 80;
-	fprintf(stdout, "\Item1: %d\n", (int)item1);
-	fprintf(stdout, "\Item2: %d\n", (int)item2);
-	fprintf(stdout, "\Item3: %d\n", (int)item3);
+	fprintf(stdout, "\nItem1: %d\n", (int)item1);
+	fprintf(stdout, "\nItem2: %d\n", (int)item2);
+	fprintf(stdout, "\nItem3: %d\n", (int)item3);
 	newLastItem(list1,(void*)item1);
 	newLastItem(list1,(void*)item2);
 	newLastItem(list1,(void*)item3);

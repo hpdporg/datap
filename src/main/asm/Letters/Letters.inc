@@ -2,11 +2,14 @@
 section '.data' data readable writeable
 
 	
+
 	letterTerminator db 0
 	pathSepLetters db '\',0
 	directoryContentsLetters db '\*',0
 	currentDirLetter db '.',0
 	containingDirLetters db '..',0
+	newlineWinLetters db 13,10,0		; '\r\n',0
+	tabLetters db 9,0			;'\t',0
 		
 section '.text' code readable writeable executable ;align 16
 

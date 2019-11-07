@@ -123,7 +123,9 @@ extern "C" {
 	MatchFlow* processMatchFlags(Matches* matches);
 	List* getMatches(Matches* matches, char* letters);
 	List* lettersSame(char* letters, char* containsLetters);
-
+	_int64 lettersSameExact(char* letters, char* containsExactLetters);
+	_int64 getNextMatchIndex(char* letters, char* containsLetters);
+	_int64 hasMatch(char* letters, char* containsLetters);
 
 	//Replacement
 	char* replaceLettersWithList(ReplaceFlags flags, char* letters, List* list, List* matchResultsList);

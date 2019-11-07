@@ -26,7 +26,7 @@ TEST(ReplacementTest, ReplaceEveryOccurence) {
 	
 	char* newLetters = replaceLettersWithList(REPLACE_BETWEEN,letters, replacementVals, matchResults);
 
-fprintf(stdout, "\nDebugReplaced letters: %d\n", (int)newLetters);
+	fprintf(stdout, "\nDebugReplaced letters: %d\n", (int)newLetters);
 	fprintf(stdout, "\nReplaced letters: %s\n", newLetters);
 
 	

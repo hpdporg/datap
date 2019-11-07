@@ -204,3 +204,63 @@ TEST(MatchingTest, DoesNotMatchSameLetters) {
 	EXPECT_EQ(0,matchResults->itemsCount);
 
 }
+
+TEST(MatchingTest, ReturnsExactMatchResult) {
+	char* letters = "ABDAJL221";
+	char* comparisonLetters = "ABDAJL221";
+	
+	fprintf(stdout, "\nLetters: %s\n", letters);
+	fprintf(stdout, "\nComparison Letters: %s\n", comparisonLetters);
+	_int64 matchResult = lettersSameExact(letters, comparisonLetters);
+	fprintf(stdout, "\nMatch result: %d\n", matchResult);
+	EXPECT_EQ(1,matchResult);
+
+}
+
+TEST(MatchingTest, DoesNotReturnExactMatchResult) {
+	char* letters = "ABDAJL221";
+	char* comparisonLetters = "ABDAJL2219";
+	
+	fprintf(stdout, "\nLetters: %s\n", letters);
+	fprintf(stdout, "\nComparison Letters: %s\n", comparisonLetters);
+	_int64 matchResult = lettersSameExact(letters, comparisonLetters);
+	fprintf(stdout, "\nMatch result: %d\n", matchResult);
+	EXPECT_EQ(0,matchResult);
+
+}
+
+TEST(MatchingTest, ReturnsNextMatchIndex) {
+	char* letters = "fffABDAJL221119";
+	char* comparisonLetters = "ABDAJL221";
+	
+	fprintf(stdout, "\nLetters: %s\n", letters);
+	fprintf(stdout, "\nComparison Letters: %s\n", comparisonLetters);
+	_int64 matchIndex = getNextMatchIndex(letters, comparisonLetters);
+	fprintf(stdout, "\nMatch index: %d\n", matchIndex);
+	EXPECT_EQ(3,matchIndex);
+
+}
+
+TEST(MatchingTest, ReturnsNoMatchPresence) {
+	char* letters = "ABDdjAJL2219";
+	char* comparisonLetters = "ABDAJL221";
+	
+	fprintf(stdout, "\nLetters: %s\n", letters);
+	fprintf(stdout, "\nComparison Letters: %s\n", comparisonLetters);
+	_int64 matchExists = hasMatch(letters, comparisonLetters);
+	fprintf(stdout, "\nMatch result: %d\n", matchExists);
+	EXPECT_EQ(0,matchExists);
+
+}
+
+TEST(MatchingTest, ReturnsMatchPresence) {
+	char* letters = "fffABDAJL221119";
+	char* comparisonLetters = "ABDAJL221";
+	
+	fprintf(stdout, "\nLetters: %s\n", letters);
+	fprintf(stdout, "\nComparison Letters: %s\n", comparisonLetters);
+	_int64 matchExists = hasMatch(letters, comparisonLetters);
+	fprintf(stdout, "\nMatch result: %d\n", matchExists);
+	EXPECT_EQ(1,matchExists);
+
+}

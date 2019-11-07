@@ -856,9 +856,7 @@ storage.retrieveRecordNames:
 	mov rcx, r9
 	call matching.lettersSameExact
 	add rsp, 8*8
-	add rax, List.itemsCount
-	mov rcx, [rax]
-	cmp rcx, 0
+	cmp rax, 0
 	jne retrieveRecordNames.nextFile
 
 	sub rsp, 8*8
@@ -868,9 +866,7 @@ storage.retrieveRecordNames:
 	mov rcx, r9
 	call matching.lettersSameExact
 	add rsp, 8*8
-	add rax, List.itemsCount
-	mov rcx, [rax]
-	cmp rcx, 0
+	cmp rax, 0
 	jne retrieveRecordNames.nextFile
 
 	.firstFile:
@@ -920,9 +916,7 @@ storage.retrieveRecordNames:
 	mov rcx, r9
 	call matching.lettersSameExact				
 	add rsp, 8*8
-	add rax, List.itemsCount
-	mov rcx, [rax]
-	cmp rcx, 0
+	cmp rax, 0
 	jne retrieveRecordNames.nextFile
 
 	sub rsp, 8*8
@@ -932,9 +926,7 @@ storage.retrieveRecordNames:
 	mov rcx, r9
 	call matching.lettersSameExact
 	add rsp, 8*8
-	add rax, List.itemsCount
-	mov rcx, [rax]
-	cmp rcx, 0
+	cmp rax, 0
 	jne retrieveRecordNames.nextFile
 
 	.newLast:

@@ -892,8 +892,8 @@ matching.lettersSame:
 	retn 0
 
 
-; Returns match results with 0 items when letters not same, and not same lengths
-; Returns greater than 0 items in List results when match
+; Returns 0 when letters not same, and not same lengths
+; Returns 1
 
 matching.lettersSameExact:
 	push rbp 
@@ -910,7 +910,7 @@ matching.lettersSameExact:
 	label lettersSameExact.letters qword at rbp-48
 	label lettersSameExact.containsRangeList qword at rbp-56
 	label lettersSameExact.containsAddr qword at rbp-64
-	label lettersSameExact.matchingIndex qword at rbp-72
+	label lettersSameExact.matchResult qword at rbp-72
 	label lettersSameExact.containLetters qword at rbp-80
 	label lettersSameExact.length1 qword at rbp-88
 	label lettersSameExact.length2 qword at rbp-96
@@ -937,6 +937,10 @@ matching.lettersSameExact:
 	push r15
 	sub rsp, 8
 
+
+	mov rcx, 0
+	mov [lettersSameExact.matchResult], rcx			; Begin as 0
+
 	sub rsp, 8*8
 	mov rcx, [lettersSameExact.letters]
 	call letters.letterLength
@@ -958,6 +962,11 @@ matching.lettersSameExact:
 	sub rsp, 8*8
 	call list.new
 	add rsp, 8*8
+
+	add rax, List.itemsCount
+	mov rdx, [rax]
+	mov [lettersSameExact.matchResult], rdx
+
 
 
 	jmp lettersSameExact.end
@@ -997,8 +1006,14 @@ matching.lettersSameExact:
 	add rsp, 8*8
 	mov rax, rax
 
+	add rax, List.itemsCount
+	mov rdx, [rax]
+	mov [lettersSameExact.matchResult], rdx
+
 
 	lettersSameExact.end:
+
+	mov rax, [lettersSameExact.matchResult]
 
 
 	add rsp, 8	
@@ -1017,6 +1032,269 @@ matching.lettersSameExact:
 
 	retn 0
 
+
+matching.getNextIndex:
+	push rbp 
+	mov rbp, rsp 
+	sub rsp, (8*14);+(8*6)
+
+	;mov rcx, [rbp+8] 
+	;mov rdx, [rbp+12] 
+	label getNextIndex.heapAddress qword at rbp-8  
+	label getNextIndex.handleAllocatedMemory qword at rbp-16
+	label getNextIndex.matchFlow qword at rbp-24 
+	label getNextIndex.list qword at rbp-32
+	label getNextIndex.matches qword at rbp-40
+	label getNextIndex.letters qword at rbp-48
+	label getNextIndex.containsRangeList qword at rbp-56
+	label getNextIndex.containsAddr qword at rbp-64
+	label getNextIndex.matchingIndex qword at rbp-72
+	label getNextIndex.containLetters qword at rbp-80
+	label getNextIndex.matchIndex qword at rbp-88
+	label getNextIndex.matchList qword at rbp-96
+	label getNextIndex.lettersLength qword at rbp-104
+	label getNextIndex.matchingEnd qword at rbp-112
+	;virtual at rbp-64
+	;	.list List
+	;end virtual	
+
+
+	mov [getNextIndex.letters], rcx
+	mov [getNextIndex.containLetters], rdx
+
+
+	and rsp, -32
+	push rbx 
+	push rbp 
+	push rdi 
+	push rsi
+	push rsp 
+	push r12 
+	push r13 
+	push r14 
+	push r15
+	sub rsp, 8
+
+
+	sub rsp, 8*4
+	call [GetProcessHeap]
+	mov [getNextIndex.heapAddress], rax
+	add rsp, 8*4
+
+
+
+
+	mov rcx, 0
+	mov [getNextIndex.matchIndex], rcx			; Begin as 0
+
+	sub rsp, 8*8
+	call new
+	add rsp, 8*8
+	mov [getNextIndex.matches], rax
+
+	mov rbx, [getNextIndex.matches]
+	add rbx, Matches.flags
+	mov rcx, 10101b
+	mov [rbx], rcx
+	mov rbx, [getNextIndex.matches]
+	add rbx, Matches.transformFlags
+	mov rcx, 100b
+	mov [rbx], rcx
+
+
+	sub rsp, 8*8
+	mov rdx, [getNextIndex.containLetters]
+	mov rbx, [getNextIndex.matches]
+	add rbx, Matches.containsRangeList
+	mov rcx, [rbx]
+	call list.newLastItem
+	add rsp, 8*8
+
+
+	sub rsp, 8*8
+	mov rdx, [getNextIndex.letters]
+	mov rcx, [getNextIndex.matches]
+	call get
+	add rsp, 8*8
+	mov [getNextIndex.matchList], rax
+
+
+	mov rbx,[getNextIndex.matchList]
+	add rbx, List.itemsCount
+	mov rcx, 0
+	mov rdx, [rbx]
+	cmp rcx, rdx
+	je getNextIndex.end				; No match
+
+	
+	sub rsp, 8*8
+	mov rcx, [getNextIndex.matchList]
+	call list.getNextItem
+	add rsp, 8*8
+	mov [getNextIndex.matchIndex], rax
+
+
+
+	.end:
+
+	sub rsp, 8*8
+	mov r8, [getNextIndex.matches]
+	mov rdx, 0
+	mov rcx, [getNextIndex.heapAddress]
+	call [HeapFree]
+	add rsp, 8*8
+
+
+	mov rax, [getNextIndex.matchIndex]
+
+
+
+	add rsp, 8	
+	pop r15 
+	pop r14 
+	pop r13 
+	pop r12 
+	pop rsp 
+	pop rsi 
+	pop rdi 
+	pop rbp 
+	pop rbx
+
+	mov rsp, rbp
+	pop rbp
+
+	retn 0
+
+
+matching.hasMatch:
+	push rbp 
+	mov rbp, rsp 
+	sub rsp, (8*14);+(8*6)
+
+	;mov rcx, [rbp+8] 
+	;mov rdx, [rbp+12] 
+	label hasMatch.heapAddress qword at rbp-8  
+	label hasMatch.handleAllocatedMemory qword at rbp-16
+	label hasMatch.matchFlow qword at rbp-24 
+	label hasMatch.list qword at rbp-32
+	label hasMatch.matches qword at rbp-40
+	label hasMatch.letters qword at rbp-48
+	label hasMatch.containsRangeList qword at rbp-56
+	label hasMatch.containsAddr qword at rbp-64
+	label hasMatch.matchingIndex qword at rbp-72
+	label hasMatch.containLetters qword at rbp-80
+	label hasMatch.hasMatchIndex qword at rbp-88
+	label hasMatch.matchList qword at rbp-96
+	label hasMatch.lettersLength qword at rbp-104
+	label hasMatch.matchingEnd qword at rbp-112
+	;virtual at rbp-64
+	;	.list List
+	;end virtual	
+
+
+	mov [hasMatch.letters], rcx
+	mov [hasMatch.containLetters], rdx
+
+
+	and rsp, -32
+	push rbx 
+	push rbp 
+	push rdi 
+	push rsi
+	push rsp 
+	push r12 
+	push r13 
+	push r14 
+	push r15
+	sub rsp, 8
+
+
+
+	sub rsp, 8*4
+	call [GetProcessHeap]
+	mov [hasMatch.heapAddress], rax
+	add rsp, 8*4
+
+
+
+
+
+	mov rcx, 0
+	mov [hasMatch.hasMatchIndex], rcx			; Begin as 0
+
+	sub rsp, 8*8
+	call new
+	add rsp, 8*8
+	mov [hasMatch.matches], rax
+
+	mov rbx, [hasMatch.matches]
+	add rbx, Matches.flags
+	mov rcx, 10101b
+	mov [rbx], rcx
+	mov rbx, [hasMatch.matches]
+	add rbx, Matches.transformFlags
+	mov rcx, 100b
+	mov [rbx], rcx
+
+
+	sub rsp, 8*8
+	mov rdx, [hasMatch.containLetters]
+	mov rbx, [hasMatch.matches]
+	add rbx, Matches.containsRangeList
+	mov rcx, [rbx]
+	call list.newLastItem
+	add rsp, 8*8
+
+
+	sub rsp, 8*8
+	mov rdx, [hasMatch.letters]
+	mov rcx, [hasMatch.matches]
+	call get
+	add rsp, 8*8
+	mov [hasMatch.matchList], rax
+
+
+	mov rbx,[hasMatch.matchList]
+	add rbx, List.itemsCount
+	mov rcx, 0
+	mov rdx, [rbx]
+	cmp rcx, rdx
+	je hasMatch.end				; No match
+
+	mov rcx, 1b
+	mov [hasMatch.hasMatchIndex], rcx
+
+
+
+	.end:
+
+	sub rsp, 8*8
+	mov r8, [hasMatch.matches]
+	mov rdx, 0
+	mov rcx, [hasMatch.heapAddress]
+	call [HeapFree]
+	add rsp, 8*8
+
+
+	mov rax, [hasMatch.hasMatchIndex]
+
+
+
+	add rsp, 8	
+	pop r15 
+	pop r14 
+	pop r13 
+	pop r12 
+	pop rsp 
+	pop rsi 
+	pop rdi 
+	pop rbp 
+	pop rbx
+
+	mov rsp, rbp
+	pop rbp
+
+	retn 0
 
 
 end namespace
