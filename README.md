@@ -6,5 +6,18 @@
 ## Features ##
 
 * Linked list
-* File access
+* Filestore access
+* Text matching and extraction
+* Text replacement and aggregation
+* Text and number conversion
+* Memory allocation
+
+## Building ##
+* Includes pre-built, along with VS projects.
+* Includes GoogleTest Unit tests.
+* Includes the **fasmg** assembler as an external library.
+
+## Platforms ##
+* x86_64, Windows only
+* (Other platform support may follow)
 

@@ -973,6 +973,233 @@ storage.retrieveRecordNames:
 
 	retn 0
 
+; Uses extension also
+storage.retrieveRecordNamesExtension:
+	push rbp 
+	mov rbp, rsp 
+	sub rsp, (8*11);+(8*6)
+
+	;mov rcx, [rbp+8] 
+	;mov rdx, [rbp+12] 
+	label retrieveRecordNamesExtension.heapAddress qword at rbp-8  
+	label retrieveRecordNamesExtension.handleAllocatedMemory qword at rbp-16
+	label retrieveRecordNamesExtension.handle qword at rbp-24 
+	label retrieveRecordNamesExtension.item qword at rbp-32
+	label retrieveRecordNamesExtension.recordAddr qword at rbp-40
+	label retrieveRecordNamesExtension.sizeRetrieved qword at rbp-48
+	label retrieveRecordNamesExtension.w32FindData qword at rbp-56
+	label retrieveRecordNamesExtension.locationContentsLetters qword at rbp-64
+	label retrieveRecordNamesExtension.nextFileNameLetters qword at rbp-72
+	label retrieveRecordNamesExtension.list qword at rbp-80
+	label retrieveRecordNamesExtension.fileExtensionLetters qword at rbp-88
+	;virtual at rbp-64
+	;	.list List
+	;end virtual	
+
+
+	mov [retrieveRecordNamesExtension.recordAddr], rcx
+	mov [retrieveRecordNamesExtension.fileExtensionLetters], rdx
+
+	and rsp, -32
+	push rbx 
+	push rbp 
+	push rdi 
+	push rsi
+	push rsp 
+	push r12 
+	push r13 
+	push r14 
+	push r15
+	sub rsp, 8
+
+	;Sizes w32_find_Data
+	;  DWORD    dwFileAttributes;		4
+	;  FILETIME ftCreationTime;		8
+	;  FILETIME ftLastAccessTime;		8
+	;  FILETIME ftLastWriteTime;		8
+	;  DWORD    nFileSizeHigh;		4
+	;  DWORD    nFileSizeLow;		4
+	;  DWORD    dwReserved0;		4
+	;  DWORD    dwReserved1;		4
+	;  CHAR     cFileName[MAX_PATH];	1
+
+
+
+	sub rsp, 8*8
+	call list.new
+	add rsp, 8*8
+	mov [retrieveRecordNamesExtension.list], rax
+	
+
+	sub rsp, 8*8
+	mov rdx, directoryContentsLetters
+	mov rbx, [retrieveRecordNamesExtension.recordAddr]
+	add rbx, Record.location
+	mov rcx, [rbx]
+	call letters.appendLetters
+	add rsp, 8*8
+	mov [retrieveRecordNamesExtension.locationContentsLetters], rax
+
+	sub rsp, 8*8
+	mov rdx, [retrieveRecordNamesExtension.fileExtensionLetters]
+	mov rcx, [retrieveRecordNamesExtension.locationContentsLetters]
+	call letters.appendLetters							; Only difference from retrieveRecordNames
+	add rsp, 8*8
+	mov [retrieveRecordNamesExtension.locationContentsLetters], rax
+
+	sub rsp, 8*8
+	mov rcx, 64
+	call allocate.linear
+	add rsp, 8*8
+	mov [retrieveRecordNamesExtension.w32FindData], rax
+
+
+
+
+	sub rsp, 8*8
+	mov rdx, [retrieveRecordNamesExtension.w32FindData]
+	mov rcx,[retrieveRecordNamesExtension.locationContentsLetters]
+	call [FindFirstFile]
+	add rsp, 8*8
+	mov [retrieveRecordNamesExtension.handle], rax
+	mov r9, 0
+	sub r9, 1b
+	cmp rax, r9
+	jne retrieveRecordNamesExtension.noError ; INVALID_HANDLE_VALUE
+
+	;sub rsp, 8*8
+	;call [GetLastError]
+	;add rsp, 8*8
+	;mov rax, rax
+	
+
+	.noError:
+	;jmp retrieveRecordNamesExtension.firstFile	; debug
+
+	sub rsp, 8*8
+	mov rdx, currentDirLetter
+	mov r9, [retrieveRecordNamesExtension.w32FindData]
+	add r9, 44
+	mov rcx, r9
+	call matching.lettersSameExact
+	add rsp, 8*8
+	cmp rax, 0
+	jne retrieveRecordNamesExtension.nextFile
+
+	sub rsp, 8*8
+	mov rdx, containingDirLetters
+	mov r9, [retrieveRecordNamesExtension.w32FindData]
+	add r9, 44
+	mov rcx, r9
+	call matching.lettersSameExact
+	add rsp, 8*8
+	cmp rax, 0
+	jne retrieveRecordNamesExtension.nextFile
+
+	.firstFile:
+	mov r9, [retrieveRecordNamesExtension.w32FindData]
+	add r9, 44
+	mov rcx, r9
+	sub rsp, 8*8
+	call letters.copyLetters
+	mov rdx, rax
+	add rsp, 8*8
+
+	sub rsp, 8*8
+	;mov rdx, rax
+	mov rcx, [retrieveRecordNamesExtension.list]
+	call list.newLastItem
+	add rsp, 8*8
+
+
+	;mov r14, 0
+	;mov [retrieveRecordNamesExtension.item], r14	;debug
+
+	.nextFile:
+
+	sub rsp, 8*8
+	mov rdx, [retrieveRecordNamesExtension.w32FindData]
+	mov rcx, [retrieveRecordNamesExtension.handle]
+	call [FindNextFile]
+	add rsp, 8*8
+	mov r9, rax
+	cmp r9, 0
+	je retrieveRecordNamesExtension.endFiles
+
+
+
+	;mov r14, [retrieveRecordNamesExtension.item]
+	;add r14, 10b
+	;mov [retrieveRecordNamesExtension.item], r14
+	;cmp r14, 101b
+	;jge retrieveRecordNamesExtension.end
+
+	;jmp retrieveRecordNamesExtension.newLast	; debug
+
+	sub rsp, 8*8
+	mov rdx, currentDirLetter
+	mov r9, [retrieveRecordNamesExtension.w32FindData]
+	add r9, 44
+	mov rcx, r9
+	call matching.lettersSameExact				
+	add rsp, 8*8
+	cmp rax, 0
+	jne retrieveRecordNamesExtension.nextFile
+
+	sub rsp, 8*8
+	mov rdx, containingDirLetters
+	mov r9, [retrieveRecordNamesExtension.w32FindData]
+	add r9, 44
+	mov rcx, r9
+	call matching.lettersSameExact
+	add rsp, 8*8
+	cmp rax, 0
+	jne retrieveRecordNamesExtension.nextFile
+
+	.newLast:
+	mov r9, [retrieveRecordNamesExtension.w32FindData]
+	add r9, 44
+	mov rcx, r9
+	sub rsp, 8*8
+	call letters.copyLetters
+	mov rdx, rax
+	add rsp, 8*8
+
+	sub rsp, 8*8
+	;mov rdx, rax
+	mov rcx, [retrieveRecordNamesExtension.list]
+	call list.newLastItem
+	add rsp, 8*8
+
+
+
+	jmp retrieveRecordNamesExtension.nextFile
+	.endFiles:
+
+
+
+
+	retrieveRecordNamesExtension.end:
+
+	mov rax, [retrieveRecordNamesExtension.list]
+
+
+	add rsp, 8	
+	pop r15 
+	pop r14 
+	pop r13 
+	pop r12 
+	pop rsp 
+	pop rsi 
+	pop rdi 
+	pop rbp 
+	pop rbx
+
+	mov rsp, rbp
+	pop rbp
+
+	retn 0
+
 storage.newFile:
 	push rbp 
 	mov rbp, rsp 
