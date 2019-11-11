@@ -6,7 +6,12 @@ public list.getNextItem as 'getNextItem'
 
 public list.getNextItemNesting as 'getNextItemNesting'
 
+public list.getLastDivergedItem as 'getLastDivergedItem'
+public list.getLastDivergedItemNesting as 'getLastDivergedItemNesting'
+public list.getConvergedItemCount as 'getConvergedItemCount'
+public list.getNextTangentItem as 'getNextTangentItem'
 public list.nextItemNesting as 'nextItemNesting'
+public list.lastItemNesting as 'lastItemNesting'
 
 public list.resetIndex as 'resetIndex'
 

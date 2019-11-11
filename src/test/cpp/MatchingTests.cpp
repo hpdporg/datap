@@ -217,6 +217,19 @@ TEST(MatchingTest, ReturnsExactMatchResult) {
 
 }
 
+TEST(MatchingTest, ReturnsNoExactMatchResultWithSmallerComparisonLetters) {
+	char* letters = "storeFile";
+	char* comparisonLetters = "ref2";
+	
+	fprintf(stdout, "\nLetters: %s\n", letters);
+	fprintf(stdout, "\nComparison Letters: %s\n", comparisonLetters);
+	_int64 matchResult = lettersSameExact(letters, comparisonLetters);
+	fprintf(stdout, "\nMatch result: %d\n", matchResult);
+	EXPECT_EQ(0,matchResult);
+
+}
+
+
 TEST(MatchingTest, DoesNotReturnExactMatchResult) {
 	char* letters = "ABDAJL221";
 	char* comparisonLetters = "ABDAJL2219";

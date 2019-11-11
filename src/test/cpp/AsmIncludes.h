@@ -102,8 +102,13 @@ extern "C" {
 	List* newList();
 	void newLastItem(List* list, void* item);
 	void* getNextItem(List* list);
-	void* getNextItemNesting(List* list);
-	void* nextItemNesting(List* list, _int64 nesting);
+	void* getLastDivergedItem(List* list);
+	void* getLastDivergedItemNesting(List* list);
+	_int64 getNextItemNesting(List* list);
+	_int64 getConvergedItemCount(List* list);
+	void* getNextTangentItem(List* list, _int64 nesting);
+	void* nextItemNesting(List* list, _int64 nesting);						// Updates next item's nesting
+	void* lastItemNesting(List* list, _int64 nesting);						// Updates last item's nesting
 	void resetIndex(List* list);
 	void* newNextItem(List* list, void* item);
 	void* getPriorItem(List* list);
