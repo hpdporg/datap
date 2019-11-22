@@ -858,7 +858,7 @@ list.getLastDivergedItem:
 list.getLastDivergedItemNesting:
 	push rbp 
 	mov rbp, rsp 
-	sub rsp, (8*6);+(8*6)
+	sub rsp, (8*8);+(8*6)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
