@@ -182,8 +182,8 @@ TEST(MatchingTest, TextContainsEveryStartEndMatch) {
 }
 
 TEST(MatchingTest, MatchesSameLetters) {
-	char* letters = "ABDAJL221";
-	char* comparisonLetters = "ABDAJL221";
+	char* letters = (char*)"ABDAJL221";
+	char* comparisonLetters = (char*)"ABDAJL221";
 	
 	fprintf(stdout, "\nLetters: %s\n", letters);
 	fprintf(stdout, "\nComparison Letters: %s\n", comparisonLetters);
@@ -194,8 +194,8 @@ TEST(MatchingTest, MatchesSameLetters) {
 }
 
 TEST(MatchingTest, DoesNotMatchSameLetters) {
-	char* letters = "ABDAJL221";
-	char* comparisonLetters = "ABD29AJL221";
+	char* letters = (char*)"ABDAJL221";
+	char* comparisonLetters = (char*)"ABD29AJL221";
 	
 	fprintf(stdout, "\nLetters: %s\n", letters);
 	fprintf(stdout, "\nComparison Letters: %s\n", comparisonLetters);
@@ -206,8 +206,8 @@ TEST(MatchingTest, DoesNotMatchSameLetters) {
 }
 
 TEST(MatchingTest, ReturnsExactMatchResult) {
-	char* letters = "ABDAJL221";
-	char* comparisonLetters = "ABDAJL221";
+	char* letters = (char*)"ABDAJL221";
+	char* comparisonLetters = (char*)"ABDAJL221";
 	
 	fprintf(stdout, "\nLetters: %s\n", letters);
 	fprintf(stdout, "\nComparison Letters: %s\n", comparisonLetters);
@@ -218,8 +218,8 @@ TEST(MatchingTest, ReturnsExactMatchResult) {
 }
 
 TEST(MatchingTest, ReturnsNoExactMatchResultWithSmallerComparisonLetters) {
-	char* letters = "storeFile";
-	char* comparisonLetters = "ref2";
+	char* letters = (char*)"storeFile";
+	char* comparisonLetters = (char*)"ref2";
 	
 	fprintf(stdout, "\nLetters: %s\n", letters);
 	fprintf(stdout, "\nComparison Letters: %s\n", comparisonLetters);
@@ -231,8 +231,8 @@ TEST(MatchingTest, ReturnsNoExactMatchResultWithSmallerComparisonLetters) {
 
 
 TEST(MatchingTest, DoesNotReturnExactMatchResult) {
-	char* letters = "ABDAJL221";
-	char* comparisonLetters = "ABDAJL2219";
+	char* letters = (char*)"ABDAJL221";
+	char* comparisonLetters = (char*)"ABDAJL2219";
 	
 	fprintf(stdout, "\nLetters: %s\n", letters);
 	fprintf(stdout, "\nComparison Letters: %s\n", comparisonLetters);
@@ -243,8 +243,8 @@ TEST(MatchingTest, DoesNotReturnExactMatchResult) {
 }
 
 TEST(MatchingTest, ReturnsNextMatchIndex) {
-	char* letters = "fffABDAJL221119";
-	char* comparisonLetters = "ABDAJL221";
+	char* letters = (char*)"fffABDAJL221119";
+	char* comparisonLetters = (char*)"ABDAJL221";
 	
 	fprintf(stdout, "\nLetters: %s\n", letters);
 	fprintf(stdout, "\nComparison Letters: %s\n", comparisonLetters);
@@ -255,8 +255,8 @@ TEST(MatchingTest, ReturnsNextMatchIndex) {
 }
 
 TEST(MatchingTest, ReturnsNoMatchPresence) {
-	char* letters = "ABDdjAJL2219";
-	char* comparisonLetters = "ABDAJL221";
+	char* letters = (char*)"ABDdjAJL2219";
+	char* comparisonLetters = (char*)"ABDAJL221";
 	
 	fprintf(stdout, "\nLetters: %s\n", letters);
 	fprintf(stdout, "\nComparison Letters: %s\n", comparisonLetters);
@@ -267,8 +267,8 @@ TEST(MatchingTest, ReturnsNoMatchPresence) {
 }
 
 TEST(MatchingTest, ReturnsMatchPresence) {
-	char* letters = "fffABDAJL221119";
-	char* comparisonLetters = "ABDAJL221";
+	char* letters = (char*)"fffABDAJL221119";
+	char* comparisonLetters = (char*)"ABDAJL221";
 	
 	fprintf(stdout, "\nLetters: %s\n", letters);
 	fprintf(stdout, "\nComparison Letters: %s\n", comparisonLetters);
