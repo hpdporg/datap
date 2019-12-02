@@ -2861,4 +2861,98 @@ list.resetIndex:
 	pop rbp
 
 	retn 0
+
+
+list.extendList:
+	push rbp 
+	mov rbp, rsp 
+	sub rsp, (8*6);+(8*6)
+
+	;mov rcx, [rbp+8] 
+	;mov rdx, [rbp+12] 
+	label extendList.heapAddress qword at rbp-8  
+	label extendList.handleAllocatedMemory qword at rbp-16
+	label extendList.list qword at rbp-24 
+	label extendList.item qword at rbp-32
+	label extendList.prevItem qword at rbp-40
+	label extendList.extensionList qword at rbp-48
+
+	;virtual at rbp-64
+	;	.list List
+	;end virtual	
+
+
+	mov [extendList.list], rcx
+	mov [extendList.extensionList], rdx
+
+
+	and rsp, -32
+	push rbx 
+	push rbp 
+	push rdi 
+	push rsi
+	push rsp 
+	push r12 
+	push r13 
+	push r14 
+	push r15
+	sub rsp, 8
+
+
+	sub rsp, 8*8
+	mov rcx, [extendList.extensionList]
+	call resetIndex
+	add rsp, 8*8
+
+
+	.nextExtensionListItem:
+	mov rbx, [extendList.extensionList]
+	mov rdx, rbx
+	add rbx, List.index
+	add rdx, List.itemsCount
+	mov rcx, [rbx]
+	mov r8, [rdx]
+	cmp rcx, r8
+	jnl extendList.endExtensionList
+
+
+	sub rsp, 8*8
+	mov rcx, [extendList.extensionList]
+	call getNextItem
+	add rsp, 8*8
+
+	sub rsp, 8*8
+	mov rdx, rax
+	mov rcx, [extendList.list]
+	call newLastItem
+	add rsp, 8*8
+
+
+
+
+	jmp extendList.nextExtensionListItem
+
+	.endExtensionList:	
+
+
+
+	mov rax,[extendList.list]
+
+	add rsp, 8	
+	pop r15 
+	pop r14 
+	pop r13 
+	pop r12 
+	pop rsp 
+	pop rsi 
+	pop rdi 
+	pop rbp 
+	pop rbx
+
+	mov rsp, rbp
+	pop rbp
+
+	retn 0
+
+
 end namespace

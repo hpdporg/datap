@@ -114,6 +114,7 @@ extern "C" {
 	void* getPriorItem(List* list);
 	void* getNextItemMatch(List* list, void* itemMatch);
 	void* getNextItemMatchComp(List* list, void* itemMatch, _int64 comp);
+	List* extendList(List* list, List* extensionList);
 
 	//Storage
 	Record* newStorage();
@@ -134,7 +135,7 @@ extern "C" {
 
 	//Replacement
 	char* replaceLettersWithList(ReplaceFlags flags, char* letters, List* list, List* matchResultsList);
-
+	char* replaceContainsLettersWithList(char* letters, List* list, char* containsLetters);
 }
 
 

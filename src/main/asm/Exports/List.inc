@@ -22,3 +22,5 @@ public list.getPriorItem as 'getPriorItem'
 public list.getNextItemMatch as 'getNextItemMatch'
 
 public list.getNextItemMatchComp as 'getNextItemMatchComp'
+
+public list.extendList as 'extendList'

@@ -104,3 +104,52 @@ TEST(ListTests, ListIndexCanBeDecreased) {
 
 
 }
+
+
+TEST(ListTests, ExtendsList) {
+	List* list1 = newList();
+	List* list2 = newList();
+
+	int item1 = 2;
+	int item2 = 41;
+	int item3 = 80;
+	int item4 = 130;
+	int item5 = 87;
+
+	fprintf(stdout, "\nItem1: %d\n", (int)item1);
+	fprintf(stdout, "\nItem2: %d\n", (int)item2);
+	fprintf(stdout, "\nItem3: %d\n", (int)item3);
+	fprintf(stdout, "\nItem4: %d\n", (int)item4);
+	fprintf(stdout, "\nItem5: %d\n", (int)item5);
+	newLastItem(list1, (void*)item1);
+	newLastItem(list1, (void*)item2);
+	newLastItem(list1, (void*)item3);
+
+	newLastItem(list2, (void*)item4);
+	newLastItem(list2, (void*)item5);
+
+	fprintf(stdout, "\nItems Count: %d\n", list1->itemsCount);
+	EXPECT_TRUE((list1->itemsCount == 3));
+
+	extendList(list1, list2);
+	resetIndex(list1);
+	while (list1->index < list1->itemsCount) {
+		int numberItem = (int)getNextItem(list1);
+		fprintf(stdout, "\nNext item: %d\n", numberItem);
+		if (list1->index == 1) {	// getNextItem increments index implicitly following call
+			EXPECT_EQ(2, numberItem);
+		}
+		if (list1->index == 2) {	// getNextItem increments index implicitly following call
+			EXPECT_EQ(41, numberItem);
+		}
+		if (list1->index == 3) {	// getNextItem increments index implicitly following call
+			EXPECT_EQ(80, numberItem);
+		}
+		if (list1->index == 4) {	// getNextItem increments index implicitly following call
+			EXPECT_EQ(130, numberItem);
+		}
+		if (list1->index == 5) {	// getNextItem increments index implicitly following call
+			EXPECT_EQ(87, numberItem);
+		}
+	}
+}
