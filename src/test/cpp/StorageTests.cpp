@@ -42,6 +42,18 @@ TEST_F(StorageTest, LettersAppended) {
 	EXPECT_TRUE(record->allocSize!= 0);
 }
 
+TEST_F(StorageTest, LettersAppendedWithoutDefiningPathSeparately) {
+	Record* record = newStorage();
+	fprintf(stdout, "\nOutput: %d\n", (int)record);
+	record->builtLocation = (char*)"..\\..\\..\\..\\src\\resources\\TestCSV.csv";
+	fprintf(stdout, "\nOutput: %s\n", (record->builtLocation));
+	storeLetters(record, (char*)"ABC8291");
+	fprintf(stdout, "\nHandle: %d\n", (record->handle));
+	EXPECT_TRUE(record->handle != 0);
+	fprintf(stdout, "\nSize: %d\n", (record->allocSize));
+	EXPECT_TRUE(record->allocSize != 0);
+}
+
 TEST_F(StorageTest, LettersReplaced) {
 	Record* backupRecord = newStorage();
 	fprintf(stdout, "\nOutput: %d\n", (int)backupRecord);

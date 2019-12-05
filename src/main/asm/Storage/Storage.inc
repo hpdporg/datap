@@ -1200,6 +1200,215 @@ storage.retrieveRecordNamesExtension:
 
 	retn 0
 
+storage.removeRecord:
+	push rbp 
+	mov rbp, rsp 
+	sub rsp, (8*6);+(8*6)
+
+	;mov rcx, [rbp+8] 
+	;mov rdx, [rbp+12] 
+	label removeRecord.heapAddress qword at rbp-8  
+	label removeRecord.handleAllocatedMemory qword at rbp-16
+	label removeRecord.list qword at rbp-24 
+	label removeRecord.item qword at rbp-32
+	label removeRecord.recordAddr qword at rbp-40
+	label removeRecord.sizeRetrieved qword at rbp-48
+	;virtual at rbp-64
+	;	.list List
+	;end virtual	
+
+
+	mov [removeRecord.recordAddr], rcx
+
+
+	and rsp, -32
+	push rbx 
+	push rbp 
+	push rdi 
+	push rsi
+	push rsp 
+	push r12 
+	push r13 
+	push r14 
+	push r15
+	sub rsp, 8
+
+
+
+
+	sub rsp, 8*8
+	mov rdx, 0				; File size high
+	mov rbx, [removeRecord.recordAddr]
+	add rbx, Record.builtLocation
+	mov rcx, [rbx]
+	call [DeleteFile]
+	add rsp, 8*8
+
+
+	
+	mov rax, [removeRecord.recordAddr]
+
+
+	removeRecord.end:
+
+
+	add rsp, 8	
+	pop r15 
+	pop r14 
+	pop r13 
+	pop r12 
+	pop rsp 
+	pop rsi 
+	pop rdi 
+	pop rbp 
+	pop rbx
+
+	mov rsp, rbp
+	pop rbp
+
+	retn 0
+
+
+
+; TO-DO: Include instructions, tests
+storage.debugNum:
+	push rbp 
+	mov rbp, rsp 
+	sub rsp, (8*6);+(8*6)
+
+	;mov rcx, [rbp+8] 
+	;mov rdx, [rbp+12] 
+	label debugNum.heapAddress qword at rbp-8  
+	label debugNum.handleAllocatedMemory qword at rbp-16
+	label debugNum.list qword at rbp-24 
+	label debugNum.item qword at rbp-32
+	label debugNum.recordAddr qword at rbp-40
+	label debugNum.sizeRetrieved qword at rbp-48
+	;virtual at rbp-64
+	;	.list List
+	;end virtual	
+
+
+	mov [debugNum.recordAddr], rcx
+
+
+	and rsp, -32
+	push rbx 
+	push rbp 
+	push rdi 
+	push rsi
+	push rsp 
+	push r12 
+	push r13 
+	push r14 
+	push r15
+	sub rsp, 8
+
+
+
+
+	sub rsp, 8*8
+	mov rdx, 0				; File size high
+	mov rbx, [debugNum.recordAddr]
+	add rbx, Record.builtLocation
+	mov rcx, [rbx]
+	call [DeleteFile]
+	add rsp, 8*8
+
+
+	
+	mov rax, [debugNum.recordAddr]
+
+
+	debugNum.end:
+
+
+	add rsp, 8	
+	pop r15 
+	pop r14 
+	pop r13 
+	pop r12 
+	pop rsp 
+	pop rsi 
+	pop rdi 
+	pop rbp 
+	pop rbx
+
+	mov rsp, rbp
+	pop rbp
+
+	retn 0
+
+
+; TO-DO: Include instructions, tests
+storage.debugLetters:
+	push rbp 
+	mov rbp, rsp 
+	sub rsp, (8*6);+(8*6)
+
+	;mov rcx, [rbp+8] 
+	;mov rdx, [rbp+12] 
+	label debugLetters.heapAddress qword at rbp-8  
+	label debugLetters.handleAllocatedMemory qword at rbp-16
+	label debugLetters.list qword at rbp-24 
+	label debugLetters.item qword at rbp-32
+	label debugLetters.recordAddr qword at rbp-40
+	label debugLetters.sizeRetrieved qword at rbp-48
+	;virtual at rbp-64
+	;	.list List
+	;end virtual	
+
+
+	mov [debugLetters.recordAddr], rcx
+
+
+	and rsp, -32
+	push rbx 
+	push rbp 
+	push rdi 
+	push rsi
+	push rsp 
+	push r12 
+	push r13 
+	push r14 
+	push r15
+	sub rsp, 8
+
+
+
+
+	sub rsp, 8*8
+	mov rdx, 0				; File size high
+	mov rbx, [debugLetters.recordAddr]
+	add rbx, Record.builtLocation
+	mov rcx, [rbx]
+	call [DeleteFile]
+	add rsp, 8*8
+
+
+	
+	mov rax, [debugLetters.recordAddr]
+
+
+	debugLetters.end:
+
+
+	add rsp, 8	
+	pop r15 
+	pop r14 
+	pop r13 
+	pop r12 
+	pop rsp 
+	pop rsi 
+	pop rdi 
+	pop rbp 
+	pop rbx
+
+	mov rsp, rbp
+	pop rbp
+
+	retn 0
+
 storage.newFile:
 	push rbp 
 	mov rbp, rsp 

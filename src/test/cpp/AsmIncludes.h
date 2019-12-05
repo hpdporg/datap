@@ -123,6 +123,7 @@ extern "C" {
 	Record* storeLetters(Record* record, char* letters);
 	Record* restoreLetters(Record* record, char* letters);
 	List* retrieveRecordNames(Record* record);
+	void removeRecord(Record* record);
 
 	//Matches
 	Matches* newMatches();
