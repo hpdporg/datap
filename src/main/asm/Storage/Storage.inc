@@ -1274,7 +1274,7 @@ storage.removeRecord:
 storage.debugNum:
 	push rbp 
 	mov rbp, rsp 
-	sub rsp, (8*6);+(8*6)
+	sub rsp, (8*7);+(8*6)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
@@ -1284,12 +1284,19 @@ storage.debugNum:
 	label debugNum.item qword at rbp-32
 	label debugNum.recordAddr qword at rbp-40
 	label debugNum.sizeRetrieved qword at rbp-48
+	label debugNum.num qword at rbp-56
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
 
 
-	mov [debugNum.recordAddr], rcx
+	mov [debugNum.num], rcx
+
+	sub rsp, 8*8
+	mov rcx, [debugNum.num]
+	call letters.numAsLetters
+	add rsp, 8*8
+
 
 
 	and rsp, -32
