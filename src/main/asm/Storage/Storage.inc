@@ -266,15 +266,29 @@ storage.retrieve:
 	call [CloseHandle]
 	add rsp, 8*8
 
+	sub rsp, 8*8
+	mov rbx, [retrieve.recordAddr]
+	add rbx, Record.allocSize
+	mov rdx, [rbx]
+	mov rbx, [retrieve.recordAddr]
+	add rbx, Record.allocAddr
+	mov rcx, [rbx]
+	call letters.appendZero
+	add rsp, 8*8
 
+	mov rbx, [retrieve.recordAddr]
+	add rbx, Record.allocAddr
+	mov [rbx], rax
 
-
-
+	mov rbx, [retrieve.recordAddr]
+	add rbx, Record.allocSize
+	mov r8, [rbx]
+	add r8, 1b
+	mov [rbx], r8
 
 
 	mov rax, [retrieve.recordAddr]
-
-
+	
 	retrieve.end:
 
 
@@ -328,6 +342,7 @@ storage.storeLetters:
 	push r15
 	sub rsp, 8
 
+	
 
 	sub rsp, 8*4
 	mov rcx, [storeLetters.letters]
@@ -1387,12 +1402,7 @@ storage.debugLetters:
 	push r15
 	sub rsp, 8
 
-	sub rsp, 8*8
-	mov rcx, [debugLetters.letters]
-	call letters.copyLetters
-	add rsp, 8*8
-	mov rdx, rax
-	mov [debugLetters.letters], rdx
+	
 	
 
 	sub rsp, 8*8
@@ -1417,6 +1427,181 @@ storage.debugLetters:
 
 
 	debugLetters.end:
+
+
+	add rsp, 8	
+	pop r15 
+	pop r14 
+	pop r13 
+	pop r12 
+	pop rsp 
+	pop rsi 
+	pop rdi 
+	pop rbp 
+	pop rbx
+
+	mov rsp, rbp
+	pop rbp
+
+	retn 0
+
+; Includes newline
+storage.debugNumMsg:
+	push rbp 
+	mov rbp, rsp 
+	sub rsp, (8*8);+(8*6)
+
+	;mov rcx, [rbp+8] 
+	;mov rdx, [rbp+12] 
+	label debugNumMsg.heapAddress qword at rbp-8  
+	label debugNumMsg.handleAllocatedMemory qword at rbp-16
+	label debugNumMsg.list qword at rbp-24 
+	label debugNumMsg.item qword at rbp-32
+	label debugNumMsg.recordAddr qword at rbp-40
+	label debugNumMsg.sizeRetrieved qword at rbp-48
+	label debugNumMsg.num qword at rbp-56
+	label debugNumMsg.letters qword at rbp-64
+	;virtual at rbp-64
+	;	.list List
+	;end virtual	
+
+
+	mov [debugNumMsg.num], rcx
+
+	and rsp, -32
+	push rbx 
+	push rbp 
+	push rdi 
+	push rsi
+	push rsp 
+	push r12 
+	push r13 
+	push r14 
+	push r15
+	sub rsp, 8
+
+	sub rsp, 8*8
+	mov rcx, [debugNumMsg.num]
+	call letters.numAsLetters
+	add rsp, 8*8
+	mov [debugNumMsg.letters], rax
+
+	sub rsp, 8*8
+	mov rdx, newlineWinLetters
+	mov rcx, [debugNumMsg.letters]
+	call letters.appendLetters
+	add rsp, 8*8
+	mov rdx, rax
+	mov [debugNumMsg.letters], rdx
+
+
+	sub rsp, 8*8
+	call new
+	add rsp, 8*8
+	mov [debugNumMsg.recordAddr], rax
+
+	mov rbx, [debugNumMsg.recordAddr]
+	add rbx, Record.builtLocation
+	mov rdx, debugRecName
+	mov [rbx], rdx
+	
+	sub rsp, 8*8
+	mov rdx, [debugNumMsg.letters]
+	mov rcx, [debugNumMsg.recordAddr]
+	call storeLetters
+	add rsp, 8*8
+
+
+	
+	mov rax, [debugNumMsg.recordAddr]
+
+
+	debugNumMsg.end:
+
+
+	add rsp, 8	
+	pop r15 
+	pop r14 
+	pop r13 
+	pop r12 
+	pop rsp 
+	pop rsi 
+	pop rdi 
+	pop rbp 
+	pop rbx
+
+	mov rsp, rbp
+	pop rbp
+
+	retn 0
+
+; Includes newline
+storage.debugLettersMsg:
+	push rbp 
+	mov rbp, rsp 
+	sub rsp, (8*8);+(8*6)
+
+	;mov rcx, [rbp+8] 
+	;mov rdx, [rbp+12] 
+	label debugLettersMsg.heapAddress qword at rbp-8  
+	label debugLettersMsg.handleAllocatedMemory qword at rbp-16
+	label debugLettersMsg.list qword at rbp-24 
+	label debugLettersMsg.item qword at rbp-32
+	label debugLettersMsg.recordAddr qword at rbp-40
+	label debugLettersMsg.sizeRetrieved qword at rbp-48
+	label debugLettersMsg.num qword at rbp-56
+	label debugLettersMsg.letters qword at rbp-64
+	;virtual at rbp-64
+	;	.list List
+	;end virtual	
+
+
+	mov [debugLettersMsg.letters], rcx
+
+	and rsp, -32
+	push rbx 
+	push rbp 
+	push rdi 
+	push rsi
+	push rsp 
+	push r12 
+	push r13 
+	push r14 
+	push r15
+	sub rsp, 8
+
+	
+	sub rsp, 8*8
+	mov rdx, newlineWinLetters
+	mov rcx, [debugLettersMsg.letters]
+	call letters.appendLetters
+	add rsp, 8*8
+	mov rdx, rax
+	mov [debugLettersMsg.letters], rdx
+	
+
+	sub rsp, 8*8
+	call new
+	add rsp, 8*8
+	mov [debugLettersMsg.recordAddr], rax
+
+	mov rbx, [debugLettersMsg.recordAddr]
+	add rbx, Record.builtLocation
+	mov rdx, debugRecName
+	mov [rbx], rdx
+	
+	sub rsp, 8*8
+	mov rdx, [debugLettersMsg.letters]
+	mov rcx, [debugLettersMsg.recordAddr]
+	call storeLetters
+	add rsp, 8*8
+
+
+	
+	mov rax, [debugLettersMsg.recordAddr]
+
+
+	debugLettersMsg.end:
 
 
 	add rsp, 8	

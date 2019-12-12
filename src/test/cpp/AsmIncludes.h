@@ -126,6 +126,8 @@ extern "C" {
 	void removeRecord(Record* record);
 	void debugNum(_int64 num);
 	void debugLetters(char* letters);
+	void debugNumMsg(_int64 num);
+	void debugLettersMsg(char* letters);
 
 	//Matches
 	Matches* newMatches();

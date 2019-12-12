@@ -122,18 +122,49 @@ TEST_F(StorageTest, StoresDebugNum) {
 }
 
 TEST_F(StorageTest, StoresDebugLetters) {
-	char* letters = "dfalj2ij";
-	debugLetters(letters);
+	const char* letters = "dfalj2ij";
+	debugLetters((char*)letters);
 
 	Record* record = newStorage();
 
 	defineRecordPath(record, (char*)"DebugRec.txt", (char*)".\\");
 	retrieve(record);
 	EXPECT_TRUE(record->handle!= 0);
-	fprintf(stdout, "\nContents: %s\n", (record->allocAddr));	
-	EXPECT_STREQ("dfalj2ij",(char*)record->allocAddr);
-	//removeRecord(record);
+	fprintf(stdout, "\nContents: %s\n", (char*)(record->allocAddr));	
+	char* contents = (char*)record->allocAddr;
+	EXPECT_STREQ("dfalj2ij",(char*)contents);
+	removeRecord(record);
 	
+}
+
+TEST_F(StorageTest, StoresDebugNumMsg) {
+	debugNumMsg(819891);
+
+	Record* record = newStorage();
+
+	defineRecordPath(record, (char*)"DebugRec.txt", (char*)".\\");
+	retrieve(record);
+	EXPECT_TRUE(record->handle != 0);
+	fprintf(stdout, "\nContents: %s\n", (record->allocAddr));
+	EXPECT_STREQ("819891\r\n", (char*)record->allocAddr);
+	removeRecord(record);
+
+}
+
+TEST_F(StorageTest, StoresDebugLettersMsg) {
+	const char* letters = "dfalj2ij";
+	debugLettersMsg((char*)letters);
+
+	Record* record = newStorage();
+
+	defineRecordPath(record, (char*)"DebugRec.txt", (char*)".\\");
+	retrieve(record);
+	EXPECT_TRUE(record->handle != 0);
+	fprintf(stdout, "\nContents: %s\n", (char*)(record->allocAddr));
+	char* contents = (char*)record->allocAddr;
+	EXPECT_STREQ("dfalj2ij\r\n", (char*)contents);
+	removeRecord(record);
+
 }
 
 

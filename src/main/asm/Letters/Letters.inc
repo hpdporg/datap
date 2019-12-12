@@ -723,5 +723,103 @@ letters.copyLetters:
 	retn 0
 
 
+letters.appendZero:
+	push rbp 
+	mov rbp, rsp 
+	sub rsp, (8*8);+(8*6)
+
+	;mov rcx, [rbp+8] 
+	;mov rdx, [rbp+12] 
+	label appendZero.debugMsgSize qword at rbp-8 
+	label appendZero.heapAddress qword at rbp-16
+	label appendZero.linearAllocationSize qword at rbp-24
+	label appendZero.num qword at rbp-32
+	label appendZero.lettersLength qword at rbp-40
+	label appendZero.numberNegative qword at rbp-48
+	label appendZero.letters qword at rbp-56
+	label appendZero.lettersBufferForward qword at rbp-64
+	;virtual at rbp-64
+	;	.list List
+	;end virtual	
+
+
+	mov [appendZero.letters], rcx
+	mov [appendZero.lettersLength], rdx
+
+	and rsp, -32
+	push rbx 
+	push rbp 
+	push rdi 
+	push rsi
+	push rsp 
+	push r12 
+	push r13 
+	push r14 
+	push r15
+	sub rsp, 8
+
+
+
+	sub rsp, 8*4
+	call [GetProcessHeap]
+	mov [appendZero.heapAddress], rax
+	add rsp, 8*4
+
+
+	mov rcx, 0
+	add rcx, ListItem.next
+	add rcx, 1000b
+
+	sub rsp, 8*4
+	mov r8, [appendZero.lettersLength]	; Length + 1 (zero)
+	add r8, 1b
+	mov rdx, 000001000b
+	mov rcx, [appendZero.heapAddress]
+	call [ HeapAlloc] 
+	mov [appendZero.lettersBufferForward], rax
+	add rsp, 8*4
+
+
+
+	mov rsi, [appendZero.letters]
+	mov rcx, [appendZero.lettersLength]
+	
+	mov rdi, [appendZero.lettersBufferForward]
+	cld
+	rep movsb
+
+
+	mov rsi, letterTerminator
+	mov rdi, [appendZero.lettersBufferForward]
+	add rdi, [appendZero.lettersLength]
+	mov rcx, 1
+	cld
+	rep movsb
+
+
+
+
+	mov rax, [appendZero.lettersBufferForward]
+
+	
+
+
+	add rsp, 8	
+	pop r15 
+	pop r14 
+	pop r13 
+	pop r12 
+	pop rsp 
+	pop rsi 
+	pop rdi 
+	pop rbp 
+	pop rbx
+
+	mov rsp, rbp
+	pop rbp
+
+	retn 0
+
+
 end namespace
 
