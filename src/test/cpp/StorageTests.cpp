@@ -107,6 +107,36 @@ TEST_F(StorageTest, RetrievesRecordNames) {
 	
 }
 
+TEST_F(StorageTest, StoresDebugNum) {
+	debugNum(819891);
+
+	Record* record = newStorage();
+
+	defineRecordPath(record, (char*)"DebugRec.txt", (char*)".\\");
+	retrieve(record);
+	EXPECT_TRUE(record->handle!= 0);
+	fprintf(stdout, "\nContents: %s\n", (record->allocAddr));	
+	EXPECT_STREQ("819891",(char*)record->allocAddr);
+	removeRecord(record);
+	
+}
+
+TEST_F(StorageTest, StoresDebugLetters) {
+	char* letters = "dfalj2ij";
+	debugLetters(letters);
+
+	Record* record = newStorage();
+
+	defineRecordPath(record, (char*)"DebugRec.txt", (char*)".\\");
+	retrieve(record);
+	EXPECT_TRUE(record->handle!= 0);
+	fprintf(stdout, "\nContents: %s\n", (record->allocAddr));	
+	EXPECT_STREQ("dfalj2ij",(char*)record->allocAddr);
+	//removeRecord(record);
+	
+}
+
+
 //Store List contents? As CSV?
 //Insert in File after match?
 //Replace sequences with other letters

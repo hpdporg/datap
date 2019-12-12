@@ -124,6 +124,8 @@ extern "C" {
 	Record* restoreLetters(Record* record, char* letters);
 	List* retrieveRecordNames(Record* record);
 	void removeRecord(Record* record);
+	void debugNum(_int64 num);
+	void debugLetters(char* letters);
 
 	//Matches
 	Matches* newMatches();

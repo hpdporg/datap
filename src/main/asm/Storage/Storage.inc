@@ -26,6 +26,7 @@ section '.data' data readable writeable align 16
 	; ---- Structures
 	;element Element
 
+	debugRecName db 'DebugRec.txt',0
 
 	
 
@@ -1270,11 +1271,10 @@ storage.removeRecord:
 
 
 
-; TO-DO: Include instructions, tests
 storage.debugNum:
 	push rbp 
 	mov rbp, rsp 
-	sub rsp, (8*7);+(8*6)
+	sub rsp, (8*8);+(8*6)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
@@ -1285,19 +1285,13 @@ storage.debugNum:
 	label debugNum.recordAddr qword at rbp-40
 	label debugNum.sizeRetrieved qword at rbp-48
 	label debugNum.num qword at rbp-56
+	label debugNum.letters qword at rbp-64
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
 
 
 	mov [debugNum.num], rcx
-
-	sub rsp, 8*8
-	mov rcx, [debugNum.num]
-	call letters.numAsLetters
-	add rsp, 8*8
-
-
 
 	and rsp, -32
 	push rbx 
@@ -1311,15 +1305,27 @@ storage.debugNum:
 	push r15
 	sub rsp, 8
 
-
+	sub rsp, 8*8
+	mov rcx, [debugNum.num]
+	call letters.numAsLetters
+	add rsp, 8*8
+	mov [debugNum.letters], rax
 
 
 	sub rsp, 8*8
-	mov rdx, 0				; File size high
+	call new
+	add rsp, 8*8
+	mov [debugNum.recordAddr], rax
+
 	mov rbx, [debugNum.recordAddr]
 	add rbx, Record.builtLocation
-	mov rcx, [rbx]
-	call [DeleteFile]
+	mov rdx, debugRecName
+	mov [rbx], rdx
+	
+	sub rsp, 8*8
+	mov rdx, [debugNum.letters]
+	mov rcx, [debugNum.recordAddr]
+	call storeLetters
 	add rsp, 8*8
 
 
@@ -1347,11 +1353,10 @@ storage.debugNum:
 	retn 0
 
 
-; TO-DO: Include instructions, tests
 storage.debugLetters:
 	push rbp 
 	mov rbp, rsp 
-	sub rsp, (8*6);+(8*6)
+	sub rsp, (8*8);+(8*6)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
@@ -1361,13 +1366,14 @@ storage.debugLetters:
 	label debugLetters.item qword at rbp-32
 	label debugLetters.recordAddr qword at rbp-40
 	label debugLetters.sizeRetrieved qword at rbp-48
+	label debugLetters.num qword at rbp-56
+	label debugLetters.letters qword at rbp-64
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
 
 
-	mov [debugLetters.recordAddr], rcx
-
+	mov [debugLetters.letters], rcx
 
 	and rsp, -32
 	push rbx 
@@ -1381,15 +1387,28 @@ storage.debugLetters:
 	push r15
 	sub rsp, 8
 
-
-
+	sub rsp, 8*8
+	mov rcx, [debugLetters.letters]
+	call letters.copyLetters
+	add rsp, 8*8
+	mov rdx, rax
+	mov [debugLetters.letters], rdx
+	
 
 	sub rsp, 8*8
-	mov rdx, 0				; File size high
+	call new
+	add rsp, 8*8
+	mov [debugLetters.recordAddr], rax
+
 	mov rbx, [debugLetters.recordAddr]
 	add rbx, Record.builtLocation
-	mov rcx, [rbx]
-	call [DeleteFile]
+	mov rdx, debugRecName
+	mov [rbx], rdx
+	
+	sub rsp, 8*8
+	mov rdx, [debugLetters.letters]
+	mov rcx, [debugLetters.recordAddr]
+	call storeLetters
 	add rsp, 8*8
 
 
