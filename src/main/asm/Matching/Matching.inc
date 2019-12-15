@@ -947,11 +947,21 @@ matching.lettersSameExact:
 	add rsp, 8*8
 	mov [lettersSameExact.length1], rax
 
+	;sub rsp, 8*8
+	;mov rcx, [lettersSameExact.length1]
+	;call storage.debugNumMsg
+	;add rsp, 8*8
+
 	sub rsp, 8*8
 	mov rcx, [lettersSameExact.containLetters]
 	call letters.letterLength
 	add rsp, 8*8
 	mov [lettersSameExact.length2], rax
+
+	;sub rsp, 8*8
+	;mov rcx, [lettersSameExact.length2]
+	;call storage.debugNumMsg
+	;add rsp, 8*8
 
 	
 	mov rcx, [lettersSameExact.length1]

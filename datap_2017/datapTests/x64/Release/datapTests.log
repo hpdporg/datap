@@ -1,12 +1,4 @@
-﻿  AllocateTests.cpp
-c:\users\lewis\datap\src\test\cpp\allocatetests.cpp(5): warning C4311: 'type cast': pointer truncation from 'void *' to 'int'
-c:\users\lewis\datap\src\test\cpp\allocatetests.cpp(5): warning C4302: 'type cast': truncation from 'void *' to 'int'
-  LettersTests.cpp
-c:\users\lewis\datap\src\test\cpp\letterstests.cpp(12): warning C4477: 'fprintf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type '__int64'
-  c:\users\lewis\datap\src\test\cpp\letterstests.cpp(12): note: consider using '%lld' in the format string
-  c:\users\lewis\datap\src\test\cpp\letterstests.cpp(12): note: consider using '%Id' in the format string
-  c:\users\lewis\datap\src\test\cpp\letterstests.cpp(12): note: consider using '%I64d' in the format string
-  ListTests.cpp
+﻿  ListTests.cpp
 c:\users\lewis\datap\src\test\cpp\listtests.cpp(6): warning C4311: 'type cast': pointer truncation from 'List *' to 'int'
 c:\users\lewis\datap\src\test\cpp\listtests.cpp(6): warning C4302: 'type cast': truncation from 'List *' to 'int'
 c:\users\lewis\datap\src\test\cpp\listtests.cpp(12): warning C4311: 'type cast': pointer truncation from 'List *' to 'int'
@@ -47,131 +39,25 @@ c:\users\lewis\datap\src\test\cpp\listtests.cpp(131): warning C4477: 'fprintf' :
   c:\users\lewis\datap\src\test\cpp\listtests.cpp(131): note: consider using '%I64d' in the format string
 c:\users\lewis\datap\src\test\cpp\listtests.cpp(137): warning C4311: 'type cast': pointer truncation from 'void *' to 'int'
 c:\users\lewis\datap\src\test\cpp\listtests.cpp(137): warning C4302: 'type cast': truncation from 'void *' to 'int'
-  Main.cpp
-  MatchingTests.cpp
-c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(7): warning C4311: 'type cast': pointer truncation from 'Matches *' to 'int'
-c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(7): warning C4302: 'type cast': truncation from 'Matches *' to 'int'
-c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(20): warning C4311: 'type cast': pointer truncation from 'MatchFlow *' to 'int'
-c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(20): warning C4302: 'type cast': truncation from 'MatchFlow *' to 'int'
-c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(34): warning C4311: 'type cast': pointer truncation from 'MatchFlow *' to 'int'
-c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(34): warning C4302: 'type cast': truncation from 'MatchFlow *' to 'int'
-c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(49): warning C4311: 'type cast': pointer truncation from 'MatchFlow *' to 'int'
-c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(49): warning C4302: 'type cast': truncation from 'MatchFlow *' to 'int'
-c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(64): warning C4311: 'type cast': pointer truncation from 'MatchFlow *' to 'int'
-c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(64): warning C4302: 'type cast': truncation from 'MatchFlow *' to 'int'
-c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(87): warning C4311: 'type cast': pointer truncation from 'void *' to 'int'
-c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(87): warning C4302: 'type cast': truncation from 'void *' to 'int'
-c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(111): warning C4311: 'type cast': pointer truncation from 'void *' to 'int'
-c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(111): warning C4302: 'type cast': truncation from 'void *' to 'int'
-c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(135): warning C4311: 'type cast': pointer truncation from 'void *' to 'int'
-c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(135): warning C4302: 'type cast': truncation from 'void *' to 'int'
-c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(163): warning C4311: 'type cast': pointer truncation from 'void *' to 'int'
-c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(163): warning C4302: 'type cast': truncation from 'void *' to 'int'
-c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(191): warning C4477: 'fprintf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type '__int64'
-  c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(191): note: consider using '%lld' in the format string
-  c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(191): note: consider using '%Id' in the format string
-  c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(191): note: consider using '%I64d' in the format string
-c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(203): warning C4477: 'fprintf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type '__int64'
-  c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(203): note: consider using '%lld' in the format string
-  c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(203): note: consider using '%Id' in the format string
-  c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(203): note: consider using '%I64d' in the format string
-c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(215): warning C4477: 'fprintf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type '__int64'
-  c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(215): note: consider using '%lld' in the format string
-  c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(215): note: consider using '%Id' in the format string
-  c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(215): note: consider using '%I64d' in the format string
-c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(227): warning C4477: 'fprintf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type '__int64'
-  c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(227): note: consider using '%lld' in the format string
-  c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(227): note: consider using '%Id' in the format string
-  c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(227): note: consider using '%I64d' in the format string
-c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(240): warning C4477: 'fprintf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type '__int64'
-  c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(240): note: consider using '%lld' in the format string
-  c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(240): note: consider using '%Id' in the format string
-  c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(240): note: consider using '%I64d' in the format string
-c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(252): warning C4477: 'fprintf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type '__int64'
-  c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(252): note: consider using '%lld' in the format string
-  c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(252): note: consider using '%Id' in the format string
-  c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(252): note: consider using '%I64d' in the format string
-c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(264): warning C4477: 'fprintf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type '__int64'
-  c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(264): note: consider using '%lld' in the format string
-  c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(264): note: consider using '%Id' in the format string
-  c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(264): note: consider using '%I64d' in the format string
-c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(276): warning C4477: 'fprintf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type '__int64'
-  c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(276): note: consider using '%lld' in the format string
-  c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(276): note: consider using '%Id' in the format string
-  c:\users\lewis\datap\src\test\cpp\matchingtests.cpp(276): note: consider using '%I64d' in the format string
-  ReplacementTests.cpp
-c:\users\lewis\datap\src\test\cpp\replacementtests.cpp(24): warning C4477: 'fprintf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type '__int64'
-  c:\users\lewis\datap\src\test\cpp\replacementtests.cpp(24): note: consider using '%lld' in the format string
-  c:\users\lewis\datap\src\test\cpp\replacementtests.cpp(24): note: consider using '%Id' in the format string
-  c:\users\lewis\datap\src\test\cpp\replacementtests.cpp(24): note: consider using '%I64d' in the format string
-c:\users\lewis\datap\src\test\cpp\replacementtests.cpp(29): warning C4311: 'type cast': pointer truncation from 'char *' to 'int'
-c:\users\lewis\datap\src\test\cpp\replacementtests.cpp(29): warning C4302: 'type cast': truncation from 'char *' to 'int'
-c:\users\lewis\datap\src\test\cpp\replacementtests.cpp(59): warning C4477: 'fprintf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type '__int64'
-  c:\users\lewis\datap\src\test\cpp\replacementtests.cpp(59): note: consider using '%lld' in the format string
-  c:\users\lewis\datap\src\test\cpp\replacementtests.cpp(59): note: consider using '%Id' in the format string
-  c:\users\lewis\datap\src\test\cpp\replacementtests.cpp(59): note: consider using '%I64d' in the format string
-c:\users\lewis\datap\src\test\cpp\replacementtests.cpp(64): warning C4311: 'type cast': pointer truncation from 'char *' to 'int'
-c:\users\lewis\datap\src\test\cpp\replacementtests.cpp(64): warning C4302: 'type cast': truncation from 'char *' to 'int'
-c:\users\lewis\datap\src\test\cpp\replacementtests.cpp(87): warning C4477: 'fprintf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type 'char *'
-c:\users\lewis\datap\src\test\cpp\replacementtests.cpp(87): warning C4313: 'fprintf': '%d' in format string conflicts with argument 1 of type 'char *'
-c:\users\lewis\datap\src\test\cpp\replacementtests.cpp(92): warning C4311: 'type cast': pointer truncation from 'char *' to 'int'
-c:\users\lewis\datap\src\test\cpp\replacementtests.cpp(92): warning C4302: 'type cast': truncation from 'char *' to 'int'
-  StorageTest.cpp
-  StorageTests.cpp
-c:\users\lewis\datap\src\test\cpp\storagetests.cpp(7): warning C4311: 'type cast': pointer truncation from 'Record *' to 'int'
-c:\users\lewis\datap\src\test\cpp\storagetests.cpp(7): warning C4302: 'type cast': truncation from 'Record *' to 'int'
-c:\users\lewis\datap\src\test\cpp\storagetests.cpp(13): warning C4311: 'type cast': pointer truncation from 'Record *' to 'int'
-c:\users\lewis\datap\src\test\cpp\storagetests.cpp(13): warning C4302: 'type cast': truncation from 'Record *' to 'int'
-c:\users\lewis\datap\src\test\cpp\storagetests.cpp(22): warning C4311: 'type cast': pointer truncation from 'Record *' to 'int'
-c:\users\lewis\datap\src\test\cpp\storagetests.cpp(22): warning C4302: 'type cast': truncation from 'Record *' to 'int'
-c:\users\lewis\datap\src\test\cpp\storagetests.cpp(26): warning C4477: 'fprintf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type 'HANDLE'
-c:\users\lewis\datap\src\test\cpp\storagetests.cpp(26): warning C4313: 'fprintf': '%d' in format string conflicts with argument 1 of type 'HANDLE'
-c:\users\lewis\datap\src\test\cpp\storagetests.cpp(28): warning C4477: 'fprintf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type '__int64'
-  c:\users\lewis\datap\src\test\cpp\storagetests.cpp(28): note: consider using '%lld' in the format string
-  c:\users\lewis\datap\src\test\cpp\storagetests.cpp(28): note: consider using '%Id' in the format string
-  c:\users\lewis\datap\src\test\cpp\storagetests.cpp(28): note: consider using '%I64d' in the format string
-c:\users\lewis\datap\src\test\cpp\storagetests.cpp(35): warning C4311: 'type cast': pointer truncation from 'Record *' to 'int'
-c:\users\lewis\datap\src\test\cpp\storagetests.cpp(35): warning C4302: 'type cast': truncation from 'Record *' to 'int'
-c:\users\lewis\datap\src\test\cpp\storagetests.cpp(39): warning C4477: 'fprintf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type 'HANDLE'
-c:\users\lewis\datap\src\test\cpp\storagetests.cpp(39): warning C4313: 'fprintf': '%d' in format string conflicts with argument 1 of type 'HANDLE'
-c:\users\lewis\datap\src\test\cpp\storagetests.cpp(41): warning C4477: 'fprintf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type '__int64'
-  c:\users\lewis\datap\src\test\cpp\storagetests.cpp(41): note: consider using '%lld' in the format string
-  c:\users\lewis\datap\src\test\cpp\storagetests.cpp(41): note: consider using '%Id' in the format string
-  c:\users\lewis\datap\src\test\cpp\storagetests.cpp(41): note: consider using '%I64d' in the format string
-c:\users\lewis\datap\src\test\cpp\storagetests.cpp(47): warning C4311: 'type cast': pointer truncation from 'Record *' to 'int'
-c:\users\lewis\datap\src\test\cpp\storagetests.cpp(47): warning C4302: 'type cast': truncation from 'Record *' to 'int'
-c:\users\lewis\datap\src\test\cpp\storagetests.cpp(51): warning C4477: 'fprintf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type 'HANDLE'
-c:\users\lewis\datap\src\test\cpp\storagetests.cpp(51): warning C4313: 'fprintf': '%d' in format string conflicts with argument 1 of type 'HANDLE'
-c:\users\lewis\datap\src\test\cpp\storagetests.cpp(53): warning C4477: 'fprintf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type '__int64'
-  c:\users\lewis\datap\src\test\cpp\storagetests.cpp(53): note: consider using '%lld' in the format string
-  c:\users\lewis\datap\src\test\cpp\storagetests.cpp(53): note: consider using '%Id' in the format string
-  c:\users\lewis\datap\src\test\cpp\storagetests.cpp(53): note: consider using '%I64d' in the format string
-c:\users\lewis\datap\src\test\cpp\storagetests.cpp(59): warning C4311: 'type cast': pointer truncation from 'Record *' to 'int'
-c:\users\lewis\datap\src\test\cpp\storagetests.cpp(59): warning C4302: 'type cast': truncation from 'Record *' to 'int'
-c:\users\lewis\datap\src\test\cpp\storagetests.cpp(62): warning C4477: 'fprintf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type 'Record *'
-c:\users\lewis\datap\src\test\cpp\storagetests.cpp(62): warning C4313: 'fprintf': '%d' in format string conflicts with argument 1 of type 'Record *'
-c:\users\lewis\datap\src\test\cpp\storagetests.cpp(63): warning C4477: 'fprintf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type 'HANDLE'
-c:\users\lewis\datap\src\test\cpp\storagetests.cpp(63): warning C4313: 'fprintf': '%d' in format string conflicts with argument 1 of type 'HANDLE'
-c:\users\lewis\datap\src\test\cpp\storagetests.cpp(65): warning C4477: 'fprintf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type '__int64'
-  c:\users\lewis\datap\src\test\cpp\storagetests.cpp(65): note: consider using '%lld' in the format string
-  c:\users\lewis\datap\src\test\cpp\storagetests.cpp(65): note: consider using '%Id' in the format string
-  c:\users\lewis\datap\src\test\cpp\storagetests.cpp(65): note: consider using '%I64d' in the format string
-c:\users\lewis\datap\src\test\cpp\storagetests.cpp(69): warning C4311: 'type cast': pointer truncation from 'Record *' to 'int'
-c:\users\lewis\datap\src\test\cpp\storagetests.cpp(69): warning C4302: 'type cast': truncation from 'Record *' to 'int'
-c:\users\lewis\datap\src\test\cpp\storagetests.cpp(74): warning C4477: 'fprintf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type 'HANDLE'
-c:\users\lewis\datap\src\test\cpp\storagetests.cpp(74): warning C4313: 'fprintf': '%d' in format string conflicts with argument 1 of type 'HANDLE'
-c:\users\lewis\datap\src\test\cpp\storagetests.cpp(76): warning C4477: 'fprintf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type '__int64'
-  c:\users\lewis\datap\src\test\cpp\storagetests.cpp(76): note: consider using '%lld' in the format string
-  c:\users\lewis\datap\src\test\cpp\storagetests.cpp(76): note: consider using '%Id' in the format string
-  c:\users\lewis\datap\src\test\cpp\storagetests.cpp(76): note: consider using '%I64d' in the format string
-c:\users\lewis\datap\src\test\cpp\storagetests.cpp(87): warning C4477: 'fprintf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type '__int64'
-  c:\users\lewis\datap\src\test\cpp\storagetests.cpp(87): note: consider using '%lld' in the format string
-  c:\users\lewis\datap\src\test\cpp\storagetests.cpp(87): note: consider using '%Id' in the format string
-  c:\users\lewis\datap\src\test\cpp\storagetests.cpp(87): note: consider using '%I64d' in the format string
+c:\users\lewis\datap\src\test\cpp\listtests.cpp(174): warning C4312: 'type cast': conversion from 'int' to 'void *' of greater size
+c:\users\lewis\datap\src\test\cpp\listtests.cpp(176): warning C4312: 'type cast': conversion from 'int' to 'void *' of greater size
+c:\users\lewis\datap\src\test\cpp\listtests.cpp(178): warning C4312: 'type cast': conversion from 'int' to 'void *' of greater size
+c:\users\lewis\datap\src\test\cpp\listtests.cpp(180): warning C4312: 'type cast': conversion from 'int' to 'void *' of greater size
+c:\users\lewis\datap\src\test\cpp\listtests.cpp(182): warning C4312: 'type cast': conversion from 'int' to 'void *' of greater size
+c:\users\lewis\datap\src\test\cpp\listtests.cpp(184): warning C4312: 'type cast': conversion from 'int' to 'void *' of greater size
+c:\users\lewis\datap\src\test\cpp\listtests.cpp(186): warning C4312: 'type cast': conversion from 'int' to 'void *' of greater size
+c:\users\lewis\datap\src\test\cpp\listtests.cpp(189): warning C4477: 'fprintf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type '__int64'
+  c:\users\lewis\datap\src\test\cpp\listtests.cpp(189): note: consider using '%lld' in the format string
+  c:\users\lewis\datap\src\test\cpp\listtests.cpp(189): note: consider using '%Id' in the format string
+  c:\users\lewis\datap\src\test\cpp\listtests.cpp(189): note: consider using '%I64d' in the format string
+c:\users\lewis\datap\src\test\cpp\listtests.cpp(196): warning C4311: 'type cast': pointer truncation from 'void *' to 'int'
+c:\users\lewis\datap\src\test\cpp\listtests.cpp(196): warning C4302: 'type cast': truncation from 'void *' to 'int'
 datap.obj : warning LNK4078: multiple '.data' sections found with different attributes (C03000C0)
 gtest.lib(gtest-all.obj) : warning LNK4078: multiple '.text' sections found with different attributes (60501020)
   Generating code
-  All 838 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  55 of 883 functions ( 6.2%) were compiled, the rest were copied from previous compilation.
+    9 functions were new in current compilation
+    147 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
 gtest.lib(gtest-all.obj) : warning LNK4099: PDB 'gtest.pdb' was not found with 'gtest.lib(gtest-all.obj)' or at 'C:\Users\lewis\datap\datap_2017\datapTests\x64\Release\gtest.pdb'; linking object as if no debug info
   datapTests.vcxproj -> C:\Users\lewis\datap\datap_2017\\datapTests\x64\Release\datapTests.exe

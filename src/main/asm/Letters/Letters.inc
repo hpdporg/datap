@@ -255,9 +255,14 @@ letters.letterLength:
 	push r15
 	sub rsp, 8
 
+	mov rcx, 0
+	mov [letterLength.lettersLength], rcx 		; Begin as 0
 
 	mov rdx, [letterLength.letters]
 
+	mov rbx, [rdx]
+	cmp bl, 0
+	je letterLength.end			; Blank
 
 
 	mov rax, 0
@@ -274,6 +279,7 @@ letters.letterLength:
 	mov [letterLength.lettersLength], rcx
 
 
+	.end:
 	mov rax, [letterLength.lettersLength]
 
 

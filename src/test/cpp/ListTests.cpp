@@ -153,3 +153,75 @@ TEST(ListTests, ExtendsList) {
 		}
 	}
 }
+
+TEST(ListTests, LastItemNestingIsDefined) {
+	List* list1 = newList();
+
+
+	int item1 = 2;
+	int item2 = 41;
+	int item3 = 80;
+	int item4 = 130;
+	int item5 = 87;
+	int item6 = 87;
+	int item7 = 87;
+
+	fprintf(stdout, "\nItem1: %d\n", (int)item1);
+	fprintf(stdout, "\nItem2: %d\n", (int)item2);
+	fprintf(stdout, "\nItem3: %d\n", (int)item3);
+	fprintf(stdout, "\nItem4: %d\n", (int)item4);
+	fprintf(stdout, "\nItem5: %d\n", (int)item5);
+	newLastItem(list1, (void*)item1);
+	lastItemNesting(list1, 0);
+	newLastItem(list1, (void*)item2);
+	lastItemNesting(list1, 1);
+	newLastItem(list1, (void*)item3);
+	lastItemNesting(list1, 2);
+	newLastItem(list1, (void*)item4);
+	lastItemNesting(list1, 0);
+	newLastItem(list1, (void*)item5);
+	lastItemNesting(list1, 1);
+	newLastItem(list1, (void*)item6);
+	lastItemNesting(list1, 0);
+	newLastItem(list1, (void*)item7);
+	lastItemNesting(list1, 1);
+
+	fprintf(stdout, "\nItems Count: %d\n", list1->itemsCount);
+	EXPECT_TRUE((list1->itemsCount == 7));
+
+
+	resetIndex(list1);
+	while (list1->index < list1->itemsCount) {
+		int nestingNum = (int)getNextItemNesting(list1);
+		int numberItem = (int)getNextItem(list1);
+		fprintf(stdout, "\nNext item, nesting: %d %d\n", numberItem, nestingNum);
+		if (list1->index == 1) {	// getNextItem increments index implicitly following call
+			EXPECT_EQ(2, numberItem);
+			EXPECT_EQ(0, nestingNum);
+		}
+		if (list1->index == 2) {	// getNextItem increments index implicitly following call
+			EXPECT_EQ(41, numberItem);
+			EXPECT_EQ(1, nestingNum);
+		}
+		if (list1->index == 3) {	// getNextItem increments index implicitly following call
+			EXPECT_EQ(80, numberItem);
+			EXPECT_EQ(2, nestingNum);
+		}
+		if (list1->index == 4) {	// getNextItem increments index implicitly following call
+			EXPECT_EQ(130, numberItem);
+			EXPECT_EQ(0, nestingNum);
+		}
+		if (list1->index == 5) {	// getNextItem increments index implicitly following call
+			EXPECT_EQ(87, numberItem);
+			EXPECT_EQ(1, nestingNum);
+		}
+		if (list1->index == 6) {	// getNextItem increments index implicitly following call
+			EXPECT_EQ(87, numberItem);
+			EXPECT_EQ(0, nestingNum);
+		}
+		if (list1->index == 7) {	// getNextItem increments index implicitly following call
+			EXPECT_EQ(87, numberItem);
+			EXPECT_EQ(1, nestingNum);
+		}
+	}
+}
