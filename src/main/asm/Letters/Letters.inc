@@ -826,6 +826,117 @@ letters.appendZero:
 
 	retn 0
 
+letters.listAsLetters:
+	push rbp 
+	mov rbp, rsp 
+	sub rsp, (8*8);+(8*6)
+
+	;mov rcx, [rbp+8] 
+	;mov rdx, [rbp+12] 
+	label listAsLetters.debugMsgSize qword at rbp-8 
+	label listAsLetters.heapAddress qword at rbp-16
+	label listAsLetters.linearAllocationSize qword at rbp-24
+	label listAsLetters.list qword at rbp-32
+	label listAsLetters.lettersLength qword at rbp-40
+	label listAsLetters.numberNegative qword at rbp-48
+	label listAsLetters.letters qword at rbp-56
+	label listAsLetters.nextLetters qword at rbp-64
+	;virtual at rbp-64
+	;	.list List
+	;end virtual	
+
+
+	mov [listAsLetters.list], rcx
+
+	and rsp, -32
+	push rbx 
+	push rbp 
+	push rdi 
+	push rsi
+	push rsp 
+	push r12 
+	push r13 
+	push r14 
+	push r15
+	sub rsp, 8
+
+	mov rcx, 0
+	mov [listAsLetters.letters], 0		; Begin as 0
+
+
+	sub rsp, 8*8
+	mov rcx, [listAsLetters.list]
+	call list.resetIndex
+	add rsp, 8*8
+
+	.nextListItem:
+	mov rbx, [listAsLetters.list]
+	mov r8, rbx
+	add rbx, List.index
+	add r8, List.itemsCount
+	mov rcx, [rbx]
+	mov rdx, [r8]
+	cmp rcx, rdx
+	jnl listAsLetters.end
+
+
+	sub rsp, 8*8
+	mov rcx, [listAsLetters.list]
+	call list.getNextItem
+	add rsp, 8*8
+	mov [listAsLetters.nextLetters], rax
+
+	mov rcx, [listAsLetters.letters]
+	cmp rcx, 0
+	jne listAsLetters.notFirstLetters
+
+	sub rsp, 8*8
+	mov rcx, [listAsLetters.nextLetters]
+	call copyLetters				; allocate first, do not append
+	add rsp, 8*8
+	mov [listAsLetters.letters], rax
+
+	jmp listAsLetters.nextListItem
+	.notFirstLetters:
+
+	sub rsp, 8*8
+	mov rcx, [listAsLetters.nextLetters]
+	call copyLetters				; allocate first, do not append
+	add rsp, 8*8
+	
+
+	sub rsp, 8*8
+	mov rdx,rax
+	mov rcx, [listAsLetters.letters]
+	call appendLetters				; Append
+	add rsp, 8*8
+	mov [listAsLetters.letters], rax
+
+
+	jmp listAsLetters.nextListItem
+	.end:
+
+	mov rax, [listAsLetters.letters]
+
+	
+
+
+	add rsp, 8	
+	pop r15 
+	pop r14 
+	pop r13 
+	pop r12 
+	pop rsp 
+	pop rsi 
+	pop rdi 
+	pop rbp 
+	pop rbx
+
+	mov rsp, rbp
+	pop rbp
+
+	retn 0
+
 
 end namespace
 
