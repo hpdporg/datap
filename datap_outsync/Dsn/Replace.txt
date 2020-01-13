@@ -1,4 +1,0 @@
-
-
-Replace Letters with list?
-	calls append
