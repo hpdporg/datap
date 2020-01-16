@@ -1063,6 +1063,7 @@ storage.retrieveRecordNamesExtension:
 	add rsp, 8*8
 	mov [retrieveRecordNamesExtension.locationContentsLetters], rax
 
+
 	sub rsp, 8*8
 	mov rcx, 64
 	call allocate.linear
@@ -1083,6 +1084,12 @@ storage.retrieveRecordNamesExtension:
 	cmp rax, r9
 	jne retrieveRecordNamesExtension.noError ; INVALID_HANDLE_VALUE
 
+
+	sub rsp, 8*8
+	mov rcx, 64328
+	;call debugNumMsg
+	add rsp, 8*8
+
 	;sub rsp, 8*8
 	;call [GetLastError]
 	;add rsp, 8*8
@@ -1102,6 +1109,12 @@ storage.retrieveRecordNamesExtension:
 	cmp rax, 0
 	jne retrieveRecordNamesExtension.nextFile
 
+
+	sub rsp, 8*8
+	mov rcx, 43228
+	;call debugNumMsg
+	add rsp, 8*8
+
 	sub rsp, 8*8
 	mov rdx, containingDirLetters
 	mov r9, [retrieveRecordNamesExtension.w32FindData]
@@ -1111,6 +1124,12 @@ storage.retrieveRecordNamesExtension:
 	add rsp, 8*8
 	cmp rax, 0
 	jne retrieveRecordNamesExtension.nextFile
+
+
+	sub rsp, 8*8
+	mov rcx, 4828
+	;call debugNumMsg
+	add rsp, 8*8
 
 	.firstFile:
 	mov r9, [retrieveRecordNamesExtension.w32FindData]
@@ -1125,6 +1144,12 @@ storage.retrieveRecordNamesExtension:
 	;mov rdx, rax
 	mov rcx, [retrieveRecordNamesExtension.list]
 	call list.newLastItem
+	add rsp, 8*8
+
+
+	sub rsp, 8*8
+	mov rcx, 2328
+	;call debugNumMsg
 	add rsp, 8*8
 
 
@@ -1151,6 +1176,12 @@ storage.retrieveRecordNamesExtension:
 	;jge retrieveRecordNamesExtension.end
 
 	;jmp retrieveRecordNamesExtension.newLast	; debug
+
+
+	sub rsp, 8*8
+	mov rcx, 88228
+	;call debugNumMsg
+	add rsp, 8*8
 
 	sub rsp, 8*8
 	mov rdx, currentDirLetter
@@ -1193,9 +1224,19 @@ storage.retrieveRecordNamesExtension:
 	.endFiles:
 
 
+	sub rsp, 8*8
+	mov rcx, 999228
+	;call debugNumMsg
+	add rsp, 8*8
 
 
 	retrieveRecordNamesExtension.end:
+
+
+	sub rsp, 8*8
+	mov rcx, 78728
+	;call debugNumMsg
+	add rsp, 8*8
 
 	mov rax, [retrieveRecordNamesExtension.list]
 
