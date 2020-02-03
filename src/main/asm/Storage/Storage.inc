@@ -351,7 +351,7 @@ storage.storeLetters:
 	mov [storeLetters.letterLength], rax
 
 
-	sub rsp, 8*8
+	sub rsp, 8*10
 	mov qword [rsp+6*8], 0					;hTemplateFile
 	mov qword [rsp+5*8], 128 				;dwFlagsandAttributes
 	mov qword [rsp+4*8], 000000100b 			;dwCreationDisposition
@@ -362,7 +362,7 @@ storage.storeLetters:
 	add rbx, Record.builtLocation
 	mov rcx, [rbx]
 	call [CreateFile]
-	add rsp, 8*8
+	add rsp, 8*10
 	mov rbx, [storeLetters.recordAddr]
 	add rbx, Record.handle
 	mov [rbx], rax

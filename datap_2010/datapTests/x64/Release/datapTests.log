@@ -1,4 +1,4 @@
-﻿Build started 11/26/2019 10:42:29 AM.
+﻿Build started 2/3/2020 11:10:46 AM.
      1>Project "C:\Users\lsall\datap\datap_2010\datapTests\datapTests.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
          Creating "x64\Release\datapTests.unsuccessfulbuild" because "AlwaysCreate" was specified.
@@ -37,4 +37,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:15.74
+Time Elapsed 00:00:13.89
