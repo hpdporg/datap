@@ -1,3 +1,5 @@
+[![Build Status](https://dev.azure.com/lewissall/hpdporg/_apis/build/status/hpdporg.datap?branchName=master)](https://dev.azure.com/lewissall/hpdporg/_build/latest?definitionId=1&branchName=master)
+
 # datap #
 
 **datap** provides data processing utilities. This library is used in other projects as a dependency. It is not meant as a standalone project.
