@@ -20,7 +20,8 @@ steps:
     clean: true
     msbuildArchitecture: 'x64'
 
-- task: PowerShell@2
+- task: CmdLine@2
   inputs:
-    filePath: 'datap_2017\datapTests\x64\Release\dataptests.exe'
-  displayName: 'GoogleTest'
+    script: 'datap_2017\datapTests\x64\Release\dataptests.exe'
+    failOnStderr: true'
+    displayName: 'GoogleTest'
