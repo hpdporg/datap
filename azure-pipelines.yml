@@ -10,8 +10,14 @@ pool:
   vmImage: 'vs2017-win2016'
 
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+- task: VSBuild@1
+  inputs:
+    solution: 'datap_2017\datap.sln'
+    vsVersion: '15.0'
+    platform: 'x64'
+    configuration: 'release'
+    clean: true
+    msbuildArchitecture: 'x64'
 
 - script: |
     echo Add other tasks to build, test, and deploy your project.
