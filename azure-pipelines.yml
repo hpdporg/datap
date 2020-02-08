@@ -30,3 +30,9 @@ steps:
     testResultsFormat: 'JUnit'
     testResultsFiles: 'datap_2017/datapTests/x64/Release/test_detail.xml'
     failTaskOnFailedTests: true
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: 'src\main\asm\datap.obj'
+    ArtifactName: 'datap.obj'
+    publishLocation: 'Container'
