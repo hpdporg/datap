@@ -20,7 +20,13 @@ steps:
     clean: true
     msbuildArchitecture: 'x64'
 
-- script: 'dataptests.exe'
+- script: 'dataptests.exe --gtest_output=xml'
   displayName: 'GoogleTest'
   workingDirectory: datap_2017\datapTests\x64\Release   
   failOnStderr: true
+
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'JUnit'
+    testResultsFiles: 'datap_2017/datapTests/x64/Release/test_detail.xml'
+    failTaskOnFailedTests: true
