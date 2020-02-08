@@ -20,8 +20,7 @@ steps:
     clean: true
     msbuildArchitecture: 'x64'
 
-- task: CmdLine@2
-  inputs:
-    script: 'datap_2017\datapTests\x64\Release\dataptests.exe'
-    failOnStderr: true'
-    displayName: 'GoogleTest'
+- script: 'dataptests.exe'
+  displayName: 'GoogleTest'
+  workingDirectory: datap_2017\datapTests\x64\Release   
+  failOnStderr: true
