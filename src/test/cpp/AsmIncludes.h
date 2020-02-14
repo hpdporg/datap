@@ -85,6 +85,14 @@ typedef enum ReplaceFlags{
 } ReplaceFlags;
 
 
+								
+typedef struct Time{
+	_int64	year;
+	_int64	month;
+} Time;
+
+
+
 ///extern char* pathSepLettersChar;
 extern "C" {
 
@@ -141,6 +149,10 @@ extern "C" {
 	//Replacement
 	char* replaceLettersWithList(ReplaceFlags flags, char* letters, List* list, List* matchResultsList);
 	char* replaceContainsLettersWithList(char* letters, List* list, char* containsLetters);
+
+	//Time
+	Time* newTime();
+	Time* getNow();
 }
 
 
