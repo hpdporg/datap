@@ -7,6 +7,9 @@ Table data type?
 Parallel list?
 
 plane
+stream
+flow*
+sweep
 
 retrieveList
 	Hierarchical
