@@ -4,6 +4,8 @@
 #include <Windows.h>
 
 
+
+
 typedef struct ListItem {
 	void* item;
 	void* previous;
@@ -26,6 +28,16 @@ typedef struct List {
 	_int64	indexedItemIndex;
 	void* itemMatch;
 } List;
+
+
+typedef struct Flow {
+	List* lists;
+	_int64	width;
+	_int64	i;
+	_int64	j;
+	_int64	length;
+	_int64	paddingValue;
+} Flow;
 
 typedef struct Record {
 	void* allocAddr;
@@ -85,6 +97,14 @@ typedef enum ReplaceFlags{
 } ReplaceFlags;
 
 
+								
+typedef struct Time{
+	_int64	year;
+	_int64	month;
+} Time;
+
+
+
 ///extern char* pathSepLettersChar;
 extern "C" {
 
@@ -116,6 +136,11 @@ extern "C" {
 	void* getNextItemMatchComp(List* list, void* itemMatch, _int64 comp);
 	List* extendList(List* list, List* extensionList);
 
+	//Flow
+	Flow* newFlow();
+	void newLastFlowList(Flow* flow, List* list);
+	void increaseFlowWidth(Flow* flow, _int64 width);
+
 	//Storage
 	Record* newStorage();
 	Record* defineRecordPath(Record* record, char* name, char* location);
@@ -137,11 +162,17 @@ extern "C" {
 	_int64 lettersSameExact(char* letters, char* containsExactLetters);
 	_int64 getNextMatchIndex(char* letters, char* containsLetters);
 	_int64 hasMatch(char* letters, char* containsLetters);
+	List* extractBetween(char* letters, char* delimiter);
 
 	//Replacement
 	char* replaceLettersWithList(ReplaceFlags flags, char* letters, List* list, List* matchResultsList);
 	char* replaceContainsLettersWithList(char* letters, List* list, char* containsLetters);
+
+	//Time
+	Time* newTime();
+	Time* getNow();
 }
+
 
 
 #endif

@@ -9,6 +9,7 @@ extrn '__imp_HeapFree' as HeapFree:qword
 include 'Exports/Letters.inc'
 include 'Exports/Allocate.inc'
 include 'Exports/List.inc'
+include 'Exports/Flow.inc'
 include 'Exports/Storage.inc'
 include 'Exports/Matching.inc'
 include 'Exports/Replacement.inc'

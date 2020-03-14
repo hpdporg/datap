@@ -1,4 +1,4 @@
-#include "AsmIncludes.h"
+#include "datap.h"
 #include "MatchingTests.h"
 
 
@@ -275,5 +275,24 @@ TEST(MatchingTest, ReturnsMatchPresence) {
 	_int64 matchExists = hasMatch(letters, comparisonLetters);
 	fprintf(stdout, "\nMatch result: %d\n", matchExists);
 	EXPECT_EQ(1,matchExists);
+
+}
+
+
+TEST(MatchingTest, ReturnsExtractsBetweenDelimiters) {
+	char* letters = (char*)"val1,val2,val3,val4";
+	char* delimiter = (char*)",";
+	
+	fprintf(stdout, "\nLetters: %s\n", letters);
+	fprintf(stdout, "\nDelimiter Letters: %s\n", delimiter);
+	List* extractList = extractBetween(letters, delimiter);
+	fprintf(stdout, "\nMatch count: %d\n", extractList->itemsCount);
+
+	resetIndex(extractList);
+	while (extractList->index < extractList->itemsCount){
+		char* extractVal = (char*)getNextItem(extractList);
+		fprintf(stdout, "\nNext extract val: %s",extractVal);
+	}
+	//EXPECT_EQ(1,matchExists);
 
 }

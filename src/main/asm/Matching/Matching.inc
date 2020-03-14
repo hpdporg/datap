@@ -1306,5 +1306,189 @@ matching.hasMatch:
 
 	retn 0
 
+; Extract list of matches between a delimiter
+; Tokenizer
+matching.extractBetween:
+	push rbp 
+	mov rbp, rsp 
+	sub rsp, (8*14);+(8*6)
+
+	;mov rcx, [rbp+8] 
+	;mov rdx, [rbp+12] 
+	label extractBetween.heapAddress qword at rbp-8  
+	label extractBetween.handleAllocatedMemory qword at rbp-16
+	label extractBetween.matchFlow qword at rbp-24 
+	label extractBetween.letterLength qword at rbp-32
+	label extractBetween.matches qword at rbp-40
+	label extractBetween.letters qword at rbp-48
+	label extractBetween.startIndex qword at rbp-56
+	label extractBetween.endIndex qword at rbp-64
+	label extractBetween.matchingIndex qword at rbp-72
+	label extractBetween.containLetters qword at rbp-80
+	label extractBetween.extractIndex qword at rbp-88
+	label extractBetween.matchList qword at rbp-96
+	label extractBetween.extractList qword at rbp-104
+	label extractBetween.delimiter qword at rbp-112
+	;virtual at rbp-64
+	;	.list List
+	;end virtual	
+
+
+	mov [extractBetween.letters], rcx
+	mov [extractBetween.delimiter], rdx
+
+
+	and rsp, -32
+	push rbx 
+	push rbp 
+	push rdi 
+	push rsi
+	push rsp 
+	push r12 
+	push r13 
+	push r14 
+	push r15
+	sub rsp, 8
+
+
+	sub rsp, 8*4
+	call [GetProcessHeap]
+	mov [extractBetween.heapAddress], rax
+	add rsp, 8*4
+
+
+	sub rsp, 8*8
+	call new
+	add rsp, 8*8
+	mov [extractBetween.matches], rax
+
+	mov rbx, [extractBetween.matches]
+	mov rdx, rbx
+	add rbx, Matches.flags
+	mov r10, 11001b			; MATCH_START MATCH_EVERY MATCH_TRANSFORM
+	mov [rbx], r10
+	add rdx, Matches.transformFlags
+	mov r11, 100b			; TRANSFORM_CONTAINS
+
+	sub rsp, 8*8
+	mov rdx, [extractBetween.delimiter]
+	mov rbx, [extractBetween.matches]
+	add rbx, Matches.containsRangeList
+	mov rcx, [rbx]
+	call list.newLastItem
+	add rsp, 8*8
+
+	sub rsp, 8*8
+	mov rdx, [extractBetween.letters]
+	mov rcx, [extractBetween.matches]
+	call get
+	add rsp, 8*8
+	mov [extractBetween.matchList], rax
+	
+
+	sub rsp, 8*8
+	call list.new
+	add rsp, 8*8
+	mov [extractBetween.extractList], rax
+
+	mov rcx, 0
+	mov [extractBetween.startIndex], rcx
+	mov [extractBetween.endIndex], rcx		; Begin as 0
+
+	.nextMatch:
+	mov rbx,[extractBetween.matchList]
+	mov rdx, rbx
+	add rdx, List.index
+	add rbx, List.itemsCount
+	mov rcx, [rdx]
+	mov r8, [rbx]
+	cmp rcx, r8
+	jnl extractBetween.endMatchList
+
+	
+	sub rsp, 8*8
+	mov rcx, [extractBetween.matchList]
+	call list.getNextItem
+	add rsp, 8*8
+	mov [extractBetween.endIndex], rax
+	
+	sub rsp, 8*8
+	mov r8, [extractBetween.endIndex]
+	mov rdx, [extractBetween.startIndex]
+	mov rcx, [extractBetween.letters]
+	call letters.betweenIndices
+	add rsp, 8*8
+	sub rsp, 8*8
+	mov rdx, rax
+	mov rcx, [extractBetween.extractList]
+	call list.newLastItem
+	add rsp, 8*8
+
+	mov r13, [extractBetween.endIndex]
+	mov [extractBetween.startIndex], r13		; Swap on next run
+
+	jmp extractBetween.nextMatch
+
+	.endMatchList:
+
+	mov rcx, [extractBetween.endIndex]
+	cmp rcx, 0					; Get last extraction value? i.e. val3 in val1,val2,val3
+	je extractBetween.end				; No matches
+
+	sub rsp, 8*8
+	mov rcx, [extractBetween.letters]
+	call letters.letterLength
+	add rsp, 8*8
+	mov [extractBetween.letterLength], rax
+
+	mov rcx, [extractBetween.endIndex]
+	mov rax, [extractBetween.letterLength]
+	sub rax, 1b
+	cmp rcx, rax
+	jnl extractBetween.end
+
+	sub rsp, 8*8
+	mov r8, [extractBetween.letterLength]		; -1? How can you include the end if end index is exclusive
+	mov rdx, [extractBetween.endIndex]
+	mov rcx, [extractBetween.letters]
+	call letters.betweenIndices
+	add rsp, 8*8
+	sub rsp, 8*8
+	mov rdx, rax
+	mov rcx, [extractBetween.extractList]
+	call list.newLastItem
+	add rsp, 8*8
+
+
+	.end:
+
+	sub rsp, 8*8
+	mov r8, [extractBetween.matches]
+	mov rdx, 0
+	mov rcx, [extractBetween.heapAddress]
+	call [HeapFree]
+	add rsp, 8*8
+
+
+	mov rax, [extractBetween.extractList]
+
+
+
+	add rsp, 8	
+	pop r15 
+	pop r14 
+	pop r13 
+	pop r12 
+	pop rsp 
+	pop rsi 
+	pop rdi 
+	pop rbp 
+	pop rbx
+
+	mov rsp, rbp
+	pop rbp
+
+	retn 0
+
 
 end namespace
