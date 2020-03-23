@@ -2610,6 +2610,97 @@ list.getNextItemMatch:
 
 	retn 0
 
+;------------
+;   Gets the next item match index in a list
+;   Uses the List index value as a starting position
+;   Leaves the List index advanced at the next item.
+;   Takes List address, item as parameters.
+;   Returns the item index or the item count when not found.
+;------------
+list.getNextItemMatchIndex:
+	push rbp 
+	mov rbp, rsp 
+	sub rsp, (8*4);((8)+(8))
+
+	;mov rcx, rcx 
+	
+	label getNextItemMatchIndex.listAddress qword at rbp-8 
+	label getNextItemMatchIndex.item qword at rbp-16 
+	label getNextItemMatchIndex.itemMatchIndex qword at rbp-24 
+	label getNextItemMatchIndex.itemMatch qword at rbp-32 
+
+	
+	and rsp, -32
+	push rbx 
+	push rbp 
+	push rdi 
+	push rsi
+	push rsp 
+	push r12 
+	push r13 
+	push r14 
+	push r15
+	sub rsp, 8
+
+	mov [getNextItemMatchIndex.listAddress], rcx
+	mov [getNextItemMatchIndex.item], rdx
+
+
+	
+	mov rbx, [getNextItemMatchIndex.listAddress]
+	add rbx, List.itemsCount
+	mov rcx, [rbx]
+	mov [getNextItemMatchIndex.itemMatchIndex], rcx				; Begin as item count
+
+
+	.nextItem:
+
+	mov rbx, [getNextItemMatchIndex.listAddress]
+	mov rdx, rbx
+	add rbx, List.index
+	add rdx, List.itemsCount
+	mov r8, [rbx]
+	mov r9, [rdx]
+	cmp r8, r9
+	jnl getNextItemMatchIndex.end
+	
+	sub rsp, 8*8
+	mov rcx, [getNextItemMatchIndex.listAddress]
+	call getNextItem
+	add rsp, 8*8
+	mov r10, [getNextItemMatchIndex.item]
+	cmp rax, r10
+	jne getNextItemMatchIndex.nextItem
+
+	mov rcx, [getNextItemMatchIndex.listAddress]
+	add rcx, List.index
+	mov r12, [rcx]
+	sub r12, 1b	
+
+	mov [getNextItemMatchIndex.itemMatchIndex], r12				; Match found
+
+
+	.end:
+
+	mov rax, [getNextItemMatchIndex.itemMatchIndex]
+
+	add rsp, 8	
+	pop r15 
+	pop r14 
+	pop r13 
+	pop r12 
+	pop rsp 
+	pop rsi 
+	pop rdi 
+	pop rbp 
+	pop rbx
+
+	mov rsp, rbp
+	pop rbp
+
+	retn 0
+
+
 
 ; Components within next match. 
 ; Assumes match is an address and component value at loc is returned.
@@ -2953,6 +3044,138 @@ list.extendList:
 	pop rbp
 
 	retn 0
+
+
+;------------
+;   Inserts a new numeric ascending item.
+;   Takes List address, item address as parameters
+;   Returns index item was inserted at.
+;------------
+list.newAscendingItem:
+	push rbp 
+	mov rbp, rsp 
+	sub rsp, ((8*9));+(8*6))
+
+	mov rcx, rcx				; List
+	mov rdx, rdx				; New Item
+	label newAscendingItem.listAddress qword at rbp-8 
+	label newAscendingItem.newItemAddress qword at rbp-16 
+	label newAscendingItem.afterNewItemAddress qword at rbp-24
+	label newAscendingItem.beforeNewItemAddress qword at rbp-32
+	label newAscendingItem.beforeNewItemNesting qword at rbp-40 
+	label newAscendingItem.hHeap qword at rbp-48 
+	label newAscendingItem.hAllocatedMemory qword at rbp-56
+	label newAscendingItem.newItemIndex qword at rbp-64
+	label newAscendingItem.comparisonItem qword at rbp-72
+	;virtual at rbp-112
+	;	.newListItem ListItem
+	;end virtual
+
+
+
+	and rsp, -32
+	push rbx 
+	push rbp 
+	push rdi 
+	push rsi
+	push rsp 
+	push r12 
+	push r13 
+	push r14 
+	push r15
+	sub rsp, 8
+
+	mov [newAscendingItem.listAddress], rcx
+	mov [newAscendingItem.newItemAddress], rdx
+
+
+	mov rcx, 0
+	mov [newAscendingItem.newItemIndex], rcx		; Begin as 0
+
+	sub rsp, 8*8
+	mov rcx, [newAscendingItem.listAddress]
+	call resetIndex
+	add rsp, 8*8
+
+
+	.nextItem:
+	mov rbx, [newAscendingItem.listAddress]
+	mov r9, rbx
+	add r9, List.index
+	add rbx, List.itemsCount
+	mov rcx, [r9]
+	mov rdx, [rbx]
+	mov [newAscendingItem.newItemIndex], rcx		; Cache index
+	cmp rcx, rdx
+	jnl newAscendingItem.endList
+
+
+	sub rsp, 8*8
+	mov rcx, [newAscendingItem.listAddress]
+	call getNextItem
+	add rsp, 8*8
+	mov [newAscendingItem.comparisonItem], rax
+
+
+	mov rax, [newAscendingItem.comparisonItem]
+	mov r10, [newAscendingItem.newItemAddress]	
+	cmp r10, rax
+	jg newAscendingItem.nextItem
+
+
+	mov rbx, [newAscendingItem.listAddress]
+	mov r9, rbx
+	add r9, List.index
+	mov r11, [newAscendingItem.newItemIndex]
+	mov [r9], r11
+	sub rsp, 8*8
+	mov rdx, [newAscendingItem.newItemAddress]
+	mov rcx, rbx
+	call newNextItem
+	add rsp, 8*8
+
+	
+	jmp newAscendingItem.end
+	.endList:						; Must be end at this point
+
+	sub rsp, 8*8
+	mov rdx, [newAscendingItem.newItemAddress]
+	mov rcx, [newAscendingItem.listAddress]
+	call newLastItem
+	add rsp, 8*8
+
+
+
+
+	.end:
+
+	mov rax, [newAscendingItem.newItemIndex]
+
+
+	add rsp, 8	
+	pop r15 
+	pop r14 
+	pop r13 
+	pop r12 
+	pop rsp 
+	pop rsi 
+	pop rdi 
+	pop rbp 
+	pop rbx
+
+	mov rsp, rbp
+	pop rbp
+
+	retn 0
+
+
+
+
+
+
+
+
+
 
 
 end namespace

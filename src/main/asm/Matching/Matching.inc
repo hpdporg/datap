@@ -1369,6 +1369,7 @@ matching.extractBetween:
 	mov [rbx], r10
 	add rdx, Matches.transformFlags
 	mov r11, 100b			; TRANSFORM_CONTAINS
+	mov [rdx], r11
 
 	sub rsp, 8*8
 	mov rdx, [extractBetween.delimiter]
@@ -1378,6 +1379,8 @@ matching.extractBetween:
 	call list.newLastItem
 	add rsp, 8*8
 
+
+
 	sub rsp, 8*8
 	mov rdx, [extractBetween.letters]
 	mov rcx, [extractBetween.matches]
@@ -1385,6 +1388,7 @@ matching.extractBetween:
 	add rsp, 8*8
 	mov [extractBetween.matchList], rax
 	
+
 
 	sub rsp, 8*8
 	call list.new
@@ -1406,11 +1410,18 @@ matching.extractBetween:
 	jnl extractBetween.endMatchList
 
 	
+
 	sub rsp, 8*8
 	mov rcx, [extractBetween.matchList]
 	call list.getNextItem
 	add rsp, 8*8
 	mov [extractBetween.endIndex], rax
+
+	mov rcx, [extractBetween.endIndex]
+	sub rcx, 1b
+	mov [extractBetween.endIndex], rcx		; Non-inclusive
+
+
 	
 	sub rsp, 8*8
 	mov r8, [extractBetween.endIndex]
@@ -1424,8 +1435,9 @@ matching.extractBetween:
 	call list.newLastItem
 	add rsp, 8*8
 
-	mov r13, [extractBetween.endIndex]
-	mov [extractBetween.startIndex], r13		; Swap on next run
+	mov rcx, [extractBetween.endIndex]
+	add rcx, 10b
+	mov [extractBetween.startIndex], rcx		; Non-inclusive, skip ahead 2, swap on next run
 
 	jmp extractBetween.nextMatch
 
@@ -1442,14 +1454,16 @@ matching.extractBetween:
 	mov [extractBetween.letterLength], rax
 
 	mov rcx, [extractBetween.endIndex]
+	add rcx, 1b					; Was decremented earlier
 	mov rax, [extractBetween.letterLength]
 	sub rax, 1b
 	cmp rcx, rax
 	jnl extractBetween.end
 
 	sub rsp, 8*8
-	mov r8, [extractBetween.letterLength]		; -1? How can you include the end if end index is exclusive
+	mov r8, [extractBetween.letterLength]		
 	mov rdx, [extractBetween.endIndex]
+	add rdx, 10b					; Non-inclusive, was decremented before as end, must be advanced as start
 	mov rcx, [extractBetween.letters]
 	call letters.betweenIndices
 	add rsp, 8*8
@@ -1471,6 +1485,156 @@ matching.extractBetween:
 
 
 	mov rax, [extractBetween.extractList]
+
+
+
+	add rsp, 8	
+	pop r15 
+	pop r14 
+	pop r13 
+	pop r12 
+	pop rsp 
+	pop rsi 
+	pop rdi 
+	pop rbp 
+	pop rbx
+
+	mov rsp, rbp
+	pop rbp
+
+	retn 0
+
+; Extract Flow from matches between two delimiters
+; Tokenizer on tabular data, i.e. rows and columns from file with newlines and commas/tabs as delimiters
+matching.extractFlowBetween:
+	push rbp 
+	mov rbp, rsp 
+	sub rsp, (8*16);+(8*6)
+
+	;mov rcx, [rbp+8] 
+	;mov rdx, [rbp+12] 
+	label extractFlowBetween.heapAddress qword at rbp-8  
+	label extractFlowBetween.handleAllocatedMemory qword at rbp-16
+	label extractFlowBetween.matchFlow qword at rbp-24 
+	label extractFlowBetween.letterLength qword at rbp-32
+	label extractFlowBetween.jItem qword at rbp-40
+	label extractFlowBetween.letters qword at rbp-48
+	label extractFlowBetween.startIndex qword at rbp-56
+	label extractFlowBetween.endIndex qword at rbp-64
+	label extractFlowBetween.matchingIndex qword at rbp-72
+	label extractFlowBetween.iDelimiter qword at rbp-80
+	label extractFlowBetween.extractIndex qword at rbp-88
+	label extractFlowBetween.matchList qword at rbp-96
+	label extractFlowBetween.flow qword at rbp-104
+	label extractFlowBetween.jDelimiter qword at rbp-112
+	label extractFlowBetween.iExtractList qword at rbp-120
+	label extractFlowBetween.jExtractList qword at rbp-128
+	;virtual at rbp-64
+	;	.list List
+	;end virtual	
+
+
+	mov [extractFlowBetween.letters], rcx
+	mov [extractFlowBetween.iDelimiter], rdx		; Across
+	mov [extractFlowBetween.jDelimiter], r8			; Vertical
+
+
+	and rsp, -32
+	push rbx 
+	push rbp 
+	push rdi 
+	push rsi
+	push rsp 
+	push r12 
+	push r13 
+	push r14 
+	push r15
+	sub rsp, 8
+
+
+	sub rsp, 8*4
+	call [GetProcessHeap]
+	mov [extractFlowBetween.heapAddress], rax
+	add rsp, 8*4
+
+	sub rsp, 8*8
+	call flow.new
+	add rsp, 8*8
+	mov [extractFlowBetween.flow], rax
+
+
+	sub rsp, 8*8
+	mov rdx, [extractFlowBetween.jDelimiter]
+	mov rcx, [extractFlowBetween.letters]
+	call extractBetween
+	add rsp, 8*8
+	mov [extractFlowBetween.jExtractList], rax
+
+
+	.nextJItem:
+	mov rbx, [extractFlowBetween.jExtractList]
+	mov rdx, rbx
+	add rbx, List.index
+	add rdx, List.itemsCount
+	mov rcx, [rbx]
+	mov r8, [rdx]
+	cmp rcx, r8
+	jnl extractFlowBetween.endJList
+
+
+	sub rsp, 8*8
+	mov rcx, [extractFlowBetween.jExtractList]
+	call list.getNextItem
+	add rsp, 8*8
+	mov [extractFlowBetween.jItem], rax
+
+	sub rsp, 8*8
+	mov rdx, [extractFlowBetween.iDelimiter]
+	mov rcx, [extractFlowBetween.jItem]
+	call extractBetween
+	add rsp, 8*8
+	mov [extractFlowBetween.iExtractList], rax
+
+	mov rbx, [extractFlowBetween.iExtractList]
+	add rbx, List.itemsCount
+	mov rcx, [rbx]
+	mov r11, [extractFlowBetween.flow]
+	add r11, Flow.width
+	mov rdx, [r11]
+	cmp rcx, rdx
+	jle extractFlowBetween.flowWidthNotIncreased
+
+	sub rsp, 8*8
+	mov rbx, [extractFlowBetween.iExtractList]
+	add rbx, List.itemsCount
+	mov rdx, [rbx]
+	mov rcx, [extractFlowBetween.flow]
+	call flow.increaseWidth
+	add rsp, 8*8
+
+
+	.flowWidthNotIncreased:
+
+
+	sub rsp, 8*8
+	mov rdx, [extractFlowBetween.iExtractList]
+	mov rcx, [extractFlowBetween.flow]
+	call flow.newLastIVals
+	add rsp, 8*8
+
+
+
+
+	jmp extractFlowBetween.nextJItem
+	.endJList:
+
+
+
+
+
+	.end:
+
+	mov rax, [extractFlowBetween.flow]
 
 
 

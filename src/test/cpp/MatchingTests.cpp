@@ -293,6 +293,63 @@ TEST(MatchingTest, ReturnsExtractsBetweenDelimiters) {
 		char* extractVal = (char*)getNextItem(extractList);
 		fprintf(stdout, "\nNext extract val: %s",extractVal);
 	}
-	//EXPECT_EQ(1,matchExists);
+	EXPECT_EQ(4, extractList->itemsCount);
+
+}
+
+TEST(MatchingTest, ReturnsExtractsBetweenDelimitersWithtrailingDelimiter) {
+	char* letters = (char*)"val1,val2,val3,val4,";
+	char* delimiter = (char*)",";
+
+	fprintf(stdout, "\nLetters: %s\n", letters);
+	fprintf(stdout, "\nDelimiter Letters: %s\n", delimiter);
+	List* extractList = extractBetween(letters, delimiter);
+	fprintf(stdout, "\nMatch count: %d\n", extractList->itemsCount);
+
+	resetIndex(extractList);
+	while (extractList->index < extractList->itemsCount) {
+		char* extractVal = (char*)getNextItem(extractList);
+		fprintf(stdout, "\nNext extract val: %s", extractVal);
+	}
+	EXPECT_EQ(4,extractList->itemsCount);
+
+}
+
+TEST(MatchingTest, ReturnsFlowExtractedBetweenDelimiters) {
+	char* letters = (char*)"val1,val2,val3,val4\nval5,val6,val7,val8\n";
+	char* iDelimiter = (char*)",";
+	char* jDelimiter = (char*)"\n";
+
+	fprintf(stdout, "\nLetters: %s\n", letters);
+	fprintf(stdout, "\niDelimiter Letters: %s\n", iDelimiter);
+	fprintf(stdout, "\njDelimiter Letters: %s\n", jDelimiter);
+	Flow* flow = extractFlowBetween(letters, iDelimiter, jDelimiter);
+	fprintf(stdout, "\nMatch count: %d\n", (flow->length*flow->width));
+
+	resetFlowIJ(flow);
+	while (flow->j < flow->length) {
+		char* extractVal = (char*)getNextFlowItem(flow);
+		fprintf(stdout, "\nNext extract val: %s", extractVal);
+	}
+	EXPECT_EQ(8, (flow->length*flow->width));
+
+}
+TEST(MatchingTest, ReturnsFlowExtractedBetweenDelimitersWithoutTrailingNewline) {
+	char* letters = (char*)"val1,val2,val3,val4\nval5,val6,val7,val8";
+	char* iDelimiter = (char*)",";
+	char* jDelimiter = (char*)"\n";
+
+	fprintf(stdout, "\nLetters: %s\n", letters);
+	fprintf(stdout, "\niDelimiter Letters: %s\n", iDelimiter);
+	fprintf(stdout, "\njDelimiter Letters: %s\n", jDelimiter);
+	Flow* flow = extractFlowBetween(letters, iDelimiter, jDelimiter);
+	fprintf(stdout, "\nMatch count: %d\n", (flow->length*flow->width));
+
+	resetFlowIJ(flow);
+	while (flow->j < flow->length) {
+		char* extractVal = (char*)getNextFlowItem(flow);
+		fprintf(stdout, "\nNext extract val: %s", extractVal);
+	}
+	EXPECT_EQ(8, (flow->length*flow->width));
 
 }

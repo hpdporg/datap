@@ -140,6 +140,8 @@ extern "C" {
 	Flow* newFlow();
 	void newLastFlowList(Flow* flow, List* list);
 	void increaseFlowWidth(Flow* flow, _int64 width);
+	void resetFlowIJ(Flow*);
+	void* getNextFlowItem(Flow*);
 
 	//Storage
 	Record* newStorage();
@@ -163,6 +165,7 @@ extern "C" {
 	_int64 getNextMatchIndex(char* letters, char* containsLetters);
 	_int64 hasMatch(char* letters, char* containsLetters);
 	List* extractBetween(char* letters, char* delimiter);
+	Flow* extractFlowBetween(char* letters, char* iDelimiter, char* jDelimiter);
 
 	//Replacement
 	char* replaceLettersWithList(ReplaceFlags flags, char* letters, List* list, List* matchResultsList);
