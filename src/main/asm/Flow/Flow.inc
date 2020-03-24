@@ -33,15 +33,16 @@ section '.text' code readable writeable executable ;align 16
 
 flow:
 namespace flow
-flow.new:
+new:
+namespace new
 	push rbp 
 	mov rbp, rsp 
 	sub rsp, (8*2);+(8*0)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
-	label new.heapAddress qword at rbp-8  
-	label new.handleAllocatedMemory qword at rbp-16
+	label heapAddress qword at rbp-8  
+	label handleAllocatedMemory qword at rbp-16
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
@@ -64,7 +65,7 @@ flow.new:
 
 	sub rsp, 8*4
 	call [GetProcessHeap]
-	mov [new.heapAddress], rax
+	mov [heapAddress], rax
 	add rsp, 8*4
 	
 
@@ -75,35 +76,35 @@ flow.new:
 	sub rsp, 8*4
 	mov r8, rcx		
 	mov rdx, 000001000b
-	mov rcx, [new.heapAddress]
+	mov rcx, [heapAddress]
 	call [ HeapAlloc] 
-	mov [new.handleAllocatedMemory], rax
+	mov [handleAllocatedMemory], rax
 	add rsp, 8*4
 
 
-	mov rbx, [new.handleAllocatedMemory]
+	mov rbx, [handleAllocatedMemory]
 	add rbx, Flow.lists
 	sub rsp, 8*8
 	call list.new
 	add rsp, 8*8
 	mov [rbx], rax
-	mov rbx, [new.handleAllocatedMemory]
+	mov rbx, [handleAllocatedMemory]
 	add rbx, Flow.width
 	mov rax, 0
 	mov [rbx], rax
-	mov rbx, [new.handleAllocatedMemory]
+	mov rbx, [handleAllocatedMemory]
 	add rbx, Flow.i
 	mov rax, 0
 	mov [rbx], rax
-	mov rbx, [new.handleAllocatedMemory]
+	mov rbx, [handleAllocatedMemory]
 	add rbx, Flow.j
 	mov rax, 0
 	mov [rbx], rax
-	mov rbx, [new.handleAllocatedMemory]
+	mov rbx, [handleAllocatedMemory]
 	add rbx, Flow.length
 	mov rax, 0
 	mov [rbx], rax
-	mov rbx, [new.handleAllocatedMemory]
+	mov rbx, [handleAllocatedMemory]
 	add rbx, Flow.paddingValue
 	mov rax, 0
 	mov [rbx], rax
@@ -111,21 +112,21 @@ flow.new:
 	mov [rbx], rax
 
 
-	;lea rax, [new.list]
-	;lea rcx, [new.list.indexedItemIndex]
+	;lea rax, [list]
+	;lea rcx, [list.indexedItemIndex]
 
 	;sub rcx, rax
 	;add rcx, 1000b
 
 	;cld
 
-	;lea rsi, [new.list]
-	;mov rdi, [list.new.handleAllocatedMemory]
+	;lea rsi, [list]
+	;mov rdi, [list.handleAllocatedMemory]
 
 	;rep movsb
 
 
-	mov rax, [new.handleAllocatedMemory]
+	mov rax, [handleAllocatedMemory]
 
 
 	add rsp, 8	
@@ -143,33 +144,34 @@ flow.new:
 	pop rbp
 
 	retn 0
-
+end namespace
 
 
 
 
 ; Called by flow.increaseWidth
 ; Increments Flow.width. Increases Flow.length if applicable
-flow.newLastList:
+newLastList:
+namespace newLastList
 	push rbp 
 	mov rbp, rsp 
 	sub rsp, (8*6);+(8*6)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
-	label newLastList.heapAddress qword at rbp-8  
-	label newLastList.handleAllocatedMemory qword at rbp-16
-	label newLastList.list qword at rbp-24 
-	label newLastList.flow qword at rbp-32
-	label newLastList.prevItem qword at rbp-40
-	label newLastList.priorIndex qword at rbp-48
+	label heapAddress qword at rbp-8  
+	label handleAllocatedMemory qword at rbp-16
+	label newList qword at rbp-24 
+	label flow qword at rbp-32
+	label prevItem qword at rbp-40
+	label priorIndex qword at rbp-48
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
 
 
-	mov [newLastList.flow], rcx
-	mov [newLastList.list], rdx
+	mov [flow], rcx
+	mov [newList], rdx
 
 
 	and rsp, -32
@@ -187,8 +189,8 @@ flow.newLastList:
 
 
 	sub rsp, 8*8
-	mov rdx, [newLastList.list]
-	mov rbx, [newLastList.flow]
+	mov rdx, [newList]
+	mov rbx, [flow]
 	add rbx, Flow.lists
 	mov rcx, [rbx]
 	call list.newLastItem
@@ -206,28 +208,28 @@ flow.newLastList:
 ;	end struc	
 
 
-	mov rbx, [newLastList.flow]
+	mov rbx, [flow]
 	add rbx, Flow.width
 	mov rcx, [rbx]
 	add rcx, 1b
 	mov [rbx], rcx					; Increment
 
-	mov rdx, [newLastList.list]
+	mov rdx, [newList]
 	add rdx, List.itemsCount
 	mov rcx, [rdx]
-	mov rbx, [newLastList.flow]
+	mov rbx, [flow]
 	add rbx, Flow.length
 	mov r8, [rbx]
 
 	cmp rcx, r8
-	jle newLastList.flowLengthNotIncreased
+	jle flowLengthNotIncreased
 	
 	mov [rbx], rcx					; Length increased when greater
 
 
-	.flowLengthNotIncreased:
+	flowLengthNotIncreased:
 
-	.end:
+	completed:
 
 	mov rax, 0
 
@@ -248,31 +250,33 @@ flow.newLastList:
 	pop rbp
 
 	retn 0
+end namespace
 
 
 ; Builds new List, passes to Flow
 ; Calls flow.newLastList
 ; Takes Flow reference, length value as parameters
-flow.increaseWidth:
+increaseWidth:
+namespace increaseWidth
 	push rbp 
 	mov rbp, rsp 
 	sub rsp, (8*6);+(8*6)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
-	label increaseWidth.heapAddress qword at rbp-8  
-	label increaseWidth.handleAllocatedMemory qword at rbp-16
-	label increaseWidth.list qword at rbp-24 
-	label increaseWidth.flow qword at rbp-32
-	label increaseWidth.index qword at rbp-40
-	label increaseWidth.width qword at rbp-48
+	label heapAddress qword at rbp-8  
+	label handleAllocatedMemory qword at rbp-16
+	label flowList qword at rbp-24 
+	label flow qword at rbp-32
+	label index qword at rbp-40
+	label width qword at rbp-48
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
 
 
-	mov [increaseWidth.flow], rcx
-	mov [increaseWidth.width], rdx
+	mov [flow], rcx
+	mov [width], rdx
 
 
 	and rsp, -32
@@ -289,14 +293,14 @@ flow.increaseWidth:
 
 
 	mov rcx, 0
-	mov [increaseWidth.index], rcx			; Begin as 0
+	mov [index], rcx			; Begin as 0
 
 
-	.nextList:
-	mov rcx, [increaseWidth.index]
-	mov rdx, [increaseWidth.width]
+	nextList:
+	mov rcx, [index]
+	mov rdx, [width]
 	cmp rcx, rdx
-	jnl increaseWidth.increased
+	jnl increased
 
 
 	sub rsp, 8*8
@@ -304,23 +308,23 @@ flow.increaseWidth:
 	add rsp, 8*8
 	sub rsp, 8*8
 	mov rdx, rax
-	mov rcx, [increaseWidth.flow]
-	call flow.newLastList
+	mov rcx, [flow]
+	call newLastList
 	add rsp, 8*8
 
 
-	mov rcx, [increaseWidth.index]
+	mov rcx, [index]
 	add rcx, 1b
-	mov [increaseWidth.index], rcx
+	mov [index], rcx
 
-	jmp increaseWidth.nextList
-	.increased:
-
-
+	jmp nextList
+	increased:
 
 
 
-	.end:
+
+
+	completed:
 
 	mov rax, 0
 
@@ -341,35 +345,37 @@ flow.increaseWidth:
 	pop rbp
 
 	retn 0
+end namespace
 
 ; Pass vals from List into Flow across
 ; New Flow row
 ; Missing vals at end will be padded with padding value
-flow.newLastIVals:
+newLastIVals:
+namespace newLastIVals
 	push rbp 
 	mov rbp, rsp 
 	sub rsp, (8*11);+(8*6)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
-	label newLastIVals.heapAddress qword at rbp-8  
-	label newLastIVals.handleAllocatedMemory qword at rbp-16
-	label newLastIVals.list qword at rbp-24 
-	label newLastIVals.flow qword at rbp-32
-	label newLastIVals.index qword at rbp-40
-	label newLastIVals.length qword at rbp-48
-	label newLastIVals.item qword at rbp-56
-	label newLastIVals.paddingValue qword at rbp-64
-	label newLastIVals.lists qword at rbp-72
-	label newLastIVals.nextFlowList qword at rbp-80
-	label newLastIVals.width qword at rbp-88
+	label heapAddress qword at rbp-8  
+	label handleAllocatedMemory qword at rbp-16
+	label flowList qword at rbp-24 
+	label flow qword at rbp-32
+	label index qword at rbp-40
+	label length qword at rbp-48
+	label item qword at rbp-56
+	label paddingValue qword at rbp-64
+	label lists qword at rbp-72
+	label nextFlowList qword at rbp-80
+	label width qword at rbp-88
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
 
 
-	mov [newLastIVals.flow], rcx
-	mov [newLastIVals.list], rdx
+	mov [flow], rcx
+	mov [flowList], rdx
 
 
 	and rsp, -32
@@ -386,98 +392,98 @@ flow.newLastIVals:
 
 
 	mov rcx, 0
-	mov [newLastIVals.index], rcx			; Begin as 0
+	mov [index], rcx			; Begin as 0
 
-	mov rbx, [newLastIVals.flow]
+	mov rbx, [flow]
 	add rbx, Flow.width
 	mov r11, [rbx]
-	mov [newLastIVals.width], r11
+	mov [width], r11
 
-	mov rbx, [newLastIVals.flow]
+	mov rbx, [flow]
 	add rbx, Flow.paddingValue
 	mov r12, [rbx]
-	mov [newLastIVals.paddingValue], r12
+	mov [paddingValue], r12
 	
 	sub rsp, 8*8
-	mov rcx, [newLastIVals.list]
+	mov rcx, [flowList]
 	call list.resetIndex
 	add rsp, 8*8
 
 	sub rsp, 8*8
-	mov rbx, [newLastIVals.flow]
+	mov rbx, [flow]
 	add rbx, Flow.lists
 	mov rcx, [rbx]
-	mov [newLastIVals.lists], rcx
+	mov [lists], rcx
 	call list.resetIndex
 	add rsp, 8*8
 
-	.nextVal:
-	mov rcx, [newLastIVals.index]
-	mov rdx, [newLastIVals.width]
+	nextVal:
+	mov rcx, [index]
+	mov rdx, [width]
 	cmp rcx, rdx
-	jnl newLastIVals.endVals
+	jnl endVals
 
 
-	.nextListVal:
-	mov rcx, [newLastIVals.index]
-	mov rbx, [newLastIVals.list]
+	nextListVal:
+	mov rcx, [index]
+	mov rbx, [flowList]
 	add rbx, List.itemsCount
 	mov rdx, [rbx]
 	cmp rcx, rdx
-	jnl newLastIVals.endListVals
+	jnl endListVals
 
 	sub rsp, 8*8
-	mov rcx, [newLastIVals.list]
+	mov rcx, [flowList]
 	call list.getNextItem
 	add rsp, 8*8
-	mov [newLastIVals.item], rax
+	mov [item], rax
 
-	jmp newLastIVals.newItem
+	jmp newItem
 
-	.endListVals:
+	endListVals:
 
-	mov r12, [newLastIVals.paddingValue]		; List not full width of flow, use padding value instead
-	mov [newLastIVals.item], r12
+	mov r12, [paddingValue]		; List not full width of flow, use padding value instead
+	mov [item], r12
 
 
-	.newItem:
+	newItem:
 
 	sub rsp, 8*8
-	mov rcx, [newLastIVals.lists]
+	mov rcx, [lists]
 	call list.getNextItem
 	add rsp, 8*8
-	mov [newLastIVals.nextFlowList], rax
+	mov [nextFlowList], rax
 
 	sub rsp, 8*8
-	mov rdx, [newLastIVals.item]
-	mov rcx, [newLastIVals.nextFlowList]
+	mov rdx, [item]
+	mov rcx, [nextFlowList]
 	call list.newLastItem
 	add rsp, 8*8
 
-	mov rbx, [newLastIVals.nextFlowList]
+	mov rbx, [nextFlowList]
 	add rbx, List.itemsCount
 	mov r13, [rbx]
-	mov rbx, [newLastIVals.flow]
+	mov rbx, [flow]
 	add rbx, Flow.length
 	mov r14, [rbx]
 	cmp r13, r14
-	jle newLastIVals.flowLengthNotIncreased		; Should only not increase when next Flow List is shorter than another. May not happen due to padding
+	jle flowLengthNotIncreased		; Should only not increase when next Flow List is shorter than another. May not happen due to padding
 	mov [rbx], r13
 
-	.flowLengthNotIncreased:
+	flowLengthNotIncreased:
 
-	mov rcx, [newLastIVals.index]
+	mov rcx, [index]
 	add rcx, 1b
-	mov [newLastIVals.index], rcx
+	mov [index], rcx
 
-	jmp newLastIVals.nextVal
-	.endVals:
-
-
+	jmp nextVal
+	endVals:
 
 
 
-	.end:
+
+
+	completed:
 
 	mov rax, 0
 
@@ -498,38 +504,40 @@ flow.newLastIVals:
 	pop rbp
 
 	retn 0
+end namespace
 
 ; Pass vals from List into Flow across. List index param will be used as numeric ascending value.
 ; New Flow row, row in List in ascending order
 ; Missing vals at end will be padded with padding value
-flow.newAscendingIVals:
+newAscendingIVals:
+namespace newAscendingIVals
 	push rbp 
 	mov rbp, rsp 
 	sub rsp, (8*13);+(8*6)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
-	label newAscendingIVals.heapAddress qword at rbp-8  
-	label newAscendingIVals.handleAllocatedMemory qword at rbp-16
-	label newAscendingIVals.list qword at rbp-24 
-	label newAscendingIVals.flow qword at rbp-32
-	label newAscendingIVals.index qword at rbp-40
-	label newAscendingIVals.length qword at rbp-48
-	label newAscendingIVals.item qword at rbp-56
-	label newAscendingIVals.paddingValue qword at rbp-64
-	label newAscendingIVals.lists qword at rbp-72
-	label newAscendingIVals.nextFlowList qword at rbp-80
-	label newAscendingIVals.ascendingListIndex qword at rbp-88
-	label newAscendingIVals.width qword at rbp-96
-	label newAscendingIVals.jIndex qword at rbp-104
+	label heapAddress qword at rbp-8  
+	label handleAllocatedMemory qword at rbp-16
+	label flowList qword at rbp-24 
+	label flow qword at rbp-32
+	label index qword at rbp-40
+	label length qword at rbp-48
+	label item qword at rbp-56
+	label paddingValue qword at rbp-64
+	label lists qword at rbp-72
+	label nextFlowList qword at rbp-80
+	label ascendingListIndex qword at rbp-88
+	label width qword at rbp-96
+	label jIndex qword at rbp-104
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
 
 
-	mov [newAscendingIVals.flow], rcx
-	mov [newAscendingIVals.list], rdx
-	mov [newAscendingIVals.ascendingListIndex], r8
+	mov [flow], rcx
+	mov [flowList], rdx
+	mov [ascendingListIndex], r8
 
 
 	and rsp, -32
@@ -551,159 +559,159 @@ flow.newAscendingIVals:
 	
 
 	mov rcx, 0
-	mov [newAscendingIVals.index], rcx			; Begin as 0
+	mov [index], rcx			; Begin as 0
 
-	mov rbx, [newAscendingIVals.flow]
+	mov rbx, [flow]
 	add rbx, Flow.width
 	mov r11, [rbx]
-	mov [newAscendingIVals.width], r11
+	mov [width], r11
 
-	mov rbx, [newAscendingIVals.flow]
+	mov rbx, [flow]
 	add rbx, Flow.paddingValue
 	mov r12, [rbx]
-	mov [newAscendingIVals.paddingValue], r12
+	mov [paddingValue], r12
 	
 
-	mov rbx, [newAscendingIVals.flow]
+	mov rbx, [flow]
 	add rbx, Flow.lists
 	mov rcx, [rbx]
-	mov [newAscendingIVals.lists], rcx
+	mov [lists], rcx
 
-	mov rbx, [newAscendingIVals.list]
+	mov rbx, [flowList]
 	add rbx, List.index
-	mov rdx, [newAscendingIVals.ascendingListIndex]
+	mov rdx, [ascendingListIndex]
 	mov [rbx], rdx
-	mov r11, [newAscendingIVals.lists]
+	mov r11, [lists]
 	add r11, List.index
 	mov [r11], rdx
 
 	sub rsp, 8*8
-	mov rcx, [newAscendingIVals.lists]
+	mov rcx, [lists]
 	call list.getNextItem
 	add rsp, 8*8
-	mov [newAscendingIVals.nextFlowList], rax
+	mov [nextFlowList], rax
 
 	sub rsp, 8*8
-	mov rcx, [newAscendingIVals.list]
+	mov rcx, [flowList]
 	call list.getNextItem
 	add rsp, 8*8
-	mov [newAscendingIVals.item], rax
+	mov [item], rax
 
 
 	sub rsp, 8*8
-	mov rdx, [newAscendingIVals.item]
-	mov rcx, [newAscendingIVals.nextFlowList]
+	mov rdx, [item]
+	mov rcx, [nextFlowList]
 	call list.newAscendingItem
 	add rsp, 8*8
-	mov [newAscendingIVals.jIndex], rax			; Cache, use this later
+	mov [jIndex], rax			; Cache, use this later
 
 
 
 
 	sub rsp, 8*8
-	mov rcx, [newAscendingIVals.list]
+	mov rcx, [flowList]
 	call list.resetIndex
 	add rsp, 8*8
 
 
 
 	sub rsp, 8*8
-	mov rcx, [newAscendingIVals.lists]
+	mov rcx, [lists]
 	call list.resetIndex
 	add rsp, 8*8
 
 
 
-	.nextVal:
-	mov rcx, [newAscendingIVals.index]
-	mov rdx, [newAscendingIVals.width]
+	nextVal:
+	mov rcx, [index]
+	mov rdx, [width]
 	cmp rcx, rdx
-	jnl newAscendingIVals.endVals
+	jnl endVals
 
 
 
 
 
-	.nextListVal:
-	mov rcx, [newAscendingIVals.index]
-	mov rbx, [newAscendingIVals.list]
+	nextListVal:
+	mov rcx, [index]
+	mov rbx, [flowList]
 	add rbx, List.itemsCount
 	mov rdx, [rbx]
 	cmp rcx, rdx
-	jnl newAscendingIVals.endListVals
+	jnl endListVals
 
 
 
 
 	sub rsp, 8*8
-	mov rcx, [newAscendingIVals.list]
+	mov rcx, [flowList]
 	call list.getNextItem
 	add rsp, 8*8
-	mov [newAscendingIVals.item], rax
+	mov [item], rax
 
-	jmp newAscendingIVals.newItem
+	jmp newItem
 
-	.endListVals:
+	endListVals:
 
-	mov r12, [newAscendingIVals.paddingValue]		; List not full width of flow, use padding value instead
-	mov [newAscendingIVals.item], r12
+	mov r12, [paddingValue]		; List not full width of flow, use padding value instead
+	mov [item], r12
 
 
-	.newItem:
+	newItem:
 
 
 
 	sub rsp, 8*8
-	mov rcx, [newAscendingIVals.lists]
+	mov rcx, [lists]
 	call list.getNextItem
 	add rsp, 8*8
-	mov [newAscendingIVals.nextFlowList], rax
+	mov [nextFlowList], rax
 
-	mov r14, [newAscendingIVals.index]
-	mov r15, [newAscendingIVals.ascendingListIndex]
+	mov r14, [index]
+	mov r15, [ascendingListIndex]
 	cmp r14, r15
-	je newAscendingIVals.increaseLengthOnly
+	je increaseLengthOnly
 
-	mov r9, [newAscendingIVals.nextFlowList]
+	mov r9, [nextFlowList]
 	add r9, List.index
-	mov r8, [newAscendingIVals.jIndex]
+	mov r8, [jIndex]
 	mov [r9], r8
 
 
 	sub rsp, 8*8
-	mov rdx, [newAscendingIVals.item]
-	mov rcx, [newAscendingIVals.nextFlowList]
+	mov rdx, [item]
+	mov rcx, [nextFlowList]
 	call list.newNextItem
 	add rsp, 8*8
 
-	.increaseLengthOnly:
+	increaseLengthOnly:
 
 
 
-	mov rbx, [newAscendingIVals.nextFlowList]
+	mov rbx, [nextFlowList]
 	add rbx, List.itemsCount
 	mov r13, [rbx]
-	mov rbx, [newAscendingIVals.flow]
+	mov rbx, [flow]
 	add rbx, Flow.length
 	mov r14, [rbx]
 	cmp r13, r14
-	jle newAscendingIVals.flowLengthNotIncreased		; Should only not increase when next Flow List is shorter than another. May not happen due to padding
+	jle flowLengthNotIncreased		; Should only not increase when next Flow List is shorter than another. May not happen due to padding
 	mov [rbx], r13
 
-	.flowLengthNotIncreased:
+	flowLengthNotIncreased:
 
-	mov rcx, [newAscendingIVals.index]
+	mov rcx, [index]
 	add rcx, 1b
-	mov [newAscendingIVals.index], rcx
+	mov [index], rcx
 
-	jmp newAscendingIVals.nextVal
-	.endVals:
-
-
+	jmp nextVal
+	endVals:
 
 
 
-	.end:
+
+
+	completed:
 
 
 
@@ -727,38 +735,40 @@ flow.newAscendingIVals:
 	pop rbp
 
 	retn 0
+end namespace
 
 
 ; Finds item match, passes match index to Flow
 ; Also returns 0 when no match exists, 1 when exists
-flow.indexAsItemMatch:
+indexAsItemMatch:
+namespace indexAsItemMatch
 	push rbp 
 	mov rbp, rsp 
 	sub rsp, (8*13);+(8*6)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
-	label indexAsItemMatch.heapAddress qword at rbp-8  
-	label indexAsItemMatch.handleAllocatedMemory qword at rbp-16
-	label indexAsItemMatch.list qword at rbp-24 
-	label indexAsItemMatch.flow qword at rbp-32
-	label indexAsItemMatch.index qword at rbp-40
-	label indexAsItemMatch.length qword at rbp-48
-	label indexAsItemMatch.item qword at rbp-56
-	label indexAsItemMatch.paddingValue qword at rbp-64
-	label indexAsItemMatch.lists qword at rbp-72
-	label indexAsItemMatch.nextFlowList qword at rbp-80
-	label indexAsItemMatch.iListIndex qword at rbp-88
-	label indexAsItemMatch.width qword at rbp-96
-	label indexAsItemMatch.jIndex qword at rbp-104
+	label heapAddress qword at rbp-8  
+	label handleAllocatedMemory qword at rbp-16
+	label flowList qword at rbp-24 
+	label flow qword at rbp-32
+	label index qword at rbp-40
+	label length qword at rbp-48
+	label item qword at rbp-56
+	label paddingValue qword at rbp-64
+	label lists qword at rbp-72
+	label nextFlowList qword at rbp-80
+	label iListIndex qword at rbp-88
+	label width qword at rbp-96
+	label jIndex qword at rbp-104
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
 
 
-	mov [indexAsItemMatch.flow], rcx
-	mov [indexAsItemMatch.item], rdx
-	mov [indexAsItemMatch.iListIndex], r8
+	mov [flow], rcx
+	mov [item], rdx
+	mov [iListIndex], r8
 
 
 	and rsp, -32
@@ -778,69 +788,69 @@ flow.indexAsItemMatch:
 
 	
 
-	mov rbx, [indexAsItemMatch.flow]
+	mov rbx, [flow]
 	add rbx, Flow.lists
 	mov rcx, [rbx]
-	mov [indexAsItemMatch.lists], rcx
+	mov [lists], rcx
 
 
-	mov r11, [indexAsItemMatch.lists]
+	mov r11, [lists]
 	add r11, List.index
-	mov rdx, [indexAsItemMatch.iListIndex]
+	mov rdx, [iListIndex]
 	mov [r11], rdx
 
 	sub rsp, 8*8
-	mov rcx, [indexAsItemMatch.lists]
+	mov rcx, [lists]
 	call list.getNextItem
 	add rsp, 8*8
-	mov [indexAsItemMatch.nextFlowList], rax
+	mov [nextFlowList], rax
 
 
 
 
 	sub rsp, 8*8
-	mov rcx, [indexAsItemMatch.nextFlowList]
+	mov rcx, [nextFlowList]
 	call list.resetIndex
 	add rsp, 8*8
 
 	sub rsp, 8*8
-	mov rdx, [indexAsItemMatch.item]
-	mov rcx, [indexAsItemMatch.nextFlowList]
+	mov rdx, [item]
+	mov rcx, [nextFlowList]
 	call list.getNextItemMatchIndex
 	add rsp, 8*8
-	mov [indexAsItemMatch.index], rax
+	mov [index], rax
 
 
-	mov rbx, [indexAsItemMatch.flow]
+	mov rbx, [flow]
 	add rbx, Flow.j
-	mov rax, [indexAsItemMatch.index]
+	mov rax, [index]
 	mov [rbx], rax
 
 
 
 	mov rdx, 0						; Blank?
-	mov rbx, [indexAsItemMatch.nextFlowList]
+	mov rbx, [nextFlowList]
 	add rbx, List.itemsCount
 	mov r8, [rbx]
 	cmp rdx, r8
-	je indexAsItemMatch.endMatching
+	je endMatching
 
-	mov rdx, [indexAsItemMatch.index]
-	mov rbx, [indexAsItemMatch.nextFlowList]
+	mov rdx, [index]
+	mov rbx, [nextFlowList]
 	add rbx, List.itemsCount
 	mov r8, [rbx]
 	cmp rdx, r8
-	je indexAsItemMatch.endMatching
+	je endMatching
 	
 	mov rax, 1
 
-	jmp indexAsItemMatch.end				; 0 when no match exists
-	.endMatching:
+	jmp completed				; 0 when no match exists
+	endMatching:
 
 	mov rax, 0
 
 
-	.end:
+	completed:
 
 	mov rax, rax
 
@@ -860,37 +870,39 @@ flow.indexAsItemMatch:
 	pop rbp
 
 	retn 0
+end namespace
 
 
 ; Get each i val at Flow's j index
 ; Should consider caching the j List in the Flow so heapfree is not necessary
-flow.getNextJVals:
+getNextJVals:
+namespace getNextJVals
 	push rbp 
 	mov rbp, rsp 
 	sub rsp, (8*14);+(8*6)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
-	label getNextJVals.heapAddress qword at rbp-8  
-	label getNextJVals.handleAllocatedMemory qword at rbp-16
-	label getNextJVals.list qword at rbp-24 
-	label getNextJVals.flow qword at rbp-32
-	label getNextJVals.index qword at rbp-40
-	label getNextJVals.length qword at rbp-48
-	label getNextJVals.item qword at rbp-56
-	label getNextJVals.paddingValue qword at rbp-64
-	label getNextJVals.lists qword at rbp-72
-	label getNextJVals.nextFlowList qword at rbp-80
-	label getNextJVals.iListIndex qword at rbp-88
-	label getNextJVals.width qword at rbp-96
-	label getNextJVals.jIndex qword at rbp-104
-	label getNextJVals.jVals qword at rbp-112
+	label heapAddress qword at rbp-8  
+	label handleAllocatedMemory qword at rbp-16
+	label flowList qword at rbp-24 
+	label flow qword at rbp-32
+	label index qword at rbp-40
+	label length qword at rbp-48
+	label item qword at rbp-56
+	label paddingValue qword at rbp-64
+	label lists qword at rbp-72
+	label nextFlowList qword at rbp-80
+	label iListIndex qword at rbp-88
+	label width qword at rbp-96
+	label jIndex qword at rbp-104
+	label jVals qword at rbp-112
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
 
 
-	mov [getNextJVals.flow], rcx
+	mov [flow], rcx
 
 
 	and rsp, -32
@@ -911,16 +923,16 @@ flow.getNextJVals:
 	sub rsp, 8*8
 	call list.new
 	add rsp, 8*8
-	mov [getNextJVals.jVals], rax
+	mov [jVals], rax
 
-	mov rbx, [getNextJVals.flow]
+	mov rbx, [flow]
 	add rbx, Flow.lists
 	mov r10, [rbx]
-	mov [getNextJVals.lists], r10
+	mov [lists], r10
 
-	mov rbx, [getNextJVals.lists]
+	mov rbx, [lists]
 	add rbx, List.index
-	mov r8, [getNextJVals.flow]
+	mov r8, [flow]
 	add r8, Flow.i
 	mov rcx, [r8]
 	mov [rbx], rcx
@@ -931,37 +943,37 @@ flow.getNextJVals:
 
 
 
-	mov rbx, [getNextJVals.flow]
+	mov rbx, [flow]
 	mov r8, rbx
 	add rbx, Flow.j
 	mov rcx, [rbx]
 	add r8, Flow.length
 	mov rdx, [r8]
 	cmp rcx, rdx
-	jnl getNextJVals.endFlow
+	jnl endFlow
 
 
 
-	.nextVal:
-	mov rbx, [getNextJVals.flow]
+	nextVal:
+	mov rbx, [flow]
 	mov r8, rbx
 	add rbx, Flow.i
 	mov rcx, [rbx]
 	add r8, Flow.width
 	mov rdx, [r8]
 	cmp rcx, rdx
-	jnl getNextJVals.endVals
+	jnl endVals
 
 
 	sub rsp, 8*8
-	mov rcx, [getNextJVals.lists]
+	mov rcx, [lists]
 	call list.getNextItem
 	add rsp, 8*8
-	mov [getNextJVals.nextFlowList], rax
+	mov [nextFlowList], rax
 
-	mov rbx, [getNextJVals.nextFlowList]
+	mov rbx, [nextFlowList]
 	add rbx, List.index
-	mov r11, [getNextJVals.flow]
+	mov r11, [flow]
 	add r11, Flow.j
 	mov rcx, [r11]
 	mov [rbx], rcx
@@ -970,43 +982,43 @@ flow.getNextJVals:
 
 
 	sub rsp, 8*8
-	mov rcx, [getNextJVals.nextFlowList]
+	mov rcx, [nextFlowList]
 	call list.getNextItem
 	add rsp, 8*8
-	mov [getNextJVals.item], rax
+	mov [item], rax
 
 
 	sub rsp, 8*8
-	mov rdx, [getNextJVals.item]
-	mov rcx, [getNextJVals.jVals]
+	mov rdx, [item]
+	mov rcx, [jVals]
 	call list.newLastItem
 	add rsp, 8*8
 
 
-	mov rbx, [getNextJVals.flow]
+	mov rbx, [flow]
 	add rbx, Flow.i
 	mov rcx, [rbx]
 	add rcx, 1b					; Increment
 	mov [rbx], rcx
 
-	jmp getNextJVals.nextVal
-	.endVals:
+	jmp nextVal
+	endVals:
 
 
-	mov rbx, [getNextJVals.flow]
+	mov rbx, [flow]
 	add rbx, Flow.j
 	mov rcx, [rbx]
 	add rcx, 1b					; Increment
 	mov [rbx], rcx
 
-	.endFlow:
+	endFlow:
 
 
-	.end:
+	completed:
 
 
 
-	mov rax, [getNextJVals.jVals]
+	mov rax, [jVals]
 
 
 
@@ -1025,37 +1037,39 @@ flow.getNextJVals:
 	pop rbp
 
 	retn 0
+end namespace
 
 
 ; Flow i index as 0
 ; Takes Flow as param
-flow.resetI:
+resetI:
+namespace resetI
 	push rbp 
 	mov rbp, rsp 
 	sub rsp, (8*14);+(8*6)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
-	label resetI.heapAddress qword at rbp-8  
-	label resetI.handleAllocatedMemory qword at rbp-16
-	label resetI.list qword at rbp-24 
-	label resetI.flow qword at rbp-32
-	label resetI.index qword at rbp-40
-	label resetI.length qword at rbp-48
-	label resetI.item qword at rbp-56
-	label resetI.paddingValue qword at rbp-64
-	label resetI.lists qword at rbp-72
-	label resetI.nextFlowList qword at rbp-80
-	label resetI.iListIndex qword at rbp-88
-	label resetI.width qword at rbp-96
-	label resetI.jIndex qword at rbp-104
-	label resetI.jVals qword at rbp-112
+	label heapAddress qword at rbp-8  
+	label handleAllocatedMemory qword at rbp-16
+	label flowList qword at rbp-24 
+	label flow qword at rbp-32
+	label index qword at rbp-40
+	label length qword at rbp-48
+	label item qword at rbp-56
+	label paddingValue qword at rbp-64
+	label lists qword at rbp-72
+	label nextFlowList qword at rbp-80
+	label iListIndex qword at rbp-88
+	label width qword at rbp-96
+	label jIndex qword at rbp-104
+	label jVals qword at rbp-112
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
 
 
-	mov [resetI.flow], rcx
+	mov [flow], rcx
 
 
 	and rsp, -32
@@ -1072,13 +1086,13 @@ flow.resetI:
 
 
 
-	mov rbx, [resetI.flow]
+	mov rbx, [flow]
 	add rbx, Flow.i
 	mov rcx, 0
 	mov [rbx], rcx
 
 
-	.end:
+	completed:
 
 	mov rax, 0
 
@@ -1099,37 +1113,39 @@ flow.resetI:
 	pop rbp
 
 	retn 0
+end namespace
 
 
 ; Flow i and j indices as 0
 ; Takes Flow as param
-flow.resetIJ:
+resetIJ:
+namespace resetIJ
 	push rbp 
 	mov rbp, rsp 
 	sub rsp, (8*14);+(8*6)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
-	label resetIJ.heapAddress qword at rbp-8  
-	label resetIJ.handleAllocatedMemory qword at rbp-16
-	label resetIJ.list qword at rbp-24 
-	label resetIJ.flow qword at rbp-32
-	label resetIJ.index qword at rbp-40
-	label resetIJ.length qword at rbp-48
-	label resetIJ.item qword at rbp-56
-	label resetIJ.paddingValue qword at rbp-64
-	label resetIJ.lists qword at rbp-72
-	label resetIJ.nextFlowList qword at rbp-80
-	label resetIJ.iListIndex qword at rbp-88
-	label resetIJ.width qword at rbp-96
-	label resetIJ.jIndex qword at rbp-104
-	label resetIJ.jVals qword at rbp-112
+	label heapAddress qword at rbp-8  
+	label handleAllocatedMemory qword at rbp-16
+	label flowList qword at rbp-24 
+	label flow qword at rbp-32
+	label index qword at rbp-40
+	label length qword at rbp-48
+	label item qword at rbp-56
+	label paddingValue qword at rbp-64
+	label lists qword at rbp-72
+	label nextFlowList qword at rbp-80
+	label iListIndex qword at rbp-88
+	label width qword at rbp-96
+	label jIndex qword at rbp-104
+	label jVals qword at rbp-112
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
 
 
-	mov [resetIJ.flow], rcx
+	mov [flow], rcx
 
 
 	and rsp, -32
@@ -1146,7 +1162,7 @@ flow.resetIJ:
 
 
 
-	mov rbx, [resetIJ.flow]
+	mov rbx, [flow]
 	mov rdx, rbx
 	add rbx, Flow.i
 	add rdx, Flow.j
@@ -1155,7 +1171,7 @@ flow.resetIJ:
 	mov [rdx], rcx
 
 
-	.end:
+	completed:
 
 	mov rax, 0
 
@@ -1176,36 +1192,38 @@ flow.resetIJ:
 	pop rbp
 
 	retn 0
+end namespace
 
 
 ; Gets val at i,j and increments i,j with wrapping
-flow.getNextItem:
+getNextItem:
+namespace getNextItem
 	push rbp 
 	mov rbp, rsp 
 	sub rsp, (8*14);+(8*6)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
-	label getNextItem.heapAddress qword at rbp-8  
-	label getNextItem.handleAllocatedMemory qword at rbp-16
-	label getNextItem.list qword at rbp-24 
-	label getNextItem.flow qword at rbp-32
-	label getNextItem.iIndex qword at rbp-40
-	label getNextItem.length qword at rbp-48
-	label getNextItem.item qword at rbp-56
-	label getNextItem.paddingValue qword at rbp-64
-	label getNextItem.lists qword at rbp-72
-	label getNextItem.nextFlowList qword at rbp-80
-	label getNextItem.iListIndex qword at rbp-88
-	label getNextItem.width qword at rbp-96
-	label getNextItem.jIndex qword at rbp-104
-	label getNextItem.itemCompleted qword at rbp-112
+	label heapAddress qword at rbp-8  
+	label handleAllocatedMemory qword at rbp-16
+	label flowList qword at rbp-24 
+	label flow qword at rbp-32
+	label iIndex qword at rbp-40
+	label length qword at rbp-48
+	label item qword at rbp-56
+	label paddingValue qword at rbp-64
+	label lists qword at rbp-72
+	label nextFlowList qword at rbp-80
+	label iListIndex qword at rbp-88
+	label width qword at rbp-96
+	label jIndex qword at rbp-104
+	label itemCompleted qword at rbp-112
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
 
 
-	mov [getNextItem.flow], rcx
+	mov [flow], rcx
 
 
 	and rsp, -32
@@ -1221,133 +1239,133 @@ flow.getNextItem:
 	sub rsp, 8
 
 	mov rcx, 0
-	mov [getNextItem.item], rcx			; Begin as 0
-	mov [getNextItem.itemCompleted], rcx			; Begin as 0
+	mov [item], rcx			; Begin as 0
+	mov [itemCompleted], rcx			; Begin as 0
 
 
-	mov rbx, [getNextItem.flow]
+	mov rbx, [flow]
 	mov r9, rbx
 	add rbx, Flow.i
 	mov rcx, [rbx]
-	mov [getNextItem.iIndex], rcx
+	mov [iIndex], rcx
 	add r9, Flow.j
 	mov rdx, [r9]
-	mov [getNextItem.jIndex], rdx
-	mov rbx, [getNextItem.flow]
+	mov [jIndex], rdx
+	mov rbx, [flow]
 	add rbx, Flow.lists
 	mov r8, [rbx]
-	mov [getNextItem.lists], r8
-	mov r10, [getNextItem.flow]
+	mov [lists], r8
+	mov r10, [flow]
 	add r10, Flow.width
 	mov r11, [r10]
-	mov [getNextItem.width], r11
-	mov rbx, [getNextItem.flow]
+	mov [width], r11
+	mov rbx, [flow]
 	add rbx, Flow.length
 	mov rcx, [rbx]
-	mov [getNextItem.length], rcx
-	mov r10, [getNextItem.flow]
+	mov [length], rcx
+	mov r10, [flow]
 	add r10, Flow.paddingValue
 	mov r11, [r10]
-	mov [getNextItem.paddingValue], r11
+	mov [paddingValue], r11
 
 
-	.nextI:
-	mov r11, [getNextItem.iIndex]
-	mov r12, [getNextItem.width]
+	nextI:
+	mov r11, [iIndex]
+	mov r12, [width]
 	cmp r11, r12
-	jnl getNextItem.wrapI
+	jnl wrapI
 	
 
-	mov rbx, [getNextItem.lists]
+	mov rbx, [lists]
 	mov r10, rbx
 	add r10, List.itemsCount
 	mov rdx, [r10]
 	add rbx, List.index
-	mov r11, [getNextItem.iIndex]
+	mov r11, [iIndex]
 	cmp r11, rdx
-	jnl getNextItem.getPaddingVal
+	jnl getPaddingVal
 	mov [rbx], r11
 
 
-	.nextJ:
-	mov rbx, [getNextItem.lists]
+	nextJ:
+	mov rbx, [lists]
 	add rbx, List.index
-	mov r8, [getNextItem.iIndex]
+	mov r8, [iIndex]
 	mov [rbx], r8
 	
 	sub rsp, 8*8
-	mov rcx, [getNextItem.lists]
+	mov rcx, [lists]
 	call list.getNextItem
 	add rsp, 8*8
-	mov [getNextItem.nextFlowList], rax
+	mov [nextFlowList], rax
 
-	mov rbx, [getNextItem.nextFlowList]
+	mov rbx, [nextFlowList]
 	add rbx, List.itemsCount
 	mov r15, [rbx]
-	mov r13, [getNextItem.length]
+	mov r13, [length]
 	cmp r15, r13
-	jnle getNextItem.getPaddingVal
+	jnle getPaddingVal
 
-	mov rbx, [getNextItem.nextFlowList]
+	mov rbx, [nextFlowList]
 	add rbx, List.index
-	mov r11, [getNextItem.jIndex]
+	mov r11, [jIndex]
 	mov [rbx], r11
 
 	sub rsp, 8*8
-	mov rcx, [getNextItem.nextFlowList]
+	mov rcx, [nextFlowList]
 	call list.getNextItem
 	add rsp, 8*8
-	mov [getNextItem.item], rax
+	mov [item], rax
 
 	mov rdx, 1b
-	mov [getNextItem.itemCompleted], rdx
+	mov [itemCompleted], rdx
 
-	jmp getNextItem.incrementIJ
+	jmp incrementIJ
 
-	.getPaddingVal:
-	mov r9, [getNextItem.paddingValue]
-	mov [getNextItem.item], r9
+	getPaddingVal:
+	mov r9, [paddingValue]
+	mov [item], r9
 
 	mov rdx, 1b
-	mov [getNextItem.itemCompleted], rdx
+	mov [itemCompleted], rdx
 
-	.incrementIJ:
+	incrementIJ:
 
-	mov r11, [getNextItem.iIndex]
+	mov r11, [iIndex]
 	add r11, 1b
-	mov [getNextItem.iIndex], r11
-	mov rbx, [getNextItem.flow]
+	mov [iIndex], r11
+	mov rbx, [flow]
 	add rbx, Flow.i
 	mov [rbx], r11
 
-	mov r11, [getNextItem.iIndex]
-	mov r12, [getNextItem.width]
+	mov r11, [iIndex]
+	mov r12, [width]
 	cmp r11, r12
-	jl getNextItem.end					; Wrap I,J only when i greater than width
+	jl completed					; Wrap I,J only when i greater than width
 
-	.wrapI:
+	wrapI:
 	mov rcx, 0
-	mov [getNextItem.iIndex], rcx			; Wrap I
-	mov r10, [getNextItem.jIndex]
+	mov [iIndex], rcx			; Wrap I
+	mov r10, [jIndex]
 	add r10, 1b
-	mov [getNextItem.jIndex], r10			; Wrap J
-	mov rbx, [getNextItem.flow]
+	mov [jIndex], r10			; Wrap J
+	mov rbx, [flow]
 	mov r9, rbx
 	add rbx, Flow.i
 	add r9, Flow.j
 	mov [rbx], rcx
 	mov [r9], r10
 
-	mov rdx, [getNextItem.itemCompleted]
+	mov rdx, [itemCompleted]
 	cmp rdx, 1b
-	jne getNextItem.nextI
+	jne nextI
 
 
-	.end:
+	completed:
 
 
 
-	mov rax, [getNextItem.item]
+	mov rax, [item]
 
 
 
@@ -1366,6 +1384,7 @@ flow.getNextItem:
 	pop rbp
 
 	retn 0
+end namespace
 
 
 end namespace

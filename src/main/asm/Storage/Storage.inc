@@ -38,15 +38,16 @@ section '.text' code readable writeable executable align 16
 
 storage:
 namespace storage
-storage.new:
+new:
+namespace new
 	push rbp 
 	mov rbp, rsp 
 	sub rsp, (8*2);+(8*0)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
-	label new.heapAddress qword at rbp-8  
-	label new.handleAllocatedMemory qword at rbp-16
+	label heapAddress qword at rbp-8  
+	label handleAllocatedMemory qword at rbp-16
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
@@ -69,7 +70,7 @@ storage.new:
 
 	sub rsp, 8*4
 	call [GetProcessHeap]
-	mov [new.heapAddress], rax
+	mov [heapAddress], rax
 	add rsp, 8*4
 	
 
@@ -80,53 +81,53 @@ storage.new:
 	sub rsp, 8*4
 	mov r8, rcx		
 	mov rdx, 000001000b
-	mov rcx, [new.heapAddress]
+	mov rcx, [heapAddress]
 	call [ HeapAlloc] 
-	mov [new.handleAllocatedMemory], rax
+	mov [handleAllocatedMemory], rax
 	add rsp, 8*4
 
 
-	mov rbx, [new.handleAllocatedMemory]
+	mov rbx, [handleAllocatedMemory]
 	add rbx, Record.allocAddr
 	mov rax, 0
 	mov [rbx], rax
-	mov rbx, [new.handleAllocatedMemory]
+	mov rbx, [handleAllocatedMemory]
 	add rbx, Record.allocSize
 	mov rax, 0
 	mov [rbx], rax
-	mov rbx, [new.handleAllocatedMemory]
+	mov rbx, [handleAllocatedMemory]
 	add rbx, Record.name
 	mov rax, 0
 	mov [rbx], rax
-	mov rbx, [new.handleAllocatedMemory]
+	mov rbx, [handleAllocatedMemory]
 	add rbx, Record.location
 	mov rax, 0
 	mov [rbx], rax
-	mov rbx, [new.handleAllocatedMemory]
+	mov rbx, [handleAllocatedMemory]
 	add rbx, Record.builtLocation
 	mov rax, 0
 	mov [rbx], rax
-	mov rbx, [new.handleAllocatedMemory]
+	mov rbx, [handleAllocatedMemory]
 	add rbx, Record.handle
 	mov rax, 0
 	mov [rbx], rax
 
 
-	;lea rax, [new.list]
-	;lea rcx, [new.list.indexedItemIndex]
+	;lea rax, [list]
+	;lea rcx, [list.indexedItemIndex]
 
 	;sub rcx, rax
 	;add rcx, 1000b
 
 	;cld
 
-	;lea rsi, [new.list]
-	;mov rdi, [storage.new.handleAllocatedMemory]
+	;lea rsi, [list]
+	;mov rdi, [storage.handleAllocatedMemory]
 
 	;rep movsb
 
 
-	mov rax, [new.handleAllocatedMemory]
+	mov rax, [handleAllocatedMemory]
 
 
 	add rsp, 8	
@@ -144,26 +145,28 @@ storage.new:
 	pop rbp
 
 	retn 0
+end namespace
 
-storage.retrieve:
+retrieve:
+namespace retrieve
 	push rbp 
 	mov rbp, rsp 
 	sub rsp, (8*6);+(8*6)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
-	label retrieve.heapAddress qword at rbp-8  
-	label retrieve.handleAllocatedMemory qword at rbp-16
-	label retrieve.list qword at rbp-24 
-	label retrieve.item qword at rbp-32
-	label retrieve.recordAddr qword at rbp-40
-	label retrieve.sizeRetrieved qword at rbp-48
+	label heapAddress qword at rbp-8  
+	label handleAllocatedMemory qword at rbp-16
+	label list qword at rbp-24 
+	label item qword at rbp-32
+	label recordAddr qword at rbp-40
+	label sizeRetrieved qword at rbp-48
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
 
 
-	mov [retrieve.recordAddr], rcx
+	mov [recordAddr], rcx
 
 
 	and rsp, -32
@@ -185,16 +188,16 @@ storage.retrieve:
 	mov r9, 0 						;lpSecurityAttributes
 	mov r8, 000000010b 					;dwShareMode
 	mov rdx, 10100000000000000000000100000101b		;dwDesiredAccess
-	mov rbx, [retrieve.recordAddr]
+	mov rbx, [recordAddr]
 	add rbx, Record.builtLocation
 	mov rcx, [rbx]
 	call [CreateFile]
 	add rsp, 8*8
-	mov rbx, [retrieve.recordAddr]
+	mov rbx, [recordAddr]
 	add rbx, Record.handle
 	mov [rbx], rax
 
-	mov rbx, [retrieve.recordAddr]
+	mov rbx, [recordAddr]
 	add rbx, Record.handle
 	mov rcx, [rbx]
 	sub rsp, 8*4
@@ -204,12 +207,12 @@ storage.retrieve:
 
 	sub rsp, 8*8
 	mov rdx, 0				; File size high
-	mov rbx, [retrieve.recordAddr]
+	mov rbx, [recordAddr]
 	add rbx, Record.handle
 	mov rcx, [rbx]
 	call [GetFileSize]
 	add rsp, 8*8
-	mov rbx, [retrieve.recordAddr]
+	mov rbx, [recordAddr]
 	add rbx, Record.allocSize
 	mov rcx, 0
 	mov ecx, eax
@@ -217,18 +220,18 @@ storage.retrieve:
 
 	sub rsp, 8*4
 	call [GetProcessHeap]
-	mov [retrieve.heapAddress], rax
+	mov [heapAddress], rax
 	add rsp, 8*4
 	
 
 	sub rsp, 8*4
-	mov rbx, [retrieve.recordAddr]
+	mov rbx, [recordAddr]
 	add rbx, Record.allocSize
 	mov r8, [rbx]	
 	mov rdx, 000001000b
-	mov rcx, [retrieve.heapAddress]
+	mov rcx, [heapAddress]
 	call [ HeapAlloc] 
-	mov rbx, [retrieve.recordAddr]
+	mov rbx, [recordAddr]
 	add rbx, Record.allocAddr
 	mov [rbx], rax
 	add rsp, 8*4
@@ -238,14 +241,14 @@ storage.retrieve:
 	sub rsp, 8*8
 	mov r10, 0
 	mov [rsp+4*8], r10
-	lea r9, [retrieve.sizeRetrieved]
-	mov rbx, [retrieve.recordAddr]
+	lea r9, [sizeRetrieved]
+	mov rbx, [recordAddr]
 	add rbx, Record.allocSize
 	mov r8, [rbx]
-	mov rbx, [retrieve.recordAddr]
+	mov rbx, [recordAddr]
 	add rbx, Record.allocAddr
 	mov rdx, [rbx]
-	mov rbx, [retrieve.recordAddr]
+	mov rbx, [recordAddr]
 	add rbx, Record.handle
 	mov rcx, [rbx]
 	call [ReadFile]
@@ -260,36 +263,36 @@ storage.retrieve:
 
 	sub rsp, 8*8
 	mov rdx, 0				; File size high
-	mov rbx, [retrieve.recordAddr]
+	mov rbx, [recordAddr]
 	add rbx, Record.handle
 	mov rcx, [rbx]
 	call [CloseHandle]
 	add rsp, 8*8
 
 	sub rsp, 8*8
-	mov rbx, [retrieve.recordAddr]
+	mov rbx, [recordAddr]
 	add rbx, Record.allocSize
 	mov rdx, [rbx]
-	mov rbx, [retrieve.recordAddr]
+	mov rbx, [recordAddr]
 	add rbx, Record.allocAddr
 	mov rcx, [rbx]
 	call letters.appendZero
 	add rsp, 8*8
 
-	mov rbx, [retrieve.recordAddr]
+	mov rbx, [recordAddr]
 	add rbx, Record.allocAddr
 	mov [rbx], rax
 
-	mov rbx, [retrieve.recordAddr]
+	mov rbx, [recordAddr]
 	add rbx, Record.allocSize
 	mov r8, [rbx]
 	add r8, 1b
 	mov [rbx], r8
 
 
-	mov rax, [retrieve.recordAddr]
+	mov rax, [recordAddr]
 	
-	retrieve.end:
+	completed:
 
 
 	add rsp, 8	
@@ -307,27 +310,29 @@ storage.retrieve:
 	pop rbp
 
 	retn 0
+end namespace
 
-storage.storeLetters:
+storeLetters:
+namespace storeLetters
 	push rbp 
 	mov rbp, rsp 
 	sub rsp, (8*6);+(8*6)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
-	label storeLetters.heapAddress qword at rbp-8  
-	label storeLetters.handleAllocatedMemory qword at rbp-16
-	label storeLetters.letterLength qword at rbp-24 
-	label storeLetters.sizeWritten qword at rbp-32
-	label storeLetters.recordAddr qword at rbp-40
-	label storeLetters.letters qword at rbp-48
+	label heapAddress qword at rbp-8  
+	label handleAllocatedMemory qword at rbp-16
+	label letterLength qword at rbp-24 
+	label sizeWritten qword at rbp-32
+	label recordAddr qword at rbp-40
+	label lettersAlloc qword at rbp-48
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
 
 
-	mov [storeLetters.recordAddr], rcx
-	mov [storeLetters.letters], rdx
+	mov [recordAddr], rcx
+	mov [lettersAlloc], rdx
 
 
 	and rsp, -32
@@ -345,10 +350,10 @@ storage.storeLetters:
 	
 
 	sub rsp, 8*4
-	mov rcx, [storeLetters.letters]
+	mov rcx, [lettersAlloc]
 	call letters.letterLength
 	add rsp, 8*4
-	mov [storeLetters.letterLength], rax
+	mov [letterLength], rax
 
 
 	sub rsp, 8*10
@@ -358,16 +363,16 @@ storage.storeLetters:
 	mov r9, 0 						;lpSecurityAttributes
 	mov r8, 000000010b 					;dwShareMode
 	mov rdx, 10100000000000000000000100000101b		;dwDesiredAccess
-	mov rbx, [storeLetters.recordAddr]
+	mov rbx, [recordAddr]
 	add rbx, Record.builtLocation
 	mov rcx, [rbx]
 	call [CreateFile]
 	add rsp, 8*10
-	mov rbx, [storeLetters.recordAddr]
+	mov rbx, [recordAddr]
 	add rbx, Record.handle
 	mov [rbx], rax
 
-	mov rbx, [storeLetters.recordAddr]
+	mov rbx, [recordAddr]
 	add rbx, Record.handle
 	mov rcx, [rbx]
 	sub rsp, 8*4
@@ -376,12 +381,12 @@ storage.storeLetters:
 
 	sub rsp, 8*8
 	mov rdx, 0				; File size high
-	mov rbx, [storeLetters.recordAddr]
+	mov rbx, [recordAddr]
 	add rbx, Record.handle
 	mov rcx, [rbx]
 	call [GetFileSize]
 	add rsp, 8*8
-	mov rbx, [storeLetters.recordAddr]
+	mov rbx, [recordAddr]
 	add rbx, Record.allocSize
 	mov rcx, 0
 	mov ecx, eax
@@ -389,20 +394,20 @@ storage.storeLetters:
 
 	sub rsp, 8*8
 	mov qword [rsp+4*8], 0
-	lea r9, [storeLetters.sizeWritten]
-	mov r8, [storeLetters.letterLength]
-	mov rdx, [storeLetters.letters]
-	mov rbx, [storeLetters.recordAddr]
+	lea r9, [sizeWritten]
+	mov r8, [letterLength]
+	mov rdx, [lettersAlloc]
+	mov rbx, [recordAddr]
 	add rbx, Record.handle
 	mov rcx, [rbx]
 	call [WriteFile]
 	add rsp, 8*8
 
 
-	mov rbx, [storeLetters.recordAddr]
+	mov rbx, [recordAddr]
 	add rbx, Record.allocSize
 	mov rcx, [rbx]
-	mov rdx, [storeLetters.letterLength]
+	mov rdx, [letterLength]
 	add rcx, rdx
 	mov [rbx], rcx
 
@@ -410,7 +415,7 @@ storage.storeLetters:
 
 	sub rsp, 8*8
 	mov rdx, 0				; File size high
-	mov rbx, [storeLetters.recordAddr]
+	mov rbx, [recordAddr]
 	add rbx, Record.handle
 	mov rcx, [rbx]
 	call [CloseHandle]
@@ -419,10 +424,10 @@ storage.storeLetters:
 
 
 
-	mov rax, [storeLetters.recordAddr]
+	mov rax, [recordAddr]
 
 
-	storeLetters.end:
+	completed:
 
 
 	add rsp, 8	
@@ -440,29 +445,31 @@ storage.storeLetters:
 	pop rbp
 
 	retn 0
+end namespace
 
 ; Replaces contents
 
-storage.restoreLetters:
+restoreLetters:
+namespace restoreLetters
 	push rbp 
 	mov rbp, rsp 
 	sub rsp, (8*6);+(8*6)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
-	label restoreLetters.heapAddress qword at rbp-8  
-	label restoreLetters.handleAllocatedMemory qword at rbp-16
-	label restoreLetters.letterLength qword at rbp-24 
-	label restoreLetters.sizeWritten qword at rbp-32
-	label restoreLetters.recordAddr qword at rbp-40
-	label restoreLetters.letters qword at rbp-48
+	label reheapAddress qword at rbp-8  
+	label rehandleAllocatedMemory qword at rbp-16
+	label reletterLength qword at rbp-24 
+	label resizeWritten qword at rbp-32
+	label rerecordAddr qword at rbp-40
+	label reletters qword at rbp-48
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
 
 
-	mov [restoreLetters.recordAddr], rcx
-	mov [restoreLetters.letters], rdx
+	mov [rerecordAddr], rcx
+	mov [reletters], rdx
 
 
 	and rsp, -32
@@ -479,13 +486,13 @@ storage.restoreLetters:
 
 
 	sub rsp, 8*4
-	mov rcx, [restoreLetters.letters]
+	mov rcx, [reletters]
 	call letters.letterLength
 	add rsp, 8*4
-	mov [restoreLetters.letterLength], rax
+	mov [reletterLength], rax
 
 
-	mov rbx, [restoreLetters.recordAddr]
+	mov rbx, [rerecordAddr]
 	add rbx, Record.builtLocation
 	mov rcx, [rbx]
 	sub rsp, 8*4
@@ -499,12 +506,12 @@ storage.restoreLetters:
 	mov r9, 0 						;lpSecurityAttributes
 	mov r8, 000000010b 					;dwShareMode
 	mov rdx, 10100000000000000000000100000101b		;dwDesiredAccess
-	mov rbx, [restoreLetters.recordAddr]
+	mov rbx, [rerecordAddr]
 	add rbx, Record.builtLocation
 	mov rcx, [rbx]
 	call [CreateFile]
 	add rsp, 8*8
-	mov rbx, [restoreLetters.recordAddr]
+	mov rbx, [rerecordAddr]
 	add rbx, Record.handle
 	mov [rbx], rax
 
@@ -512,20 +519,20 @@ storage.restoreLetters:
 
 	sub rsp, 8*8
 	mov qword [rsp+4*8], 0
-	lea r9, [restoreLetters.sizeWritten]
-	mov r8, [restoreLetters.letterLength]
-	mov rdx, [restoreLetters.letters]
-	mov rbx, [restoreLetters.recordAddr]
+	lea r9, [resizeWritten]
+	mov r8, [reletterLength]
+	mov rdx, [reletters]
+	mov rbx, [rerecordAddr]
 	add rbx, Record.handle
 	mov rcx, [rbx]
 	call [WriteFile]
 	add rsp, 8*8
 
 
-	mov rbx, [restoreLetters.recordAddr]
+	mov rbx, [rerecordAddr]
 	add rbx, Record.allocSize
 	mov rcx, [rbx]
-	mov rdx, [restoreLetters.letterLength]
+	mov rdx, [reletterLength]
 	add rcx, rdx
 	mov [rbx], rcx
 
@@ -533,7 +540,7 @@ storage.restoreLetters:
 
 	sub rsp, 8*8
 	mov rdx, 0				; File size high
-	mov rbx, [restoreLetters.recordAddr]
+	mov rbx, [rerecordAddr]
 	add rbx, Record.handle
 	mov rcx, [rbx]
 	call [CloseHandle]
@@ -542,10 +549,10 @@ storage.restoreLetters:
 
 
 
-	mov rax, [restoreLetters.recordAddr]
+	mov rax, [rerecordAddr]
 
 
-	restoreLetters.end:
+	reend:
 
 
 	add rsp, 8	
@@ -563,29 +570,30 @@ storage.restoreLetters:
 	pop rbp
 
 	retn 0
-
+end namespace
 
 ; Replaces file with allocation already in record
 ; No letters passed in
-storage.restore:
+?restore:
+namespace restore
 	push rbp 
 	mov rbp, rsp 
 	sub rsp, (8*6);+(8*6)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
-	label restore.heapAddress qword at rbp-8  
-	label restore.handleAllocatedMemory qword at rbp-16
-	label restore.letterLength qword at rbp-24 
-	label restore.sizeWritten qword at rbp-32
-	label restore.recordAddr qword at rbp-40
-	label restore.letters qword at rbp-48
+	label heapAddress qword at rbp-8  
+	label handleAllocatedMemory qword at rbp-16
+	label letterLength qword at rbp-24 
+	label sizeWritten qword at rbp-32
+	label recordAddr qword at rbp-40
+	label lettersAlloc qword at rbp-48
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
 
 
-	mov [restore.recordAddr], rcx
+	mov [recordAddr], rcx
 	
 
 	and rsp, -32
@@ -602,18 +610,18 @@ storage.restore:
 
 
 	sub rsp, 8*4
-	mov rbx, [restore.recordAddr]
+	mov rbx, [recordAddr]
 	add rbx, Record.allocAddr
 	mov rcx, [rbx]
 	call letters.letterLength
 	add rsp, 8*4
-	mov [restore.letterLength], rax
-	mov rbx, [restore.recordAddr]
+	mov [letterLength], rax
+	mov rbx, [recordAddr]
 	add rbx, Record.allocSize
 	mov [rbx], rax
 
 
-	mov rbx, [restore.recordAddr]
+	mov rbx, [recordAddr]
 	add rbx, Record.builtLocation
 	mov rcx, [rbx]
 	sub rsp, 8*4
@@ -627,12 +635,12 @@ storage.restore:
 	mov r9, 0 						;lpSecurityAttributes
 	mov r8, 000000010b 					;dwShareMode
 	mov rdx, 10100000000000000000000100000101b		;dwDesiredAccess
-	mov rbx, [restore.recordAddr]
+	mov rbx, [recordAddr]
 	add rbx, Record.builtLocation
 	mov rcx, [rbx]
 	call [CreateFile]
 	add rsp, 8*8
-	mov rbx, [restore.recordAddr]
+	mov rbx, [recordAddr]
 	add rbx, Record.handle
 	mov [rbx], rax
 
@@ -640,22 +648,22 @@ storage.restore:
 
 	sub rsp, 8*8
 	mov qword [rsp+4*8], 0
-	lea r9, [restore.sizeWritten]
-	mov r8, [restore.letterLength]
-	mov rbx, [restore.recordAddr]
+	lea r9, [sizeWritten]
+	mov r8, [letterLength]
+	mov rbx, [recordAddr]
 	add rbx, Record.allocAddr
 	mov rdx, [rbx]
-	mov rbx, [restore.recordAddr]
+	mov rbx, [recordAddr]
 	add rbx, Record.handle
 	mov rcx, [rbx]
 	call [WriteFile]
 	add rsp, 8*8
 
 
-	mov rbx, [restore.recordAddr]
+	mov rbx, [recordAddr]
 	add rbx, Record.allocSize
 	mov rcx, [rbx]
-	mov rdx, [restore.letterLength]
+	mov rdx, [letterLength]
 	add rcx, rdx
 	mov [rbx], rcx
 
@@ -663,7 +671,7 @@ storage.restore:
 
 	sub rsp, 8*8
 	mov rdx, 0				; File size high
-	mov rbx, [restore.recordAddr]
+	mov rbx, [recordAddr]
 	add rbx, Record.handle
 	mov rcx, [rbx]
 	call [CloseHandle]
@@ -672,10 +680,10 @@ storage.restore:
 
 
 
-	mov rax, [restore.recordAddr]
+	mov rax, [recordAddr]
 
 
-	restore.end:
+	completed:
 
 
 	add rsp, 8	
@@ -693,25 +701,26 @@ storage.restore:
 	pop rbp
 
 	retn 0
+end namespace
 
-
-storage.defineRecordPath:
+defineRecordPath:
+namespace defineRecordPath
 	push rbp 
 	mov rbp, rsp 
 	sub rsp, (8*3);+(8*0)
 
 	;mov rcx, [rbp+8]
 	;mov rdx, [rbp+12]
-	label defineRecordPath.recordAddr qword at rbp-8  
-	label defineRecordPath.name qword at rbp-16
-	label defineRecordPath.location qword at rbp-24
+	label recordAddr qword at rbp-8  
+	label name qword at rbp-16
+	label location qword at rbp-24
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
 
-	mov [defineRecordPath.recordAddr], rcx
-	mov [defineRecordPath.name], rdx
-	mov [defineRecordPath.location], r8
+	mov [recordAddr], rcx
+	mov [name], rdx
+	mov [location], r8
 
 	and rsp, -32
 	push rbx 
@@ -725,34 +734,34 @@ storage.defineRecordPath:
 	push r15
 	sub rsp, 8
 
-	mov rbx, [defineRecordPath.recordAddr]
+	mov rbx, [recordAddr]
 	add rbx, Record.name
-	mov rdx, [defineRecordPath.name]
+	mov rdx, [name]
 	mov [rbx], rdx
-	mov rbx, [defineRecordPath.recordAddr]
+	mov rbx, [recordAddr]
 	add rbx, Record.location
-	mov r8, [defineRecordPath.location]
+	mov r8, [location]
 	mov [rbx], r8	
 
 
 	sub rsp, 8*8
 	mov rdx, pathSepLetters
-	mov rcx, [defineRecordPath.location]
+	mov rcx, [location]
 	call letters.appendLetters
 	add rsp, 8*8
 
 	sub rsp, 8*8
-	mov rdx, [defineRecordPath.name]
+	mov rdx, [name]
 	mov rcx, rax
 	call letters.appendLetters
 	add rsp, 8*8
 
-	mov rbx, [defineRecordPath.recordAddr]
+	mov rbx, [recordAddr]
 	add rbx, Record.builtLocation
 	mov [rbx], rax
 
 
-	mov rax, [defineRecordPath.recordAddr]
+	mov rax, [recordAddr]
 
 	add rsp, 8	
 	pop r15 
@@ -769,30 +778,32 @@ storage.defineRecordPath:
 	pop rbp
 
 	retn 0
+end namespace
 
-storage.retrieveRecordNames:
+retrieveRecordNames:
+namespace retrieveRecordNames
 	push rbp 
 	mov rbp, rsp 
 	sub rsp, (8*10);+(8*6)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
-	label retrieveRecordNames.heapAddress qword at rbp-8  
-	label retrieveRecordNames.handleAllocatedMemory qword at rbp-16
-	label retrieveRecordNames.handle qword at rbp-24 
-	label retrieveRecordNames.item qword at rbp-32
-	label retrieveRecordNames.recordAddr qword at rbp-40
-	label retrieveRecordNames.sizeRetrieved qword at rbp-48
-	label retrieveRecordNames.w32FindData qword at rbp-56
-	label retrieveRecordNames.locationContentsLetters qword at rbp-64
-	label retrieveRecordNames.nextFileNameLetters qword at rbp-72
-	label retrieveRecordNames.list qword at rbp-80
+	label heapAddress qword at rbp-8  
+	label handleAllocatedMemory qword at rbp-16
+	label handle qword at rbp-24 
+	label item qword at rbp-32
+	label recordAddr qword at rbp-40
+	label sizeRetrieved qword at rbp-48
+	label w32FindData qword at rbp-56
+	label locationContentsLetters qword at rbp-64
+	label nextFileNameLetters qword at rbp-72
+	label listAlloc qword at rbp-80
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
 
 
-	mov [retrieveRecordNames.recordAddr], rcx
+	mov [recordAddr], rcx
 
 
 	and rsp, -32
@@ -823,38 +834,38 @@ storage.retrieveRecordNames:
 	sub rsp, 8*8
 	call list.new
 	add rsp, 8*8
-	mov [retrieveRecordNames.list], rax
+	mov [listAlloc], rax
 	
 
 	sub rsp, 8*8
 	mov rdx, directoryContentsLetters
-	mov rbx, [retrieveRecordNames.recordAddr]
+	mov rbx, [recordAddr]
 	add rbx, Record.location
 	mov rcx, [rbx]
 	call letters.appendLetters
 	add rsp, 8*8
-	mov [retrieveRecordNames.locationContentsLetters], rax
+	mov [locationContentsLetters], rax
 
 
 	sub rsp, 8*8
 	mov rcx, 64
 	call allocate.linear
 	add rsp, 8*8
-	mov [retrieveRecordNames.w32FindData], rax
+	mov [w32FindData], rax
 
 
 
 
 	sub rsp, 8*8
-	mov rdx, [retrieveRecordNames.w32FindData]
-	mov rcx,[retrieveRecordNames.locationContentsLetters]
+	mov rdx, [w32FindData]
+	mov rcx,[locationContentsLetters]
 	call [FindFirstFile]
 	add rsp, 8*8
-	mov [retrieveRecordNames.handle], rax
+	mov [handle], rax
 	mov r9, 0
 	sub r9, 1b
 	cmp rax, r9
-	jne retrieveRecordNames.noError ; INVALID_HANDLE_VALUE
+	jne noError ; INVALID_HANDLE_VALUE
 
 	;sub rsp, 8*8
 	;call [GetLastError]
@@ -862,31 +873,31 @@ storage.retrieveRecordNames:
 	;mov rax, rax
 	
 
-	.noError:
-	;jmp retrieveRecordNames.firstFile	; debug
+	noError:
+	;jmp firstFile	; debug
 
 	sub rsp, 8*8
 	mov rdx, currentDirLetter
-	mov r9, [retrieveRecordNames.w32FindData]
+	mov r9, [w32FindData]
 	add r9, 44
 	mov rcx, r9
 	call matching.lettersSameExact
 	add rsp, 8*8
 	cmp rax, 0
-	jne retrieveRecordNames.nextFile
+	jne nextFile
 
 	sub rsp, 8*8
 	mov rdx, containingDirLetters
-	mov r9, [retrieveRecordNames.w32FindData]
+	mov r9, [w32FindData]
 	add r9, 44
 	mov rcx, r9
 	call matching.lettersSameExact
 	add rsp, 8*8
 	cmp rax, 0
-	jne retrieveRecordNames.nextFile
+	jne nextFile
 
-	.firstFile:
-	mov r9, [retrieveRecordNames.w32FindData]
+	firstFile:
+	mov r9, [w32FindData]
 	add r9, 44
 	mov rcx, r9
 	sub rsp, 8*8
@@ -896,57 +907,57 @@ storage.retrieveRecordNames:
 
 	sub rsp, 8*8
 	;mov rdx, rax
-	mov rcx, [retrieveRecordNames.list]
+	mov rcx, [listAlloc]
 	call list.newLastItem
 	add rsp, 8*8
 
 
 	;mov r14, 0
-	;mov [retrieveRecordNames.item], r14	;debug
+	;mov [item], r14	;debug
 
-	.nextFile:
+	nextFile:
 
 	sub rsp, 8*8
-	mov rdx, [retrieveRecordNames.w32FindData]
-	mov rcx, [retrieveRecordNames.handle]
+	mov rdx, [w32FindData]
+	mov rcx, [handle]
 	call [FindNextFile]
 	add rsp, 8*8
 	mov r9, rax
 	cmp r9, 0
-	je retrieveRecordNames.endFiles
+	je endFiles
 
 
 
-	;mov r14, [retrieveRecordNames.item]
+	;mov r14, [item]
 	;add r14, 10b
-	;mov [retrieveRecordNames.item], r14
+	;mov [item], r14
 	;cmp r14, 101b
-	;jge retrieveRecordNames.end
+	;jge end
 
-	;jmp retrieveRecordNames.newLast	; debug
+	;jmp newLast	; debug
 
 	sub rsp, 8*8
 	mov rdx, currentDirLetter
-	mov r9, [retrieveRecordNames.w32FindData]
+	mov r9, [w32FindData]
 	add r9, 44
 	mov rcx, r9
 	call matching.lettersSameExact				
 	add rsp, 8*8
 	cmp rax, 0
-	jne retrieveRecordNames.nextFile
+	jne nextFile
 
 	sub rsp, 8*8
 	mov rdx, containingDirLetters
-	mov r9, [retrieveRecordNames.w32FindData]
+	mov r9, [w32FindData]
 	add r9, 44
 	mov rcx, r9
 	call matching.lettersSameExact
 	add rsp, 8*8
 	cmp rax, 0
-	jne retrieveRecordNames.nextFile
+	jne nextFile
 
-	.newLast:
-	mov r9, [retrieveRecordNames.w32FindData]
+	newLast:
+	mov r9, [w32FindData]
 	add r9, 44
 	mov rcx, r9
 	sub rsp, 8*8
@@ -956,21 +967,21 @@ storage.retrieveRecordNames:
 
 	sub rsp, 8*8
 	;mov rdx, rax
-	mov rcx, [retrieveRecordNames.list]
+	mov rcx, [listAlloc]
 	call list.newLastItem
 	add rsp, 8*8
 
 
 
-	jmp retrieveRecordNames.nextFile
-	.endFiles:
+	jmp nextFile
+	endFiles:
 
 
 
 
-	retrieveRecordNames.end:
+	completed:
 
-	mov rax, [retrieveRecordNames.list]
+	mov rax, [listAlloc]
 
 
 	add rsp, 8	
@@ -988,33 +999,35 @@ storage.retrieveRecordNames:
 	pop rbp
 
 	retn 0
+end namespace
 
 ; Uses extension also
-storage.retrieveRecordNamesExtension:
+retrieveRecordNamesExtension:
+namespace retrieveRecordNamesExtension
 	push rbp 
 	mov rbp, rsp 
 	sub rsp, (8*11);+(8*6)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
-	label retrieveRecordNamesExtension.heapAddress qword at rbp-8  
-	label retrieveRecordNamesExtension.handleAllocatedMemory qword at rbp-16
-	label retrieveRecordNamesExtension.handle qword at rbp-24 
-	label retrieveRecordNamesExtension.item qword at rbp-32
-	label retrieveRecordNamesExtension.recordAddr qword at rbp-40
-	label retrieveRecordNamesExtension.sizeRetrieved qword at rbp-48
-	label retrieveRecordNamesExtension.w32FindData qword at rbp-56
-	label retrieveRecordNamesExtension.locationContentsLetters qword at rbp-64
-	label retrieveRecordNamesExtension.nextFileNameLetters qword at rbp-72
-	label retrieveRecordNamesExtension.list qword at rbp-80
-	label retrieveRecordNamesExtension.fileExtensionLetters qword at rbp-88
+	label heapAddress qword at rbp-8  
+	label handleAllocatedMemory qword at rbp-16
+	label handle qword at rbp-24 
+	label item qword at rbp-32
+	label recordAddr qword at rbp-40
+	label sizeRetrieved qword at rbp-48
+	label w32FindData qword at rbp-56
+	label locationContentsLetters qword at rbp-64
+	label nextFileNameLetters qword at rbp-72
+	label listAlloc qword at rbp-80
+	label fileExtensionLetters qword at rbp-88
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
 
 
-	mov [retrieveRecordNamesExtension.recordAddr], rcx
-	mov [retrieveRecordNamesExtension.fileExtensionLetters], rdx
+	mov [recordAddr], rcx
+	mov [fileExtensionLetters], rdx
 
 	and rsp, -32
 	push rbx 
@@ -1044,45 +1057,45 @@ storage.retrieveRecordNamesExtension:
 	sub rsp, 8*8
 	call list.new
 	add rsp, 8*8
-	mov [retrieveRecordNamesExtension.list], rax
+	mov [listAlloc], rax
 	
 
 	sub rsp, 8*8
 	mov rdx, directoryContentsLetters
-	mov rbx, [retrieveRecordNamesExtension.recordAddr]
+	mov rbx, [recordAddr]
 	add rbx, Record.location
 	mov rcx, [rbx]
 	call letters.appendLetters
 	add rsp, 8*8
-	mov [retrieveRecordNamesExtension.locationContentsLetters], rax
+	mov [locationContentsLetters], rax
 
 	sub rsp, 8*8
-	mov rdx, [retrieveRecordNamesExtension.fileExtensionLetters]
-	mov rcx, [retrieveRecordNamesExtension.locationContentsLetters]
+	mov rdx, [fileExtensionLetters]
+	mov rcx, [locationContentsLetters]
 	call letters.appendLetters							; Only difference from retrieveRecordNames
 	add rsp, 8*8
-	mov [retrieveRecordNamesExtension.locationContentsLetters], rax
+	mov [locationContentsLetters], rax
 
 
 	sub rsp, 8*8
 	mov rcx, 64
 	call allocate.linear
 	add rsp, 8*8
-	mov [retrieveRecordNamesExtension.w32FindData], rax
+	mov [w32FindData], rax
 
 
 
 
 	sub rsp, 8*8
-	mov rdx, [retrieveRecordNamesExtension.w32FindData]
-	mov rcx,[retrieveRecordNamesExtension.locationContentsLetters]
+	mov rdx, [w32FindData]
+	mov rcx,[locationContentsLetters]
 	call [FindFirstFile]
 	add rsp, 8*8
-	mov [retrieveRecordNamesExtension.handle], rax
+	mov [handle], rax
 	mov r9, 0
 	sub r9, 1b
 	cmp rax, r9
-	jne retrieveRecordNamesExtension.noError ; INVALID_HANDLE_VALUE
+	jne noError ; INVALID_HANDLE_VALUE
 
 
 	sub rsp, 8*8
@@ -1096,18 +1109,18 @@ storage.retrieveRecordNamesExtension:
 	;mov rax, rax
 	
 
-	.noError:
-	;jmp retrieveRecordNamesExtension.firstFile	; debug
+	noError:
+	;jmp firstFile	; debug
 
 	sub rsp, 8*8
 	mov rdx, currentDirLetter
-	mov r9, [retrieveRecordNamesExtension.w32FindData]
+	mov r9, [w32FindData]
 	add r9, 44
 	mov rcx, r9
 	call matching.lettersSameExact
 	add rsp, 8*8
 	cmp rax, 0
-	jne retrieveRecordNamesExtension.nextFile
+	jne nextFile
 
 
 	sub rsp, 8*8
@@ -1117,13 +1130,13 @@ storage.retrieveRecordNamesExtension:
 
 	sub rsp, 8*8
 	mov rdx, containingDirLetters
-	mov r9, [retrieveRecordNamesExtension.w32FindData]
+	mov r9, [w32FindData]
 	add r9, 44
 	mov rcx, r9
 	call matching.lettersSameExact
 	add rsp, 8*8
 	cmp rax, 0
-	jne retrieveRecordNamesExtension.nextFile
+	jne nextFile
 
 
 	sub rsp, 8*8
@@ -1131,8 +1144,8 @@ storage.retrieveRecordNamesExtension:
 	;call debugNumMsg
 	add rsp, 8*8
 
-	.firstFile:
-	mov r9, [retrieveRecordNamesExtension.w32FindData]
+	firstFile:
+	mov r9, [w32FindData]
 	add r9, 44
 	mov rcx, r9
 	sub rsp, 8*8
@@ -1142,7 +1155,7 @@ storage.retrieveRecordNamesExtension:
 
 	sub rsp, 8*8
 	;mov rdx, rax
-	mov rcx, [retrieveRecordNamesExtension.list]
+	mov rcx, [listAlloc]
 	call list.newLastItem
 	add rsp, 8*8
 
@@ -1154,28 +1167,28 @@ storage.retrieveRecordNamesExtension:
 
 
 	;mov r14, 0
-	;mov [retrieveRecordNamesExtension.item], r14	;debug
+	;mov [item], r14	;debug
 
-	.nextFile:
+	nextFile:
 
 	sub rsp, 8*8
-	mov rdx, [retrieveRecordNamesExtension.w32FindData]
-	mov rcx, [retrieveRecordNamesExtension.handle]
+	mov rdx, [w32FindData]
+	mov rcx, [handle]
 	call [FindNextFile]
 	add rsp, 8*8
 	mov r9, rax
 	cmp r9, 0
-	je retrieveRecordNamesExtension.endFiles
+	je endFiles
 
 
 
-	;mov r14, [retrieveRecordNamesExtension.item]
+	;mov r14, [item]
 	;add r14, 10b
-	;mov [retrieveRecordNamesExtension.item], r14
+	;mov [item], r14
 	;cmp r14, 101b
-	;jge retrieveRecordNamesExtension.end
+	;jge completed
 
-	;jmp retrieveRecordNamesExtension.newLast	; debug
+	;jmp newLast	; debug
 
 
 	sub rsp, 8*8
@@ -1185,26 +1198,26 @@ storage.retrieveRecordNamesExtension:
 
 	sub rsp, 8*8
 	mov rdx, currentDirLetter
-	mov r9, [retrieveRecordNamesExtension.w32FindData]
+	mov r9, [w32FindData]
 	add r9, 44
 	mov rcx, r9
 	call matching.lettersSameExact				
 	add rsp, 8*8
 	cmp rax, 0
-	jne retrieveRecordNamesExtension.nextFile
+	jne nextFile
 
 	sub rsp, 8*8
 	mov rdx, containingDirLetters
-	mov r9, [retrieveRecordNamesExtension.w32FindData]
+	mov r9, [w32FindData]
 	add r9, 44
 	mov rcx, r9
 	call matching.lettersSameExact
 	add rsp, 8*8
 	cmp rax, 0
-	jne retrieveRecordNamesExtension.nextFile
+	jne nextFile
 
-	.newLast:
-	mov r9, [retrieveRecordNamesExtension.w32FindData]
+	newLast:
+	mov r9, [w32FindData]
 	add r9, 44
 	mov rcx, r9
 	sub rsp, 8*8
@@ -1214,14 +1227,14 @@ storage.retrieveRecordNamesExtension:
 
 	sub rsp, 8*8
 	;mov rdx, rax
-	mov rcx, [retrieveRecordNamesExtension.list]
+	mov rcx, [listAlloc]
 	call list.newLastItem
 	add rsp, 8*8
 
 
 
-	jmp retrieveRecordNamesExtension.nextFile
-	.endFiles:
+	jmp nextFile
+	endFiles:
 
 
 	sub rsp, 8*8
@@ -1230,7 +1243,7 @@ storage.retrieveRecordNamesExtension:
 	add rsp, 8*8
 
 
-	retrieveRecordNamesExtension.end:
+	completed:
 
 
 	sub rsp, 8*8
@@ -1238,7 +1251,7 @@ storage.retrieveRecordNamesExtension:
 	;call debugNumMsg
 	add rsp, 8*8
 
-	mov rax, [retrieveRecordNamesExtension.list]
+	mov rax, [listAlloc]
 
 
 	add rsp, 8	
@@ -1256,26 +1269,28 @@ storage.retrieveRecordNamesExtension:
 	pop rbp
 
 	retn 0
+end namespace
 
-storage.removeRecord:
+removeRecord:
+namespace removeRecord
 	push rbp 
 	mov rbp, rsp 
 	sub rsp, (8*6);+(8*6)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
-	label removeRecord.heapAddress qword at rbp-8  
-	label removeRecord.handleAllocatedMemory qword at rbp-16
-	label removeRecord.list qword at rbp-24 
-	label removeRecord.item qword at rbp-32
-	label removeRecord.recordAddr qword at rbp-40
-	label removeRecord.sizeRetrieved qword at rbp-48
+	label heapAddress qword at rbp-8  
+	label handleAllocatedMemory qword at rbp-16
+	label listAlloc qword at rbp-24 
+	label item qword at rbp-32
+	label recordAddr qword at rbp-40
+	label sizeRetrieved qword at rbp-48
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
 
 
-	mov [removeRecord.recordAddr], rcx
+	mov [recordAddr], rcx
 
 
 	and rsp, -32
@@ -1295,7 +1310,7 @@ storage.removeRecord:
 
 	sub rsp, 8*8
 	mov rdx, 0				; File size high
-	mov rbx, [removeRecord.recordAddr]
+	mov rbx, [recordAddr]
 	add rbx, Record.builtLocation
 	mov rcx, [rbx]
 	call [DeleteFile]
@@ -1303,10 +1318,10 @@ storage.removeRecord:
 
 
 	
-	mov rax, [removeRecord.recordAddr]
+	mov rax, [recordAddr]
 
 
-	removeRecord.end:
+	completed:
 
 
 	add rsp, 8	
@@ -1324,30 +1339,30 @@ storage.removeRecord:
 	pop rbp
 
 	retn 0
+end namespace
 
-
-
-storage.debugNum:
+debugNum:
+namespace debugNum
 	push rbp 
 	mov rbp, rsp 
 	sub rsp, (8*8);+(8*6)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
-	label debugNum.heapAddress qword at rbp-8  
-	label debugNum.handleAllocatedMemory qword at rbp-16
-	label debugNum.list qword at rbp-24 
-	label debugNum.item qword at rbp-32
-	label debugNum.recordAddr qword at rbp-40
-	label debugNum.sizeRetrieved qword at rbp-48
-	label debugNum.num qword at rbp-56
-	label debugNum.letters qword at rbp-64
+	label heapAddress qword at rbp-8  
+	label handleAllocatedMemory qword at rbp-16
+	label listAlloc qword at rbp-24 
+	label item qword at rbp-32
+	label recordAddr qword at rbp-40
+	label sizeRetrieved qword at rbp-48
+	label num qword at rbp-56
+	label lettersAlloc qword at rbp-64
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
 
 
-	mov [debugNum.num], rcx
+	mov [num], rcx
 
 	and rsp, -32
 	push rbx 
@@ -1362,34 +1377,34 @@ storage.debugNum:
 	sub rsp, 8
 
 	sub rsp, 8*8
-	mov rcx, [debugNum.num]
+	mov rcx, [num]
 	call letters.numAsLetters
 	add rsp, 8*8
-	mov [debugNum.letters], rax
+	mov [lettersAlloc], rax
 
 
 	sub rsp, 8*8
 	call new
 	add rsp, 8*8
-	mov [debugNum.recordAddr], rax
+	mov [recordAddr], rax
 
-	mov rbx, [debugNum.recordAddr]
+	mov rbx, [recordAddr]
 	add rbx, Record.builtLocation
 	mov rdx, debugRecName
 	mov [rbx], rdx
 	
 	sub rsp, 8*8
-	mov rdx, [debugNum.letters]
-	mov rcx, [debugNum.recordAddr]
+	mov rdx, [lettersAlloc]
+	mov rcx, [recordAddr]
 	call storeLetters
 	add rsp, 8*8
 
 
 	
-	mov rax, [debugNum.recordAddr]
+	mov rax, [recordAddr]
 
 
-	debugNum.end:
+	completed:
 
 
 	add rsp, 8	
@@ -1407,29 +1422,30 @@ storage.debugNum:
 	pop rbp
 
 	retn 0
+end namespace
 
-
-storage.debugLetters:
+debugLetters:
+namespace debugLetters
 	push rbp 
 	mov rbp, rsp 
 	sub rsp, (8*8);+(8*6)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
-	label debugLetters.heapAddress qword at rbp-8  
-	label debugLetters.handleAllocatedMemory qword at rbp-16
-	label debugLetters.list qword at rbp-24 
-	label debugLetters.item qword at rbp-32
-	label debugLetters.recordAddr qword at rbp-40
-	label debugLetters.sizeRetrieved qword at rbp-48
-	label debugLetters.num qword at rbp-56
-	label debugLetters.letters qword at rbp-64
+	label heapAddress qword at rbp-8  
+	label handleAllocatedMemory qword at rbp-16
+	label listAlloc qword at rbp-24 
+	label item qword at rbp-32
+	label recordAddr qword at rbp-40
+	label sizeRetrieved qword at rbp-48
+	label num qword at rbp-56
+	label lettersAlloc qword at rbp-64
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
 
 
-	mov [debugLetters.letters], rcx
+	mov [lettersAlloc], rcx
 
 	and rsp, -32
 	push rbx 
@@ -1449,25 +1465,25 @@ storage.debugLetters:
 	sub rsp, 8*8
 	call new
 	add rsp, 8*8
-	mov [debugLetters.recordAddr], rax
+	mov [recordAddr], rax
 
-	mov rbx, [debugLetters.recordAddr]
+	mov rbx, [recordAddr]
 	add rbx, Record.builtLocation
 	mov rdx, debugRecName
 	mov [rbx], rdx
 	
 	sub rsp, 8*8
-	mov rdx, [debugLetters.letters]
-	mov rcx, [debugLetters.recordAddr]
+	mov rdx, [lettersAlloc]
+	mov rcx, [recordAddr]
 	call storeLetters
 	add rsp, 8*8
 
 
 	
-	mov rax, [debugLetters.recordAddr]
+	mov rax, [recordAddr]
 
 
-	debugLetters.end:
+	completed:
 
 
 	add rsp, 8	
@@ -1485,29 +1501,31 @@ storage.debugLetters:
 	pop rbp
 
 	retn 0
+end namespace
 
 ; Includes newline
-storage.debugNumMsg:
+debugNumMsg:
+namespace debugNumMsg
 	push rbp 
 	mov rbp, rsp 
 	sub rsp, (8*8);+(8*6)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
-	label debugNumMsg.heapAddress qword at rbp-8  
-	label debugNumMsg.handleAllocatedMemory qword at rbp-16
-	label debugNumMsg.list qword at rbp-24 
-	label debugNumMsg.item qword at rbp-32
-	label debugNumMsg.recordAddr qword at rbp-40
-	label debugNumMsg.sizeRetrieved qword at rbp-48
-	label debugNumMsg.num qword at rbp-56
-	label debugNumMsg.letters qword at rbp-64
+	label heapAddress qword at rbp-8  
+	label handleAllocatedMemory qword at rbp-16
+	label listAlloc qword at rbp-24 
+	label item qword at rbp-32
+	label recordAddr qword at rbp-40
+	label sizeRetrieved qword at rbp-48
+	label num qword at rbp-56
+	label lettersAlloc qword at rbp-64
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
 
 
-	mov [debugNumMsg.num], rcx
+	mov [num], rcx
 
 	and rsp, -32
 	push rbx 
@@ -1522,42 +1540,42 @@ storage.debugNumMsg:
 	sub rsp, 8
 
 	sub rsp, 8*8
-	mov rcx, [debugNumMsg.num]
+	mov rcx, [num]
 	call letters.numAsLetters
 	add rsp, 8*8
-	mov [debugNumMsg.letters], rax
+	mov [lettersAlloc], rax
 
 	sub rsp, 8*8
 	mov rdx, newlineWinLetters
-	mov rcx, [debugNumMsg.letters]
+	mov rcx, [lettersAlloc]
 	call letters.appendLetters
 	add rsp, 8*8
 	mov rdx, rax
-	mov [debugNumMsg.letters], rdx
+	mov [lettersAlloc], rdx
 
 
 	sub rsp, 8*8
 	call new
 	add rsp, 8*8
-	mov [debugNumMsg.recordAddr], rax
+	mov [recordAddr], rax
 
-	mov rbx, [debugNumMsg.recordAddr]
+	mov rbx, [recordAddr]
 	add rbx, Record.builtLocation
 	mov rdx, debugRecName
 	mov [rbx], rdx
 	
 	sub rsp, 8*8
-	mov rdx, [debugNumMsg.letters]
-	mov rcx, [debugNumMsg.recordAddr]
+	mov rdx, [lettersAlloc]
+	mov rcx, [recordAddr]
 	call storeLetters
 	add rsp, 8*8
 
 
 	
-	mov rax, [debugNumMsg.recordAddr]
+	mov rax, [recordAddr]
 
 
-	debugNumMsg.end:
+	completed:
 
 
 	add rsp, 8	
@@ -1575,29 +1593,31 @@ storage.debugNumMsg:
 	pop rbp
 
 	retn 0
+end namespace
 
 ; Includes newline
-storage.debugLettersMsg:
+debugLettersMsg:
+namespace debugLettersMsg
 	push rbp 
 	mov rbp, rsp 
 	sub rsp, (8*8);+(8*6)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
-	label debugLettersMsg.heapAddress qword at rbp-8  
-	label debugLettersMsg.handleAllocatedMemory qword at rbp-16
-	label debugLettersMsg.list qword at rbp-24 
-	label debugLettersMsg.item qword at rbp-32
-	label debugLettersMsg.recordAddr qword at rbp-40
-	label debugLettersMsg.sizeRetrieved qword at rbp-48
-	label debugLettersMsg.num qword at rbp-56
-	label debugLettersMsg.letters qword at rbp-64
+	label heapAddress qword at rbp-8  
+	label handleAllocatedMemory qword at rbp-16
+	label listAlloc qword at rbp-24 
+	label item qword at rbp-32
+	label recordAddr qword at rbp-40
+	label sizeRetrieved qword at rbp-48
+	label num qword at rbp-56
+	label lettersAlloc qword at rbp-64
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
 
 
-	mov [debugLettersMsg.letters], rcx
+	mov [lettersAlloc], rcx
 
 	and rsp, -32
 	push rbx 
@@ -1614,35 +1634,35 @@ storage.debugLettersMsg:
 	
 	sub rsp, 8*8
 	mov rdx, newlineWinLetters
-	mov rcx, [debugLettersMsg.letters]
+	mov rcx, [lettersAlloc]
 	call letters.appendLetters
 	add rsp, 8*8
 	mov rdx, rax
-	mov [debugLettersMsg.letters], rdx
+	mov [lettersAlloc], rdx
 	
 
 	sub rsp, 8*8
 	call new
 	add rsp, 8*8
-	mov [debugLettersMsg.recordAddr], rax
+	mov [recordAddr], rax
 
-	mov rbx, [debugLettersMsg.recordAddr]
+	mov rbx, [recordAddr]
 	add rbx, Record.builtLocation
 	mov rdx, debugRecName
 	mov [rbx], rdx
 	
 	sub rsp, 8*8
-	mov rdx, [debugLettersMsg.letters]
-	mov rcx, [debugLettersMsg.recordAddr]
+	mov rdx, [lettersAlloc]
+	mov rcx, [recordAddr]
 	call storeLetters
 	add rsp, 8*8
 
 
 	
-	mov rax, [debugLettersMsg.recordAddr]
+	mov rax, [recordAddr]
 
 
-	debugLettersMsg.end:
+	completed:
 
 
 	add rsp, 8	
@@ -1660,21 +1680,23 @@ storage.debugLettersMsg:
 	pop rbp
 
 	retn 0
+end namespace
 
-storage.newFile:
+newFile:
+namespace newFile
 	push rbp 
 	mov rbp, rsp 
 	sub rsp, (8*2);+(8*0)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
-	label newFile.handleAddr qword at rbp-8  
-	label newFile.fileNameAddr qword at rbp-16
+	label handleAddr qword at rbp-8  
+	label fileNameAddr qword at rbp-16
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
 
-	mov [newFile.fileNameAddr], rcx
+	mov [fileNameAddr], rcx
 
 	and rsp, -32
 	push rbx 
@@ -1707,7 +1729,7 @@ storage.newFile:
 	add rsp, 8*4
 
 
-	mov rax, [newFile.handleAddr]
+	mov rax, [handleAddr]
 
 	add rsp, 8	
 	pop r15 
@@ -1724,26 +1746,27 @@ storage.newFile:
 	pop rbp
 
 	retn 0
+end namespace
 
-
-storage.writeFile:
+writeFile:
+namespace writeFile
 	push rbp 
 	mov rbp, rsp 
 	sub rsp, (8*4);+(8*0)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
-	label writeFile.handleAddr qword at rbp-8  
-	label writeFile.entry qword at rbp-16
-	label writeFile.size qword at rbp-24
-	label writeFile.writtenAddr qword at rbp-32
+	label handleAddr qword at rbp-8  
+	label entry qword at rbp-16
+	label size qword at rbp-24
+	label writtenAddr qword at rbp-32
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
 
-	mov [writeFile.handleAddr], rcx
-	mov [writeFile.entry], rdx
-	mov [writeFile.size], r8
+	mov [handleAddr], rcx
+	mov [entry], rdx
+	mov [size], r8
 
 	and rsp, -32
 	push rbx 
@@ -1772,7 +1795,7 @@ storage.writeFile:
 	call [WriteFile]
 	add rsp, 8*8
 
-	mov rax, [storage.writeFile.handleAddr]
+	mov rax, [handleAddr]
 
 	add rsp, 8	
 	pop r15 
@@ -1789,7 +1812,7 @@ storage.writeFile:
 	pop rbp
 
 	retn 0
-
+end namespace
 
 
 end namespace
