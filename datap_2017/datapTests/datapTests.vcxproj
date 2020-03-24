@@ -81,7 +81,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\external\googletest\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\external\googletest\include;$(SolutionDir)..\Include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -123,6 +123,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\test\cpp\AllocateTests.cpp" />
+    <ClCompile Include="..\..\src\test\cpp\FlowTests.cpp" />
     <ClCompile Include="..\..\src\test\cpp\LettersTests.cpp" />
     <ClCompile Include="..\..\src\test\cpp\ListTests.cpp" />
     <ClCompile Include="..\..\src\test\cpp\Main.cpp" />
@@ -132,8 +133,9 @@
     <ClCompile Include="..\..\src\test\cpp\StorageTests.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Include\datap.h" />
     <ClInclude Include="..\..\src\test\cpp\AllocateTests.h" />
-    <ClInclude Include="..\..\src\test\cpp\AsmIncludes.h" />
+    <ClInclude Include="..\..\src\test\cpp\FlowTests.h" />
     <ClInclude Include="..\..\src\test\cpp\LettersTests.h" />
     <ClInclude Include="..\..\src\test\cpp\MatchingTests.h" />
     <ClInclude Include="..\..\src\test\cpp\ReplacementTests.h" />
