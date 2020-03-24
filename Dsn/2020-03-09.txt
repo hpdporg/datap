@@ -51,6 +51,7 @@ datap
 	lettersAsNum
 
 dateLettersAsTimestamp
+	lettersAsNum
 
 wbs, hierarchical
 
