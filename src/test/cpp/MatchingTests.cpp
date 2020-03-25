@@ -301,7 +301,7 @@ TEST(MatchingTest, ListReturnsNoMatchPresence) {
 TEST(MatchingTest, ListReturnsMatchPresence) {
 	char* letters1 = (char*)"AB99JL221";
 	char* letters2 = (char*)"ABDAJL221";
-	char* letters3 = (char*)"ff441119";
+	char* letters3 = (char*)"gf441119";
 	char* comparisonLetters = (char*)"ABDAJL221";
 
 	List* list = newList();
