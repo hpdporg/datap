@@ -164,6 +164,7 @@ extern "C" {
 	_int64 lettersSameExact(char* letters, char* containsExactLetters);
 	_int64 getNextMatchIndex(char* letters, char* containsLetters);
 	_int64 hasMatch(char* letters, char* containsLetters);
+	_int64 listHasMatch(List* list, char* containsLetters);
 	List* extractBetween(char* letters, char* delimiter);
 	Flow* extractFlowBetween(char* letters, char* iDelimiter, char* jDelimiter);
 

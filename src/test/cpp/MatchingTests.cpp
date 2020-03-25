@@ -279,6 +279,44 @@ TEST(MatchingTest, ReturnsMatchPresence) {
 }
 
 
+TEST(MatchingTest, ListReturnsNoMatchPresence) {
+	char* letters1 = (char*)"AB99JL221";
+	char* letters2 = (char*)"ADAJL221";
+	char* letters3 = (char*)"ff441119";
+	char* comparisonLetters = (char*)"ABDAJL221";
+
+	List* list = newList();
+	newLastItem(list, letters1);
+	newLastItem(list, letters2);
+	newLastItem(list, letters3);
+
+	//fprintf(stdout, "\nLetters: %s\n", letters);
+	fprintf(stdout, "\nComparison Letters: %s\n", comparisonLetters);
+	_int64 matchExists = listHasMatch(list, comparisonLetters);
+	fprintf(stdout, "\nMatch result: %d\n", matchExists);
+	EXPECT_EQ(0, matchExists);
+
+}
+
+TEST(MatchingTest, ListReturnsMatchPresence) {
+	char* letters1 = (char*)"AB99JL221";
+	char* letters2 = (char*)"ABDAJL221";
+	char* letters3 = (char*)"ff441119";
+	char* comparisonLetters = (char*)"ABDAJL221";
+
+	List* list = newList();
+	newLastItem(list, letters1);
+	newLastItem(list, letters2);
+	newLastItem(list, letters3);
+
+	//fprintf(stdout, "\nLetters: %s\n", letters);
+	fprintf(stdout, "\nComparison Letters: %s\n", comparisonLetters);
+	_int64 matchExists = listHasMatch(list, comparisonLetters);
+	fprintf(stdout, "\nMatch result: %d\n", matchExists);
+	EXPECT_EQ(1, matchExists);
+
+}
+
 TEST(MatchingTest, ReturnsExtractsBetweenDelimiters) {
 	char* letters = (char*)"val1,val2,val3,val4";
 	char* delimiter = (char*)",";

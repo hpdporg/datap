@@ -35,36 +35,27 @@ section '.data' data readable writeable align 16
 		NumericExpression NumericExpression
 	end virtual
 
-	; ---- Structures
-	;element Element
-
-
-	; ---- Structures
-	;element Element
-
-
-
-
-
-
 	
-
+	numExpTermList dq 0
+	condExpTermList dq 0
+	defExpTermList dq 0
 	
 
 section '.text' code readable writeable executable align 16
 
 
 numericExpression:
-namespace matching
-numericExpression.new:
+namespace numericExpression
+new:
+namespace new
 	push rbp 
 	mov rbp, rsp 
 	sub rsp, (8*2);+(8*0)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
-	label new.heapAddress qword at rbp-8  
-	label new.handleAllocatedMemory qword at rbp-16
+	label heapAddress qword at rbp-8  
+	label handleAllocatedMemory qword at rbp-16
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
@@ -87,66 +78,76 @@ numericExpression.new:
 
 	sub rsp, 8*4
 	call [GetProcessHeap]
-	mov [new.heapAddress], rax
+	mov [heapAddress], rax
 	add rsp, 8*4
 	
 
 	mov rcx, 0
-	add rcx, Matches.subRangeEndIndex
+	add rcx, NumericExpression.expressionFlags
 	add rcx, 1000b
 
 	sub rsp, 8*4
 	mov r8, rcx		
 	mov rdx, 000001000b
-	mov rcx, [new.heapAddress]
+	mov rcx, [heapAddress]
 	call [ HeapAlloc] 
-	mov [new.handleAllocatedMemory], rax
+	mov [handleAllocatedMemory], rax
 	add rsp, 8*4
 
 
+;		.numericConditionFlag dq 0		; 0: Numeric 1: Condition
+;		.expressionAlloc dq 0			; Expression alloc unparsed
+;		.expressionExtractList dq 0		; Tokenized expression
+;		.refsList dq 0				; Refs may need values replaced. refValuesList has final vals
+;		.refValuesList dq 0			; Last list
+;		.expressionFlags dq 0			; NUM_EXP_ Expression flags
 
 
-	mov rbx, [new.handleAllocatedMemory]
-	add rbx, Matches.flags
+	mov rbx, [handleAllocatedMemory]
+	add rbx, NumericExpression.numericConditionFlag
 	mov rax, 0
 	mov [rbx], rax
-	mov rbx, [new.handleAllocatedMemory]
-	add rbx, Matches.transformFlags
+	mov rbx, [handleAllocatedMemory]
+	add rbx, NumericExpression.expressionAlloc
 	mov rax, 0
 	mov [rbx], rax
-	mov rbx, [new.handleAllocatedMemory]
-	add rbx, Matches.containsRangeList
+	mov rbx, [handleAllocatedMemory]
+	add rbx, NumericExpression.expressionExtractList
+	mov rax, 0
+	mov [rbx], rax
+	mov rbx, [handleAllocatedMemory]
+	add rbx, NumericExpression.refsList
 	sub rsp, 8*8
 	call list.new
 	add rsp, 8*8
 	mov [rbx], rax
-	mov rbx, [new.handleAllocatedMemory]
-	add rbx, Matches.subRangeStartIndex
+	mov rbx, [handleAllocatedMemory]
+	add rbx, NumericExpression.refValuesList
+	sub rsp, 8*8
+	call list.new
+	add rsp, 8*8
+	mov [rbx], rax
+	mov rbx, [handleAllocatedMemory]
+	add rbx, NumericExpression.expressionFlags
 	mov rax, 0
 	mov [rbx], rax
-	mov rbx, [new.handleAllocatedMemory]
-	add rbx, Matches.subRangeEndIndex
-	mov rax, 0
-	mov [rbx], rax
-	
 
 
-
-	;lea rax, [new.list]
-	;lea rcx, [new.list.indexedItemIndex]
+	;lea rax, [list]
+	;lea rcx, [list.indexedItemIndex]
 
 	;sub rcx, rax
 	;add rcx, 1000b
 
 	;cld
 
-	;lea rsi, [new.list]
-	;mov rdi, [storage.new.handleAllocatedMemory]
+	;lea rsi, [list]
+	;mov rdi, [storage.handleAllocatedMemory]
 
 	;rep movsb
 
 
-	mov rax, [new.handleAllocatedMemory]
+	mov rax, [handleAllocatedMemory]
 
 
 	add rsp, 8	
@@ -164,27 +165,30 @@ numericExpression.new:
 	pop rbp
 
 	retn 0
+end namespace
 
-
-matching.processFlags:
+parseExpression:
+namespace parseExpression
 	push rbp 
 	mov rbp, rsp 
-	sub rsp, (8*6);+(8*6)
+	sub rsp, (8*8);+(8*6)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
-	label processFlags.heapAddress qword at rbp-8  
-	label processFlags.handleAllocatedMemory qword at rbp-16
-	label processFlags.matchFlow qword at rbp-24 
-	label processFlags.matchIndexCount qword at rbp-32
-	label processFlags.matchAddr qword at rbp-40
-	label processFlags.letters qword at rbp-48
+	label heapAddress qword at rbp-8  
+	label handleAllocatedMemory qword at rbp-16
+	label matchFlow qword at rbp-24 
+	label matchIndexCount qword at rbp-32
+	label numExpAddr qword at rbp-40
+	label lettersAlloc qword at rbp-48
+	label expExtList qword at rbp-56
+	label extItem qword at rbp-64
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
 
 
-	mov [processFlags.matchAddr], rcx
+	mov [numExpAddr], rcx
 	
 
 	and rsp, -32
@@ -202,123 +206,46 @@ matching.processFlags:
 
 
 	sub rsp, 8*8
-	call newMatchFlow
+	mov rdx, spaceLetter
+	mov rbx, [numExpAddr]
+	add rbx, NumericExpression.expressionAlloc
+	mov rcx, [rbx]
+	call matching.extractBetween
 	add rsp, 8*8
-	mov [processFlags.matchFlow], rax
+	mov rbx, [numExpAddr]
+	add rbx, NumericExpression.expressionExtractList
+	mov [rbx], rax
+	mov [expExtList], rax
 
 
-	mov rcx, 0
-	mov [processFlags.matchIndexCount], rcx		; Begin as 0
 
-	mov rbx, [processFlags.matchAddr]
-	add rbx, Matches.flags
-	mov r8, [rbx]
-	bt r8, 0					; MATCH_START	
-	jnc processFlags.endIndex
-
-	mov rbx, [processFlags.matchFlow]
-	add rbx, MatchFlow.start
-	mov rcx, 1b
-	mov [rbx], rcx
-
-	mov rcx, 1b
-	mov rdx, [processFlags.matchIndexCount]
-	add rdx, rcx
-	mov [processFlags.matchIndexCount], rdx		; Increment
-
-
-	.endIndex:
-	mov rbx, [processFlags.matchAddr]
-	add rbx, Matches.flags
-	mov r8, [rbx]
-	bt r8, 1b					; MATCH_END
-	jnc processFlags.matchFirstOrEvery	
-
-	mov rbx, [processFlags.matchFlow]
-	add rbx, MatchFlow.end
-	mov rcx, 1b
-	mov [rbx], rcx
-
-	mov rdx, [processFlags.matchFlow]
-	add rdx, MatchFlow.start
-	mov r8, [rdx]
-	cmp r8, 0
-	je processFlags.endOnly
-
-	mov rbx, [processFlags.matchFlow]
-	add rbx, MatchFlow.startEndLength		; MATCH start and end (length of contains)
-	mov rcx, 1b
-	mov [rbx], rcx
-
-
-	.endOnly:
-
-	mov rcx, 1b
-	mov rdx, [processFlags.matchIndexCount]
-	add rdx, rcx
-	mov [processFlags.matchIndexCount], rdx		; Increment
+	nextItem:
+	mov r10, [expExtList]
+	mov r11, r10
+	add r11, List.index
+	add r10, List.itemsCount
+	mov rcx, [r11]
+	mov rdx, [r10]
+	cmp rcx, rdx
+	jnl endList
 	
-
-	.matchFirstOrEvery:
-
-	mov rbx, [processFlags.matchAddr]
-	add rbx, Matches.flags
-	mov r8, [rbx]
-	bt r8, 10b					; MATCH_FIRST
-	jnc processFlags.everyMatch
-
-
-	mov rbx, [processFlags.matchFlow]
-	add rbx, MatchFlow.firstMatch
-	mov rcx, 1b
-	mov [rbx], rcx
-
-	jmp processFlags.hasTransform
-
-	.everyMatch:
-	mov rbx, [processFlags.matchAddr]
-	add rbx, Matches.flags
-	mov r8, [rbx]
-	bt r8, 11b					; MATCH_EVERY
-	jnc processFlags.hasTransform
-
-	
-	mov rbx, [processFlags.matchFlow]
-	add rbx, MatchFlow.everyMatch
-	mov rcx, 1b
-	mov [rbx], rcx
+	sub rsp, 8*8
+	mov rcx, [expExtList]
+	call list.getNextItem
+	add rsp, 8*8
+	mov [extItem], rax
 
 
 
-	.hasTransform:
-	mov rbx, [processFlags.matchAddr]
-	add rbx, Matches.flags
-	mov r8, [rbx]
-	bt r8, 100b					; MATCH_TRANSFORM
-	jnc processFlags.defineMatchIndexCounts
+	jmp nextItem
+	endList:
 
-	
-	mov rbx, [processFlags.matchAddr]
-	add rbx, Matches.transformFlags
-	mov r8, [rbx]
-	bt r8, 10b					; TRANSFORM_CONTAINS
-	jnc processFlags.defineMatchIndexCounts	
 
-	mov rbx, [processFlags.matchFlow]
-	add rbx, MatchFlow.contains
-	mov rcx, 1b
-	mov [rbx], rcx
 
-	.defineMatchIndexCounts:
 
-	mov rdx, [processFlags.matchIndexCount]
-	mov rbx, [processFlags.matchFlow]
-	add rbx, MatchFlow.matchIndexCount
-	mov [rbx], rdx
+	completed:
 
-	.end:
-
-	mov rax, [processFlags.matchFlow]
+	mov rax, 0
 
 
 
@@ -337,7 +264,113 @@ matching.processFlags:
 	pop rbp
 
 	retn 0
+end namespace
 
+
+
+
+;	numExpTermList dq 0
+;	condExpTermList dq 0
+;	defExpTermList dq 0
+
+getNumExpTermList:
+namespace getNumExpTermList
+	push rbp 
+	mov rbp, rsp 
+	sub rsp, (8*8);+(8*6)
+
+	;mov rcx, [rbp+8] 
+	;mov rdx, [rbp+12] 
+	label heapAddress qword at rbp-8  
+	label handleAllocatedMemory qword at rbp-16
+	label matchFlow qword at rbp-24 
+	label matchIndexCount qword at rbp-32
+	label numExpAddr qword at rbp-40
+	label lettersAlloc qword at rbp-48
+	label expExtList qword at rbp-56
+	label extItem qword at rbp-64
+	;virtual at rbp-64
+	;	.list List
+	;end virtual	
+
+
+	;mov [numExpAddr], rcx
+	
+
+	and rsp, -32
+	push rbx 
+	push rbp 
+	push rdi 
+	push rsi
+	push rsp 
+	push r12 
+	push r13 
+	push r14 
+	push r15
+	sub rsp, 8
+
+	mov rdx, [numExpTermList]
+	cmp rdx, 0
+	
+	jne completed				; Already initialized, just return alloc
+
+
+	sub rsp, 8*8
+	call list.new
+	add rsp, 8*8
+	mov [numExpTermList], rax
+
+
+	sub rsp, 8*8
+	mov rdx, moreLetters
+	mov rcx, [numExpTermList]
+	call list.newLastItem
+	add rsp, 8*8
+
+	sub rsp, 8*8
+	mov rdx, lessLetters
+	mov rcx, [numExpTermList]
+	call list.newLastItem
+	add rsp, 8*8
+
+	sub rsp, 8*8
+	mov rdx, divLetters
+	mov rcx, [numExpTermList]
+	call list.newLastItem
+	add rsp, 8*8
+
+	sub rsp, 8*8
+	mov rdx, mulLetters
+	mov rcx, [numExpTermList]
+	call list.newLastItem
+	add rsp, 8*8
+
+
+
+
+
+	completed:
+
+	mov rax, [numExpTermList]
+
+
+
+	add rsp, 8	
+	pop r15 
+	pop r14 
+	pop r13 
+	pop r12 
+	pop rsp 
+	pop rsi 
+	pop rdi 
+	pop rbp 
+	pop rbx
+
+	mov rsp, rbp
+	pop rbp
+
+	retn 0
+end namespace
 
 
 

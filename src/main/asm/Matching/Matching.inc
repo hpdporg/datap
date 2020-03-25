@@ -1318,6 +1318,110 @@ namespace hasMatch
 	retn 0
 end namespace
 
+listHasMatch:
+namespace listHasMatch
+	push rbp 
+	mov rbp, rsp 
+	sub rsp, (8*14);+(8*6)
+
+	;mov rcx, [rbp+8] 
+	;mov rdx, [rbp+12] 
+	label heapAddress qword at rbp-8  
+	label handleAllocatedMemory qword at rbp-16
+	label matchFlow qword at rbp-24 
+	label listAlloc qword at rbp-32
+	label matches qword at rbp-40
+	label lettersAlloc qword at rbp-48
+	label containsRangeList qword at rbp-56
+	label containsAddr qword at rbp-64
+	label matchingIndex qword at rbp-72
+	label containLetters qword at rbp-80
+	label hasMatchIndex qword at rbp-88
+	label matchList qword at rbp-96
+	label lettersLength qword at rbp-104
+	label itemAlloc qword at rbp-112
+	;virtual at rbp-64
+	;	.list List
+	;end virtual	
+
+
+	mov [listAlloc], rcx
+	mov [containLetters], rdx
+
+
+	and rsp, -32
+	push rbx 
+	push rbp 
+	push rdi 
+	push rsi
+	push rsp 
+	push r12 
+	push r13 
+	push r14 
+	push r15
+	sub rsp, 8
+
+
+	mov rcx, 0
+	mov [hasMatchIndex], rcx			; Begin as 0
+
+	nextItem:
+	mov rbx, [listAlloc]
+	mov rdx, rbx
+	add rbx, List.index
+	add rdx, List.itemsCount
+	mov rcx, [rbx]
+	mov r8, [rdx]
+	cmp rcx, r8
+	jnl endItems
+
+
+	sub rsp, 8*8
+	mov rcx, [listAlloc]
+	call list.getNextItem
+	add rsp, 8*8
+	mov [itemAlloc], rax
+
+	sub rsp, 8*8
+	mov rdx, [containLetters]
+	mov rcx, [itemAlloc]
+	call lettersSameExact
+	add rsp, 8*8
+	cmp rax, 0
+	je nextItem
+	
+	mov rax, 1
+	mov [hasMatchIndex], rax
+	jmp completed
+
+	endItems:
+
+
+	completed:
+
+
+
+	mov rax, [hasMatchIndex]
+
+
+
+	add rsp, 8	
+	pop r15 
+	pop r14 
+	pop r13 
+	pop r12 
+	pop rsp 
+	pop rsi 
+	pop rdi 
+	pop rbp 
+	pop rbx
+
+	mov rsp, rbp
+	pop rbp
+
+	retn 0
+end namespace
+
 ; Extract list of matches between a delimiter
 ; Tokenizer
 extractBetween:

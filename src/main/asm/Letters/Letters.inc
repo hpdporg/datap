@@ -10,7 +10,32 @@ section '.data' data readable writeable
 	containingDirLetters db '..',0
 	newlineWinLetters db 13,10,0		; '\r\n',0
 	tabLetters db 9,0			;'\t',0
-		
+	spaceLetter db ' ',0
+
+	moreCondLetter db '>',0
+	lessCondLetter db '<',0
+	sameLetters db 'same',0		
+	sameLetter db '=',0
+	containsLetters db 'contains',0
+	withinLetters db 'within',0
+
+	moreLetters db '+',0
+	lessLetters db '-',0
+	divLetters db '/',0
+	mulLetters db '*',0
+	floatSepLetters db '.',0
+	filterSepLetters db '.',0
+
+	firstLetters db 'first',0
+	averageLetters db 'average',0
+	lastLetters db 'last',0
+
+	sineLetters db 'sine',0
+	cosineLetters db 'cosine',0
+	tangentLetters db 'tangent',0
+	arcTangentLetters db 'arctangent',0
+
+
 section '.text' code readable writeable executable ;align 16
 
 
