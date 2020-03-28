@@ -128,6 +128,7 @@
     <ClCompile Include="..\..\src\test\cpp\ListTests.cpp" />
     <ClCompile Include="..\..\src\test\cpp\Main.cpp" />
     <ClCompile Include="..\..\src\test\cpp\MatchingTests.cpp" />
+    <ClCompile Include="..\..\src\test\cpp\NumericExpressions.cpp" />
     <ClCompile Include="..\..\src\test\cpp\ReplacementTests.cpp" />
     <ClCompile Include="..\..\src\test\cpp\StorageTest.cpp" />
     <ClCompile Include="..\..\src\test\cpp\StorageTests.cpp" />
@@ -138,6 +139,7 @@
     <ClInclude Include="..\..\src\test\cpp\FlowTests.h" />
     <ClInclude Include="..\..\src\test\cpp\LettersTests.h" />
     <ClInclude Include="..\..\src\test\cpp\MatchingTests.h" />
+    <ClInclude Include="..\..\src\test\cpp\NumericExpressions.h" />
     <ClInclude Include="..\..\src\test\cpp\ReplacementTests.h" />
     <ClInclude Include="..\..\src\test\cpp\StorageTests.h" />
   </ItemGroup>

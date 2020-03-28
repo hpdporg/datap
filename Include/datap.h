@@ -104,6 +104,26 @@ typedef struct Time{
 } Time;
 
 
+typedef struct NumericExpression {
+	_int64	numericConditionFlag;
+	char*	expressionAlloc;
+	List*	expressionExtractList;
+	List*	refsList;
+	List*	refValuesList;
+	_int64	expressionFlags;
+} NumericExpression;
+
+typedef enum ExpressionFlags {
+	NUM_EXP_MORE = 1,
+	NUM_EXP_LESS = 2,
+	NUM_EXP_SAME = 4,
+	NUM_EXP_DEF_ONLY = 8,
+	NUM_EXP_DEF_NUM = 16,
+	NUM_EXP_CONTAINS = 32,
+	NUM_EXP_WITHIN = 64
+} ExpressionFlags;
+
+
 
 ///extern char* pathSepLettersChar;
 extern "C" {
@@ -175,6 +195,14 @@ extern "C" {
 	//Time
 	Time* newTime();
 	Time* getNow();
+
+
+	//NumericExpressions
+	NumericExpression* newNumericExpression();
+	void parseNumExpression(NumericExpression* numericExpression);
+	List* getNumExpTermList();
+	List* getCondExpTermList();
+
 }
 
 

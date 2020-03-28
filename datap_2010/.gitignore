@@ -1,4 +1,4 @@
 **/*.iobj
 **/*.log
-**/*.pdb
 **/*.tlog
+**/*.dlog

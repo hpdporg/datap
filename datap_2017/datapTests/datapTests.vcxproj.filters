@@ -42,6 +42,9 @@
     <ClCompile Include="..\..\src\test\cpp\FlowTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\test\cpp\NumericExpressions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\test\cpp\MatchingTests.h">
@@ -63,6 +66,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\test\cpp\FlowTests.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\test\cpp\NumericExpressions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

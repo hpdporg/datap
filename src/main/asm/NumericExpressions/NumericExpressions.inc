@@ -44,8 +44,8 @@ section '.data' data readable writeable align 16
 section '.text' code readable writeable executable align 16
 
 
-numericExpression:
-namespace numericExpression
+numericExpressions:
+namespace numericExpressions
 new:
 namespace new
 	push rbp 
@@ -352,6 +352,111 @@ namespace getNumExpTermList
 	completed:
 
 	mov rax, [numExpTermList]
+
+
+
+	add rsp, 8	
+	pop r15 
+	pop r14 
+	pop r13 
+	pop r12 
+	pop rsp 
+	pop rsi 
+	pop rdi 
+	pop rbp 
+	pop rbx
+
+	mov rsp, rbp
+	pop rbp
+
+	retn 0
+end namespace
+
+getCondExpTermList:
+namespace getCondExpTermList
+	push rbp 
+	mov rbp, rsp 
+	sub rsp, (8*8);+(8*6)
+
+	;mov rcx, [rbp+8] 
+	;mov rdx, [rbp+12] 
+	label heapAddress qword at rbp-8  
+	label handleAllocatedMemory qword at rbp-16
+	label matchFlow qword at rbp-24 
+	label matchIndexCount qword at rbp-32
+	label numExpAddr qword at rbp-40
+	label lettersAlloc qword at rbp-48
+	label expExtList qword at rbp-56
+	label extItem qword at rbp-64
+	;virtual at rbp-64
+	;	.list List
+	;end virtual	
+
+
+	;mov [numExpAddr], rcx
+	
+
+	and rsp, -32
+	push rbx 
+	push rbp 
+	push rdi 
+	push rsi
+	push rsp 
+	push r12 
+	push r13 
+	push r14 
+	push r15
+	sub rsp, 8
+
+	mov rdx, [condExpTermList]
+	cmp rdx, 0
+	
+	jne completed				; Already initialized, just return alloc
+
+
+	sub rsp, 8*8
+	call list.new
+	add rsp, 8*8
+	mov [condExpTermList], rax
+
+
+	sub rsp, 8*8
+	mov rdx, moreCondLetter
+	mov rcx, [condExpTermList]
+	call list.newLastItem
+	add rsp, 8*8
+
+	sub rsp, 8*8
+	mov rdx, lessCondLetter
+	mov rcx, [condExpTermList]
+	call list.newLastItem
+	add rsp, 8*8
+
+
+	sub rsp, 8*8
+	mov rdx, sameLetters
+	mov rcx, [condExpTermList]
+	call list.newLastItem
+	add rsp, 8*8
+
+
+	sub rsp, 8*8
+	mov rdx, containsLetters
+	mov rcx, [condExpTermList]
+	call list.newLastItem
+	add rsp, 8*8
+
+	sub rsp, 8*8
+	mov rdx, withinLetters
+	mov rcx, [condExpTermList]
+	call list.newLastItem
+	add rsp, 8*8
+
+
+
+	completed:
+
+	mov rax, [condExpTermList]
 
 
 
