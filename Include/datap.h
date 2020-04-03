@@ -202,6 +202,7 @@ extern "C" {
 	void parseNumExpression(NumericExpression* numericExpression);
 	List* getNumExpTermList();
 	List* getCondExpTermList();
+	List* getDefExpTermList();
 
 }
 
