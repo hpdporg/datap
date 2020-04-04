@@ -26,5 +26,5 @@
 
 ## Platforms ##
 * x86_64, Windows only
-* (Other platform support may follow)
+* (Other platform support may follow.)
 
