@@ -36,6 +36,7 @@ TEST(ReplacementTest, ReplaceEveryOccurence) {
 }
 
 
+
 TEST(ReplacementTest, ReplaceOccurrencesWithDifferentVals) {
 	Matches* matches = newMatches();
 	matches->flags = (MATCH_START | MATCH_END | MATCH_EVERY | MATCH_TRANSFORM);
