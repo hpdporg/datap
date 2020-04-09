@@ -134,6 +134,8 @@ extern "C" {
 	_int64 letterLength(char* letters);
 	char* lettersBetweenListsIndices(char* letters, List* indicesList);
 	char* lettersBetweenIndices(char* letters, _int64 startIndex, _int64 endIndex);
+	_int64 lettersAsNum(char* letters);
+
 
 	// Allocate
 	void* linearAllocate(int size);
