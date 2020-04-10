@@ -244,6 +244,140 @@ namespace numAsLetters
 end namespace
 
 
+lettersAsNum:
+namespace lettersAsNum
+	push rbp 
+	mov rbp, rsp 
+	sub rsp, (8*10);+(8*6)
+
+	;mov rcx, [rbp+8] 
+	;mov rdx, [rbp+12] 
+	label debugMsgSize qword at rbp-8 
+	label heapAddress qword at rbp-16
+	label linearAllocationSize qword at rbp-24
+	label num qword at rbp-32
+	label lettersLength qword at rbp-40
+	label lettersIndex qword at rbp-48
+	label lettersBufferReverse qword at rbp-56
+	label lettersBufferForward qword at rbp-64
+	label lettersAddr qword at rbp-72
+	label numIndex qword at rbp-80
+	;virtual at rbp-64
+	;	.list List
+	;end virtual	
+
+
+	mov [lettersAddr], rcx
+
+
+	and rsp, -32
+	push rbx 
+	push rbp 
+	push rdi 
+	push rsi
+	push rsp 
+	push r12 
+	push r13 
+	push r14 
+	push r15
+	sub rsp, 8
+
+	mov rcx, 0
+	mov [lettersIndex], rcx			; Begin as 0
+	mov [num], rcx
+	mov [numIndex], rcx
+
+
+	sub rsp, 8*8
+	mov rcx, [lettersAddr]
+	call letterLength
+	add rsp, 8*8
+	mov [lettersLength], rax
+
+	mov r8, [lettersLength]
+	sub r8, 1b
+	mov [lettersIndex], r8
+
+	nextLetter:				; Start at end, work upwards
+	mov rcx, [numIndex]
+	mov rdx, [lettersLength]
+	cmp rcx, rdx
+	jnl endLetters
+
+
+	mov rbx, [lettersAddr]
+	mov r8, [lettersIndex]
+	add rbx, r8
+	mov r12, 0
+	mov r12b, byte [rbx]
+
+
+
+	sub r12, 48				; 48 is 0
+
+
+	mov rax,[numIndex]
+	mov rcx, 10
+	mov rdx, 0
+	imul rcx
+	cmp rax, 0
+	je indexZero
+
+	mov rdx, 0
+	mov rcx, r12
+	imul rcx				; Multiply by factor of 10 (10s place, 100s, etc)
+	mov r12, rax
+
+	indexZero:
+
+	mov r13, [num]
+	add r13, r12
+	mov [num], r13
+	
+
+	mov rcx, [numIndex]
+	add rcx, 1b
+	mov [numIndex], rcx
+
+	mov rcx, [lettersIndex]
+	sub rcx, 1b
+	mov [lettersIndex], rcx
+
+	jmp nextLetter
+
+
+
+	endLetters:
+
+
+
+
+
+
+
+
+	mov rax, [num];[lettersLength];[num]
+
+	
+
+
+	add rsp, 8	
+	pop r15 
+	pop r14 
+	pop r13 
+	pop r12 
+	pop rsp 
+	pop rsi 
+	pop rdi 
+	pop rbp 
+	pop rbx
+
+	mov rsp, rbp
+	pop rbp
+
+	retn 0
+end namespace
+
 letterLength:
 namespace letterLength
 	push rbp 

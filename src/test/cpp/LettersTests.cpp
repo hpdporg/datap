@@ -59,3 +59,9 @@ TEST(LettersTests, ReturnsLettersBetweenIndices) {
 	fprintf(stdout, "\nLetters between: %s\n", lettersBetween);
 	EXPECT_STREQ("ers1",lettersBetween);
 }
+
+TEST(LettersTests, LettersReturnedAsNumbers) {
+	_int64 num = lettersAsNum((char*)"48");
+	fprintf(stdout, "\nOutput: %d\n", num);
+	EXPECT_EQ(48, num);
+}
