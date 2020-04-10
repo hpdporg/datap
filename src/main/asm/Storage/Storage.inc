@@ -549,7 +549,7 @@ namespace restoreLetters
 
 
 
-	mov rax, [rerecordAddr]
+	mov rax,0; [rerecordAddr]
 
 
 	reend:
