@@ -164,7 +164,7 @@ TEST_F(StorageTest, StoresDebugLettersMsg) {
 	char* contents = (char*)record->allocAddr;
 	EXPECT_STREQ("dfalj2ij\r\n", (char*)contents);
 	removeRecord(record);
-
+	Sleep(3000);		// Just a delay at end of last test.
 }
 
 

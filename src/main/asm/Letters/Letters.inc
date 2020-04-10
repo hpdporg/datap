@@ -248,7 +248,7 @@ lettersAsNum:
 namespace lettersAsNum
 	push rbp 
 	mov rbp, rsp 
-	sub rsp, (8*9);+(8*6)
+	sub rsp, (8*10);+(8*6)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
@@ -261,6 +261,7 @@ namespace lettersAsNum
 	label lettersBufferReverse qword at rbp-56
 	label lettersBufferForward qword at rbp-64
 	label lettersAddr qword at rbp-72
+	label numIndex qword at rbp-80
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
@@ -284,6 +285,8 @@ namespace lettersAsNum
 	mov rcx, 0
 	mov [lettersIndex], rcx			; Begin as 0
 	mov [num], rcx
+	mov [numIndex], rcx
+
 
 	sub rsp, 8*8
 	mov rcx, [lettersAddr]
@@ -296,28 +299,34 @@ namespace lettersAsNum
 	mov [lettersIndex], r8
 
 	nextLetter:				; Start at end, work upwards
-	mov rcx, [lettersIndex]
+	mov rcx, [numIndex]
 	mov rdx, [lettersLength]
 	cmp rcx, rdx
 	jnl endLetters
 
+
 	mov rbx, [lettersAddr]
+	mov r8, [lettersIndex]
 	add rbx, r8
-	mov r12, [rbx]
+	mov r12, 0
+	mov r12b, byte [rbx]
+
+
 
 	sub r12, 48				; 48 is 0
 
-	mov rax,[lettersIndex]
+
+	mov rax,[numIndex]
 	mov rcx, 10
 	mov rdx, 0
 	imul rcx
-	cmp rcx, 0
+	cmp rax, 0
 	je indexZero
 
 	mov rdx, 0
 	mov rcx, r12
 	imul rcx				; Multiply by factor of 10 (10s place, 100s, etc)
-
+	mov r12, rax
 
 	indexZero:
 
@@ -326,8 +335,12 @@ namespace lettersAsNum
 	mov [num], r13
 	
 
-	mov rcx, [lettersIndex]
+	mov rcx, [numIndex]
 	add rcx, 1b
+	mov [numIndex], rcx
+
+	mov rcx, [lettersIndex]
+	sub rcx, 1b
 	mov [lettersIndex], rcx
 
 	jmp nextLetter
@@ -343,7 +356,7 @@ namespace lettersAsNum
 
 
 
-	mov rax, [num]
+	mov rax, [num];[lettersLength];[num]
 
 	
 
