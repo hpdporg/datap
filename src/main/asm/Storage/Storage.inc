@@ -847,8 +847,9 @@ namespace retrieveRecordNames
 	mov [locationContentsLetters], rax
 
 
+
 	sub rsp, 8*8
-	mov rcx, 64
+	mov rcx, 8*20;64					; Size
 	call allocate.linear
 	add rsp, 8*8
 	mov [w32FindData], rax
@@ -905,6 +906,8 @@ namespace retrieveRecordNames
 	mov rdx, rax
 	add rsp, 8*8
 
+
+
 	sub rsp, 8*8
 	;mov rdx, rax
 	mov rcx, [listAlloc]
@@ -916,6 +919,12 @@ namespace retrieveRecordNames
 	;mov [item], r14	;debug
 
 	nextFile:
+
+	;sub rsp, 8*8
+	;mov rcx, 3892
+	;call debugNumMsg
+	;add rsp, 8*8
+;jmp completed	;dbg just this line
 
 	sub rsp, 8*8
 	mov rdx, [w32FindData]
@@ -971,15 +980,22 @@ namespace retrieveRecordNames
 	call list.newLastItem
 	add rsp, 8*8
 
-
+	;jmp completed	;dbg just this line
 
 	jmp nextFile
 	endFiles:
 
 
+	sub rsp, 8*8
+	mov rcx, [handle]
+	;call [FindClose]
+	add rsp, 8*8
 
 
 	completed:
+
+
+
 
 	mov rax, [listAlloc]
 

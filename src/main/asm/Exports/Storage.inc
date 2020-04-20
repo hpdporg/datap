@@ -7,6 +7,7 @@ extrn '__imp_CloseHandle' as CloseHandle:qword
 extrn '__imp_DeleteFileA' as DeleteFile:qword
 extrn '__imp_FindFirstFileA' as FindFirstFile:qword
 extrn '__imp_FindNextFileA' as FindNextFile:qword
+extrn '__imp_FindClose' as FindClose:qword
 
 
 ;public storage.newFile as 'newFile'

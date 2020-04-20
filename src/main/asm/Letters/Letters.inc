@@ -475,6 +475,7 @@ namespace appendLetters
 	label newLettersLength qword at rbp-40
 	label lettersLengthSum qword at rbp-48
 	label appendedLetters qword at rbp-56
+
 	;label lettersBufferForward qword at rbp-64
 	;virtual at rbp-64
 	;	.list List
@@ -816,6 +817,7 @@ namespace copyLetters
 	label newLettersLength qword at rbp-40
 	label lettersLengthSum qword at rbp-48
 	label appendedLetters qword at rbp-56
+	
 	;label lettersBufferForward qword at rbp-64
 	;virtual at rbp-64
 	;	.list List

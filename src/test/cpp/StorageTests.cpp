@@ -2,6 +2,8 @@
 #include "StorageTests.h"
 #include "StorageTest.cpp"
 
+
+
 TEST_F(StorageTest, ReturnsRecord) {
 	Record* record = newStorage();
 	fprintf(stdout, "\nOutput: %d\n", (int)record);
@@ -78,11 +80,14 @@ TEST_F(StorageTest, LettersReplaced) {
 }
 
 TEST_F(StorageTest, RetrievesRecordNames) {
-	Record* record = newStorage();
-	record->location = (char*)"..\\..\\..\\..\\src\\resources";
+	Record* recordDir = newStorage();
+	recordDir->location = (char*)"..\\..\\..\\..\\src\\resources";
+	//fprintf(stdout, "\nABC %d\n",sizeof(LPWIN32_FIND_DATAA));
+	//w32FindData
+//		FindNextFileA();
 
 	fprintf(stdout,"\nRetrieving: \n");
-	List* recordNames = retrieveRecordNames(record);
+	List* recordNames = retrieveRecordNames(recordDir);
 
 	fprintf(stdout,"\nRecords retrieved: %d\n",recordNames->itemsCount);
 	while (recordNames->index < recordNames->itemsCount){
