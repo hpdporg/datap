@@ -248,7 +248,7 @@ lettersAsNum:
 namespace lettersAsNum
 	push rbp 
 	mov rbp, rsp 
-	sub rsp, (8*10);+(8*6)
+	sub rsp, (8*11);+(8*6)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
@@ -262,6 +262,7 @@ namespace lettersAsNum
 	label lettersBufferForward qword at rbp-64
 	label lettersAddr qword at rbp-72
 	label numIndex qword at rbp-80
+	label digit qword at rbp-88
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
@@ -314,22 +315,38 @@ namespace lettersAsNum
 
 
 	sub r12, 48				; 48 is 0
-
+	mov [digit], r12
 
 	mov rax,[numIndex]
-	mov rcx, 10
-	mov rdx, 0
-	imul rcx
 	cmp rax, 0
 	je indexZero
 
+	mov r15, [numIndex]
+	mov rax, 1
+	mov rcx, 10
+	multiplyByTen:
 	mov rdx, 0
+	imul rcx
+	sub r15, 1
+	cmp r15, 0
+	jne multiplyByTen
+
+	mov rdx, 0
+	mov r12, [digit]
 	mov rcx, r12
 	imul rcx				; Multiply by factor of 10 (10s place, 100s, etc)
 	mov r12, rax
+	mov [digit], r12
 
 	indexZero:
 
+	;mov r12, [digit]
+	;mov rcx, r12
+	;sub rsp, 8*8
+	;call storage.debugNumMsg
+	;add rsp, 8*8
+
+	mov r12, [digit]
 	mov r13, [num]
 	add r13, r12
 	mov [num], r13

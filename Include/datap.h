@@ -103,14 +103,26 @@ typedef struct Time{
 	_int64	month;
 } Time;
 
+typedef struct NumericParsing {
+	_int64	opFlags;
+} NumericParsing;
+
+typedef enum NumericParsingOpFlags {
+	NUM_PARS_OP_MORE = 1,
+	NUM_PARS_OP_LESS = 2,
+	NUM_PARS_OP_DIV = 4,
+	NUM_PARS_OP_MUL = 8,
+} NumericParsingOpFlags;
 
 typedef struct NumericExpression {
 	_int64	numericConditionFlag;
 	char*	expressionAlloc;
 	List*	expressionExtractList;
-	List*	refsList;
-	List*	refValuesList;
+	List*	numExpRefValList;
+	_int64	evalFlags;
 	_int64	expressionFlags;
+	_int64	result;
+	NumericParsing* numericParsing;
 } NumericExpression;
 
 typedef enum ExpressionFlags {
@@ -122,6 +134,41 @@ typedef enum ExpressionFlags {
 	NUM_EXP_CONTAINS = 32,
 	NUM_EXP_WITHIN = 64
 } ExpressionFlags;
+
+typedef enum EvalFlags {
+	NUM_EXP_EVAL_PARSED = 1,
+	NUM_EXP_EVAL_REFS_PARSED = 2,
+	NUM_EXP_EVAL_REFS_PROCESSED = 4,
+	NUM_EXP_EVAL_PROCESSED = 8,
+	NUM_EXP_EVAL_RESULT_EXISTS = 16,
+} EvalFlags;
+
+typedef struct NumExpRefVal {
+	char*	labelAlloc;
+	_int64	val;
+	_int64	flags;
+	_int64	refFlags;
+	_int64	refFilterFlags;
+} NumExpRefVal;
+
+typedef enum NumExpRefValFlags {
+	NUM_EXP_REF_VAL_REF = 1,
+	NUM_EXP_REF_VAL_INTEGER = 2,
+	NUM_EXP_REF_VAL_FLOAT = 4,
+	NUM_EXP_REF_VAL_DATE = 8,
+} NumExpRefValFlags;
+
+typedef enum NumExpRefFlags {
+	NUM_EXP_REF_LOC = 1,
+	NUM_EXP_REF_LIST = 2,
+	NUM_EXP_REF_FLOW = 4,
+} NumExpRefFlags;
+
+typedef enum NumExpRefFiltFlags {
+	NUM_EXP_REF_FILT_NO_FILT = 1,
+	NUM_EXP_REF_FILT_HAS_FILT = 2,
+} NumExpRefFiltFlags;
+
 
 
 
@@ -139,6 +186,7 @@ extern "C" {
 
 	// Allocate
 	void* linearAllocate(int size);
+	void* allocateNew(int lastMemberOffset);		// Initializes a struc
 
 	// List
 	List* newList();
@@ -205,6 +253,12 @@ extern "C" {
 	List* getNumExpTermList();
 	List* getCondExpTermList();
 	List* getDefExpTermList();
+
+	NumExpRefVal* newNumExpRefVal();
+	NumExpRefVal* parseNumExpRefVal(NumExpRefVal* numExpRefVal);
+	NumExpRefVal* processNumExpRefVal(NumExpRefVal* numExpRefVal);
+
+	NumericParsing* newNumericParsing();
 
 }
 

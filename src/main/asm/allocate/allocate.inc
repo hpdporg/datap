@@ -101,4 +101,86 @@ namespace linear
 	retn 0
 end namespace
 
+; Takes last member offset as a param i.e. strucName.member5
+new:
+namespace new
+	push rbp 
+	mov rbp, rsp 
+	sub rsp, (8*3);+(8*0)
+
+	;mov rcx, [rbp+8] 
+	;mov rdx, [rbp+12] 
+	label heapAddress qword at rbp-8  
+	label handleAllocatedMemory qword at rbp-16
+	label size qword at rbp-24
+	;virtual at rbp-64
+	;	.list List
+	;end virtual	
+
+	mov [size], rcx			; Last Member offset
+
+	and rsp, -32
+	push rbx 
+	push rbp 
+	push rdi 
+	push rsi
+	push rsp 
+	push r12 
+	push r13 
+	push r14 
+	push r15
+	sub rsp, 8
+
+
+	mov rdx, [size]
+	mov rcx, 0
+	add rcx, rdx
+	add rcx, 1000b
+	mov [size], rcx
+
+	sub rsp, 8*4
+	call [GetProcessHeap]
+	mov [heapAddress], rax
+	add rsp, 8*4
+	
+
+	sub rsp, 8*4
+	mov r8, [size]
+	mov rdx, 000001000b
+	mov rcx, [heapAddress]
+	call [ HeapAlloc] 
+	mov [handleAllocatedMemory], rax
+	add rsp, 8*4
+
+
+
+	mov rcx, [size]
+	cld
+	mov rax, 0
+
+	mov rdi, [handleAllocatedMemory]
+
+	rep stosb					; Zero out (initialize).
+
+
+	mov rax, [handleAllocatedMemory]
+
+
+	add rsp, 8	
+	pop r15 
+	pop r14 
+	pop r13 
+	pop r12 
+	pop rsp 
+	pop rsi 
+	pop rdi 
+	pop rbp 
+	pop rbx
+
+	mov rsp, rbp
+	pop rbp
+
+	retn 0
+end namespace
+
 end namespace

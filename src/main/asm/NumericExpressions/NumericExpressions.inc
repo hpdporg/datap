@@ -9,9 +9,11 @@ section '.data' data readable writeable align 16
 		.numericConditionFlag dq 0		; 0: Numeric 1: Condition
 		.expressionAlloc dq 0			; Expression alloc unparsed
 		.expressionExtractList dq 0		; Tokenized expression
-		.refsList dq 0				; Refs may need values replaced. refValuesList has final vals
-		.refValuesList dq 0			; Last list
+		.numExpRefValList dq 0			; Refs may need values replaced. refValuesList has final vals
+		.evalFlags dq 0				; NUM_EXP_EVAL flags
 		.expressionFlags dq 0			; NUM_EXP_ Expression flags
+		.result dq 0				; Result, i.e. expression evaluated value
+		.numericParsingRef dq 0			; Numeric parsing Ref
 	end struc
 
 
@@ -23,6 +25,15 @@ section '.data' data readable writeable align 16
 	; NUM_EXP_DEF_NUM	10000b			4	; = ref1 + 100
 	; NUM_EXP_CONTAINS	100000b			5	; ref1 contains ref2
 	; NUM_EXP_WITHIN	1000000b		6	; ref1 within ref2
+
+
+	; NUM_EXP_EVAL Flags
+	; NUM_EXP_EVAL_PARSED		1b			0	; Expression parsed
+	; NUM_EXP_EVAL_REFS_PARSED	100b			1	; Refs parsed
+	; NUM_EXP_EVAL_REFS_PROCESSED	1000b			2	; Refs processed
+	; NUM_EXP_EVAL_PROCESSED	10000b			3	; Expression processed
+	; NUM_EXP_EVAL_RESULT_EXISTS	100000b			4	; Result exists
+
 
 
 	; refs can contain terms before:
@@ -56,10 +67,6 @@ namespace new
 	;mov rdx, [rbp+12] 
 	label heapAddress qword at rbp-8  
 	label handleAllocatedMemory qword at rbp-16
-	;virtual at rbp-64
-	;	.list List
-	;end virtual	
-
 
 
 	and rsp, -32
@@ -76,249 +83,32 @@ namespace new
 
 
 
-	sub rsp, 8*4
-	call [GetProcessHeap]
-	mov [heapAddress], rax
-	add rsp, 8*4
+	sub rsp, 8*8
+	mov rcx, NumericExpression.numericParsingRef
+	call allocate.new
+	mov [handleAllocatedMemory], rax
+	add rsp, 8*8
 	
 
-	mov rcx, 0
-	add rcx, NumericExpression.expressionFlags
-	add rcx, 1000b
-
-	sub rsp, 8*4
-	mov r8, rcx		
-	mov rdx, 000001000b
-	mov rcx, [heapAddress]
-	call [ HeapAlloc] 
-	mov [handleAllocatedMemory], rax
-	add rsp, 8*4
-
-
-;		.numericConditionFlag dq 0		; 0: Numeric 1: Condition
-;		.expressionAlloc dq 0			; Expression alloc unparsed
-;		.expressionExtractList dq 0		; Tokenized expression
-;		.refsList dq 0				; Refs may need values replaced. refValuesList has final vals
-;		.refValuesList dq 0			; Last list
-;		.expressionFlags dq 0			; NUM_EXP_ Expression flags
 
 
 	mov rbx, [handleAllocatedMemory]
-	add rbx, NumericExpression.numericConditionFlag
-	mov rax, 0
-	mov [rbx], rax
-	mov rbx, [handleAllocatedMemory]
-	add rbx, NumericExpression.expressionAlloc
-	mov rax, 0
-	mov [rbx], rax
-	mov rbx, [handleAllocatedMemory]
-	add rbx, NumericExpression.expressionExtractList
-	mov rax, 0
-	mov [rbx], rax
-	mov rbx, [handleAllocatedMemory]
-	add rbx, NumericExpression.refsList
+	add rbx, NumericExpression.numExpRefValList
 	sub rsp, 8*8
 	call list.new
 	add rsp, 8*8
 	mov [rbx], rax
+
 	mov rbx, [handleAllocatedMemory]
-	add rbx, NumericExpression.refValuesList
+	add rbx, NumericExpression.numericParsingRef
 	sub rsp, 8*8
-	call list.new
+	call numericParsing.new
 	add rsp, 8*8
 	mov [rbx], rax
-	mov rbx, [handleAllocatedMemory]
-	add rbx, NumericExpression.expressionFlags
-	mov rax, 0
-	mov [rbx], rax
 
-
-	;lea rax, [list]
-	;lea rcx, [list.indexedItemIndex]
-
-	;sub rcx, rax
-	;add rcx, 1000b
-
-	;cld
-
-	;lea rsi, [list]
-	;mov rdi, [storage.handleAllocatedMemory]
-
-	;rep movsb
 
 
 	mov rax, [handleAllocatedMemory]
-
-
-	add rsp, 8	
-	pop r15 
-	pop r14 
-	pop r13 
-	pop r12 
-	pop rsp 
-	pop rsi 
-	pop rdi 
-	pop rbp 
-	pop rbx
-
-	mov rsp, rbp
-	pop rbp
-
-	retn 0
-end namespace
-
-parseExpression:
-namespace parseExpression
-	push rbp 
-	mov rbp, rsp 
-	sub rsp, (8*11);+(8*6)
-
-	;mov rcx, [rbp+8] 
-	;mov rdx, [rbp+12] 
-	label heapAddress qword at rbp-8  
-	label handleAllocatedMemory qword at rbp-16
-	label matchFlow qword at rbp-24 
-	label matchIndexCount qword at rbp-32
-	label numExpAddr qword at rbp-40
-	label lettersAlloc qword at rbp-48
-	label expExtList qword at rbp-56
-	label extItem qword at rbp-64
-	label numExpTermListAddr qword at rbp-72
-	label condExpTermListAddr qword at rbp-80
-	label defExpTermListAddr qword at rbp-88
-	;virtual at rbp-64
-	;	.list List
-	;end virtual	
-
-
-	mov [numExpAddr], rcx
-	
-
-	and rsp, -32
-	push rbx 
-	push rbp 
-	push rdi 
-	push rsi
-	push rsp 
-	push r12 
-	push r13 
-	push r14 
-	push r15
-	sub rsp, 8
-
-
-
-	sub rsp, 8*8
-	mov rdx, spaceLetter
-	mov rbx, [numExpAddr]
-	add rbx, NumericExpression.expressionAlloc
-	mov rcx, [rbx]
-	call matching.extractBetween
-	add rsp, 8*8
-	mov rbx, [numExpAddr]
-	add rbx, NumericExpression.expressionExtractList
-	mov [rbx], rax
-	mov [expExtList], rax
-
-
-
-	nextItem:
-	mov r10, [expExtList]
-	mov r11, r10
-	add r11, List.index
-	add r10, List.itemsCount
-	mov rcx, [r11]
-	mov rdx, [r10]
-	cmp rcx, rdx
-	jnl endList
-	
-	sub rsp, 8*8
-	mov rcx, [expExtList]
-	call list.getNextItem
-	add rsp, 8*8
-	mov [extItem], rax
-
-
-	sub rsp, 8*8
-	mov rdx, [numExpAddr]
-	mov rcx, [extItem]
-	call parseCondExp
-	add rsp, 8*8
-	cmp rax, 1b			; Match
-	je hasCond
-
-	sub rsp, 8*8
-	mov rdx, [numExpAddr]
-	mov rcx, [extItem]
-	call parseNumExp
-	add rsp, 8*8
-	cmp rax, 1b			; Match
-	je hasNum
-
-
-	sub rsp, 8*8
-	mov rdx, [numExpAddr]
-	mov rcx, [extItem]
-	call parseDefExp
-	add rsp, 8*8
-	cmp rax, 1b			; Match
-	je hasDef
-
-
-
-
-
-	jmp nextItem
-
-	hasCond:
-	mov rbx, [numExpAddr]
-	add rbx, NumericExpression.numericConditionFlag
-	mov rcx, 1b						; 0: Numeric 1: Condition
-	mov [rbx], rcx
-
-	jmp endList
-	hasNum:
-	mov rbx, [numExpAddr]
-	add rbx, NumericExpression.numericConditionFlag
-	mov rcx, 0b						; 0: Numeric 1: Condition
-	mov [rbx], rcx
-	jmp nextItem
-
-	hasDef:
-	jmp nextItem
-
-	endList:
-
-	mov rbx, [numExpAddr]					; Def by process of elimination
-	add rbx, NumericExpression.numericConditionFlag
-	mov rcx, 0b						; 0: Numeric 1: Condition
-	mov r8, [rbx]
-	cmp r8, rcx
-	jne notDef
-	
-	mov rbx, [numExpAddr]
-	add rbx, NumericExpression.expressionFlags
-	mov rdx, [rbx]
-	mov r8, 10000b		; NUM_EXP_DEF_NUM	10000b			4	; = ref1 + 100
-	and r8, rdx
-	cmp r8, 0
-	jne notDef
-
-	mov rbx, [numExpAddr]
-	add rbx, NumericExpression.expressionFlags
-	mov rdx, [rbx]
-	bts rdx, 3		; NUM_EXP_DEF_ONLY	1000b			3	; = ref1
-	mov [rbx], rdx
-
-
-
-	notDef:
-
-
-	completed:
-
-	mov rax, 0
-
 
 
 	add rsp, 8	
@@ -937,7 +727,7 @@ parseNumFlags:
 namespace parseNumFlags
 	push rbp 
 	mov rbp, rsp 
-	sub rsp, (8*11);+(8*6)
+	sub rsp, (8*12);+(8*6)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
@@ -952,6 +742,7 @@ namespace parseNumFlags
 	label numExpTermListAddr qword at rbp-72
 	label condExpTermListAddr qword at rbp-80
 	label defExpTermListAddr qword at rbp-88
+	label numericParsingRef qword at rbp-96
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
@@ -973,7 +764,82 @@ namespace parseNumFlags
 	push r15
 	sub rsp, 8
 
+	mov rbx, [numExpAddr]
+	add rbx, NumericExpression.numericParsingRef
+	mov rdx, [rbx]
+	mov [numericParsingRef], rdx			; Cache
 
+	sub rsp, 8*8
+	mov rdx, moreLetters
+	mov rcx, [extItem]
+	call matching.lettersSameExact
+	add rsp, 8*8
+	cmp rax, 1b
+	jne notMore
+
+
+	mov rbx, [numericParsingRef]
+	add rbx, NumericParsing.opFlags
+	mov rdx, [rbx]
+	bts rdx, 0	; NUM_PARS_OP_MORE		1b			0	; +
+	mov [rbx], rdx
+
+	jmp completed
+	notMore:
+
+
+	sub rsp, 8*8
+	mov rdx, lessLetters
+	mov rcx, [extItem]
+	call matching.lettersSameExact
+	add rsp, 8*8
+	cmp rax, 1b
+	jne notLess
+
+	mov rbx, [numericParsingRef]
+	add rbx, NumericParsing.opFlags
+	mov rdx, [rbx]
+	bts rdx, 1	; NUM_PARS_OP_LESS		10b			1	; -
+	mov [rbx], rdx
+
+	jmp completed
+	notLess:
+
+
+	sub rsp, 8*8
+	mov rdx, divLetters
+	mov rcx, [extItem]
+	call matching.lettersSameExact
+	add rsp, 8*8
+	cmp rax, 1b
+	jne notDiv
+
+	mov rbx, [numericParsingRef]
+	add rbx, NumericParsing.opFlags
+	mov rdx, [rbx]
+	bts rdx, 2	; NUM_PARS_OP_DIV		100b			2	; /
+	mov [rbx], rdx
+
+	jmp completed
+	notDiv:
+
+
+	sub rsp, 8*8
+	mov rdx, mulLetters
+	mov rcx, [extItem]
+	call matching.lettersSameExact
+	add rsp, 8*8
+	cmp rax, 1b
+	jne notMul
+
+	mov rbx, [numericParsingRef]
+	add rbx, NumericParsing.opFlags
+	mov rdx, [rbx]
+	bts rdx, 3	; NUM_PARS_OP_MUL		1000b			3	; *
+	mov [rbx], rdx
+
+	jmp completed
+	notMul:
 
 
 

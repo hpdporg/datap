@@ -65,3 +65,9 @@ TEST(LettersTests, LettersReturnedAsNumbers) {
 	fprintf(stdout, "\nOutput: %d\n", num);
 	EXPECT_EQ(48, num);
 }
+
+TEST(LettersTests, LettersReturnedAsNumbersFourDigit) {
+	_int64 num = lettersAsNum((char*)"4821");
+	fprintf(stdout, "\nOutput: %d\n", num);
+	EXPECT_EQ(4821, num);
+}

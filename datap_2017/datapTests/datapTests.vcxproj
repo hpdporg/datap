@@ -128,9 +128,12 @@
     <ClCompile Include="..\..\src\test\cpp\ListTests.cpp" />
     <ClCompile Include="..\..\src\test\cpp\Main.cpp" />
     <ClCompile Include="..\..\src\test\cpp\MatchingTests.cpp" />
-    <ClCompile Include="..\..\src\test\cpp\NumericExpressions.cpp" />
-    <ClCompile Include="..\..\src\test\cpp\NumericExpressionsParsing.cpp" />
-    <ClCompile Include="..\..\src\test\cpp\NumericExpressionsParsingFlags.cpp" />
+    <ClCompile Include="..\..\src\test\cpp\NumericExpressions\NumericExpressions.cpp" />
+    <ClCompile Include="..\..\src\test\cpp\NumericExpressions\NumericExpressionsParsing.cpp" />
+    <ClCompile Include="..\..\src\test\cpp\NumericExpressions\NumericExpressionsParsingFlags.cpp" />
+    <ClCompile Include="..\..\src\test\cpp\NumericExpressions\NumericParsing.cpp" />
+    <ClCompile Include="..\..\src\test\cpp\NumericExpressions\NumExpRefValProcessingTests.cpp" />
+    <ClCompile Include="..\..\src\test\cpp\NumericExpressions\NumExpRefValTests.cpp" />
     <ClCompile Include="..\..\src\test\cpp\ReplacementTests.cpp" />
     <ClCompile Include="..\..\src\test\cpp\StorageTest.cpp" />
     <ClCompile Include="..\..\src\test\cpp\StorageTests.cpp" />
@@ -141,9 +144,12 @@
     <ClInclude Include="..\..\src\test\cpp\FlowTests.h" />
     <ClInclude Include="..\..\src\test\cpp\LettersTests.h" />
     <ClInclude Include="..\..\src\test\cpp\MatchingTests.h" />
-    <ClInclude Include="..\..\src\test\cpp\NumericExpressions.h" />
-    <ClInclude Include="..\..\src\test\cpp\NumericExpressionsParsing.h" />
-    <ClInclude Include="..\..\src\test\cpp\NumericExpressionsParsingFlags.h" />
+    <ClInclude Include="..\..\src\test\cpp\NumericExpressions\NumericExpressions.h" />
+    <ClInclude Include="..\..\src\test\cpp\NumericExpressions\NumericExpressionsParsing.h" />
+    <ClInclude Include="..\..\src\test\cpp\NumericExpressions\NumericExpressionsParsingFlags.h" />
+    <ClInclude Include="..\..\src\test\cpp\NumericExpressions\NumericParsing.h" />
+    <ClInclude Include="..\..\src\test\cpp\NumericExpressions\NumExpRefValProcessingTests.h" />
+    <ClInclude Include="..\..\src\test\cpp\NumericExpressions\NumExpRefValTests.h" />
     <ClInclude Include="..\..\src\test\cpp\ReplacementTests.h" />
     <ClInclude Include="..\..\src\test\cpp\StorageTests.h" />
   </ItemGroup>

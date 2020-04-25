@@ -42,13 +42,22 @@
     <ClCompile Include="..\..\src\test\cpp\FlowTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\test\cpp\NumericExpressions.cpp">
+    <ClCompile Include="..\..\src\test\cpp\NumericExpressions\NumericExpressions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\test\cpp\NumericExpressionsParsing.cpp">
+    <ClCompile Include="..\..\src\test\cpp\NumericExpressions\NumericExpressionsParsing.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\test\cpp\NumericExpressionsParsingFlags.cpp">
+    <ClCompile Include="..\..\src\test\cpp\NumericExpressions\NumericExpressionsParsingFlags.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\test\cpp\NumericExpressions\NumExpRefValTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\test\cpp\NumericExpressions\NumExpRefValProcessingTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\test\cpp\NumericExpressions\NumericParsing.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -74,13 +83,22 @@
     <ClInclude Include="..\..\src\test\cpp\FlowTests.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\test\cpp\NumericExpressions.h">
+    <ClInclude Include="..\..\src\test\cpp\NumericExpressions\NumericExpressionsParsingFlags.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\test\cpp\NumericExpressionsParsing.h">
+    <ClInclude Include="..\..\src\test\cpp\NumericExpressions\NumericExpressions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\test\cpp\NumericExpressionsParsingFlags.h">
+    <ClInclude Include="..\..\src\test\cpp\NumericExpressions\NumericExpressionsParsing.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\test\cpp\NumericExpressions\NumExpRefValTests.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\test\cpp\NumericExpressions\NumExpRefValProcessingTests.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\test\cpp\NumericExpressions\NumericParsing.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
