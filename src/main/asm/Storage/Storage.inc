@@ -13,8 +13,18 @@ section '.data' data readable writeable align 16
 		.location dq 0		; Path
 		.builtLocation dq 0	; Built Path
 		.handle dq 0
+		.allocFlags dq 0	; STORAGE_ALLOC_FLAGS Alloc can be combination, i.e. List/Flow of Letters
+		.jDelimiter dq 0	; Vertical, line delimiter (i.e. newline)
+		.iDelimiter dq 0	; Horizontal, column delimiter (i.e. comma or tab in csv)
 	end struc
 
+
+
+	; STORAGE_ALLOC Flags		Alloc can be combination, i.e. List/Flow of Letters
+	; STORAGE_ALLOC_LETTERS		1b			0	; Allocation is letters
+	; STORAGE_ALLOC_LIST		10b			1	; Allocation is List 
+	; STORAGE_ALLOC_FLOW		100b			2	; Allocation is Flow
+	; STORAGE_ALLOC_BINARY		1000b			3	; Allocation is raw binary
 
 
 
@@ -68,63 +78,19 @@ namespace new
 
 
 
-	sub rsp, 8*4
-	call [GetProcessHeap]
-	mov [heapAddress], rax
-	add rsp, 8*4
-	
-
-	mov rcx, 0
-	add rcx, Record.handle
-	add rcx, 1000b
-
-	sub rsp, 8*4
-	mov r8, rcx		
-	mov rdx, 000001000b
-	mov rcx, [heapAddress]
-	call [ HeapAlloc] 
+	sub rsp, 8*8
+	mov rcx, Record.iDelimiter
+	call allocate.new
 	mov [handleAllocatedMemory], rax
-	add rsp, 8*4
-
-
+	add rsp, 8*8
+	
 	mov rbx, [handleAllocatedMemory]
-	add rbx, Record.allocAddr
+	add rbx, Record.allocFlags
 	mov rax, 0
-	mov [rbx], rax
-	mov rbx, [handleAllocatedMemory]
-	add rbx, Record.allocSize
-	mov rax, 0
-	mov [rbx], rax
-	mov rbx, [handleAllocatedMemory]
-	add rbx, Record.name
-	mov rax, 0
-	mov [rbx], rax
-	mov rbx, [handleAllocatedMemory]
-	add rbx, Record.location
-	mov rax, 0
-	mov [rbx], rax
-	mov rbx, [handleAllocatedMemory]
-	add rbx, Record.builtLocation
-	mov rax, 0
-	mov [rbx], rax
-	mov rbx, [handleAllocatedMemory]
-	add rbx, Record.handle
-	mov rax, 0
+	bts rax, 0	; STORAGE_ALLOC_LETTERS		1b			0	; Allocation is letters
 	mov [rbx], rax
 
 
-	;lea rax, [list]
-	;lea rcx, [list.indexedItemIndex]
-
-	;sub rcx, rax
-	;add rcx, 1000b
-
-	;cld
-
-	;lea rsi, [list]
-	;mov rdi, [storage.handleAllocatedMemory]
-
-	;rep movsb
 
 
 	mov rax, [handleAllocatedMemory]
@@ -269,25 +235,58 @@ namespace retrieve
 	call [CloseHandle]
 	add rsp, 8*8
 
-	sub rsp, 8*8
+
 	mov rbx, [recordAddr]
-	add rbx, Record.allocSize
+	add rbx, Record.allocFlags
 	mov rdx, [rbx]
-	mov rbx, [recordAddr]
-	add rbx, Record.allocAddr
-	mov rcx, [rbx]
-	call letters.appendZero
+	mov r8, 1b		; STORAGE_ALLOC_LETTERS		1b			0	; Allocation is letters
+	and r8, rdx
+	cmp r8, 0
+	je allocNotLetters
+
+
+	sub rsp, 8*8
+	mov rcx, [recordAddr]
+	call retrieveLetters		; Alloc can be combination, List or Flow of Letters
 	add rsp, 8*8
 
-	mov rbx, [recordAddr]
-	add rbx, Record.allocAddr
-	mov [rbx], rax
+
+	allocNotLetters:
 
 	mov rbx, [recordAddr]
-	add rbx, Record.allocSize
-	mov r8, [rbx]
-	add r8, 1b
-	mov [rbx], r8
+	add rbx, Record.allocFlags
+	mov rdx, [rbx]
+	mov r8, 10b	; STORAGE_ALLOC_LIST		10b			1	; Allocation is List 
+	and r8, rdx
+	cmp r8, 0
+	je allocNotList
+
+
+	sub rsp, 8*8
+	mov rcx, [recordAddr]
+	call retrieveList
+	add rsp, 8*8
+
+	allocNotList:
+
+
+	mov rbx, [recordAddr]
+	add rbx, Record.allocFlags
+	mov rdx, [rbx]
+	mov r8, 100b		; STORAGE_ALLOC_FLOW		100b			2	; Allocation is Flow
+	and r8, rdx
+	cmp r8, 0
+	je allocNotFlow
+
+
+	sub rsp, 8*8
+	mov rcx, [recordAddr]
+	call retrieveFlow
+	add rsp, 8*8
+
+	allocNotFlow:
+
+
 
 
 	mov rax, [recordAddr]
@@ -391,6 +390,7 @@ namespace storeLetters
 	mov rcx, 0
 	mov ecx, eax
 	mov [rbx], rcx
+
 
 	sub rsp, 8*8
 	mov qword [rsp+4*8], 0

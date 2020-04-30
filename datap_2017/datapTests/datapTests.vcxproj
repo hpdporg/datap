@@ -89,6 +89,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)\datapTests\$(Platform)\$(Configuration)\;$(SolutionDir)..\external\googleTestBuild\lib\Release</AdditionalLibraryDirectories>
       <AdditionalDependencies>gtest.lib;datap.obj;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <LargeAddressAware>true</LargeAddressAware>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -135,8 +136,10 @@
     <ClCompile Include="..\..\src\test\cpp\NumericExpressions\NumExpRefValProcessingTests.cpp" />
     <ClCompile Include="..\..\src\test\cpp\NumericExpressions\NumExpRefValTests.cpp" />
     <ClCompile Include="..\..\src\test\cpp\ReplacementTests.cpp" />
-    <ClCompile Include="..\..\src\test\cpp\StorageTest.cpp" />
-    <ClCompile Include="..\..\src\test\cpp\StorageTests.cpp" />
+    <ClCompile Include="..\..\src\test\cpp\Storage\StorageFlowTests.cpp" />
+    <ClCompile Include="..\..\src\test\cpp\Storage\StorageListTests.cpp" />
+    <ClCompile Include="..\..\src\test\cpp\Storage\StorageTest.cpp" />
+    <ClCompile Include="..\..\src\test\cpp\Storage\StorageTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Include\datap.h" />
@@ -151,7 +154,9 @@
     <ClInclude Include="..\..\src\test\cpp\NumericExpressions\NumExpRefValProcessingTests.h" />
     <ClInclude Include="..\..\src\test\cpp\NumericExpressions\NumExpRefValTests.h" />
     <ClInclude Include="..\..\src\test\cpp\ReplacementTests.h" />
-    <ClInclude Include="..\..\src\test\cpp\StorageTests.h" />
+    <ClInclude Include="..\..\src\test\cpp\Storage\StorageFlowTests.h" />
+    <ClInclude Include="..\..\src\test\cpp\Storage\StorageListTests.h" />
+    <ClInclude Include="..\..\src\test\cpp\Storage\StorageTests.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

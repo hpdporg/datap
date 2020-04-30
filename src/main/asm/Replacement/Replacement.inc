@@ -358,12 +358,145 @@ namespace containsLettersWithList
 	add rsp, 8*8
 	mov [containsnewLetters], rax
 
+	
+
+
+	completed:
+	mov rax, [containsnewLetters]
+
+	add rsp, 8	
+	pop r15 
+	pop r14 
+	pop r13 
+	pop r12 
+	pop rsp 
+	pop rsi 
+	pop rdi 
+	pop rbp 
+	pop rbx
+
+	mov rsp, rbp
+	pop rbp
+
+	retn 0
+end namespace
+
+; containsLettersWithList but using Flow
+; Contains Letters will be replaced using a List of Flow i (horizontal values)
+; Result is a List the size of Flow length (j, row count)
+containsLettersWithFlow:
+namespace containsLettersWithFlow
+	push rbp 
+	mov rbp, rsp 
+	sub rsp, (8*20);+(8*6)
+
+	;mov rcx, [rbp+8] 
+	;mov rdx, [rbp+12] 
+	label containsheapAddress qword at rbp-8  
+	label containshandleAllocatedMemory qword at rbp-16
+	label containsmatchFlow qword at rbp-24 
+	label containsList qword at rbp-32
+	label containsmatchAddr qword at rbp-40
+	label containsLetters qword at rbp-48
+	label replacedLettersAlloc qword at rbp-56
+	label lettersAddr qword at rbp-64
+	label containsmatchingIndex qword at rbp-72
+	label containsmatchResultsList qword at rbp-80
+	label containsstartMatchFound qword at rbp-88
+	label containsmatchFoundCount qword at rbp-96
+	label containslettersLength qword at rbp-104
+	label containsmatchingEnd qword at rbp-112
+	label containsstartIndex qword at rbp-120
+	label containsendIndex qword at rbp-128
+	label containscontainsLetters qword at rbp-136
+	label replacedLettersList qword at rbp-144
+	label flowAddr qword at rbp-152
+	label containslettersBetweenIndices qword at rbp-160
+	
+	
+	;virtual at rbp-64
+	;	.list List
+	;end virtual	
+
+
+
+	mov [lettersAddr], rcx
+	mov [flowAddr], rdx
+	mov [containsLetters], r8
+
+
+
+	and rsp, -32
+	push rbx 
+	push rbp 
+	push rdi 
+	push rsi
+	push rsp 
+	push r12 
+	push r13 
+	push r14 
+	push r15
+	sub rsp, 8
+
+	sub rsp, 8*8
+	call list.new
+	add rsp, 8*8
+	mov [replacedLettersList], rax
+
+
+
+	sub rsp, 8*8
+	mov rcx, [flowAddr]
+	call flow.resetIJ
+	add rsp, 8*8
+
+
+
+	nextFlowJReplaceItems:
+	mov r11, [flowAddr]
+	mov r12, r11
+	add r11, Flow.j
+	add r12, Flow.length
+	mov rcx, [r11]
+	mov rdx, [r12]
+	cmp rcx, rdx
+	jnl endFlowJReplaceItems
+
+
+
+
+	sub rsp, 8*8
+	mov rcx, [flowAddr]
+	call flow.getNextJVals
+	add rsp, 8*8
+	mov [containsList], rax
+
+
+	sub rsp, 8*8
+	mov r8, [containsLetters]
+	mov rdx, [containsList]
+	mov rcx, [lettersAddr]
+	call containsLettersWithList
+	add rsp, 8*8
+	mov [replacedLettersAlloc], rax
+
+
+
+	sub rsp, 8*8
+	mov rdx, [replacedLettersAlloc]
+	mov rcx, [replacedLettersList]
+	call list.newLastItem
+	add rsp, 8*8
+
+
+	jmp nextFlowJReplaceItems
+	endFlowJReplaceItems:
 
 
 
 
 	completed:
-	mov rax, [containsnewLetters]
+	mov rax, [replacedLettersList]
 
 	add rsp, 8	
 	pop r15 

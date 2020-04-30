@@ -1011,6 +1011,12 @@ namespace getNextJVals
 	add rcx, 1b					; Increment
 	mov [rbx], rcx
 
+	mov rbx, [flow]
+	add rbx, Flow.i
+	mov rcx, 0
+	mov [rbx], rcx					; Column i back at 0 so subsequent calls can occur
+
+
 	endFlow:
 
 

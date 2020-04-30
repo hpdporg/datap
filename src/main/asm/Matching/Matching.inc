@@ -1535,6 +1535,11 @@ namespace extractBetween
 	add rsp, 8*8
 	mov [endIndex], rax
 
+	;sub rsp, 8*8
+	;mov rcx, [endIndex]
+	;call storage.debugNumMsg
+	;add rsp, 8*8
+
 	mov rcx, [endIndex]
 	sub rcx, 1b
 	mov [endIndex], rcx		; Non-inclusive
@@ -1553,9 +1558,14 @@ namespace extractBetween
 	call list.newLastItem
 	add rsp, 8*8
 
+	sub rsp, 8*8
+	mov rcx, [delimiter]
+	call letters.letterLength
+	add rsp, 8*8
 	mov rcx, [endIndex]
-	add rcx, 10b
-	mov [startIndex], rcx		; Non-inclusive, skip ahead 2, swap on next run
+	add rcx, 1b			; Skip back ahead
+	add rcx, rax
+	mov [startIndex], rcx		; Non-inclusive, skip ahead size of delimiter, swap on next run
 
 	jmp nextMatch
 
@@ -1579,9 +1589,14 @@ namespace extractBetween
 	jnl completed
 
 	sub rsp, 8*8
-	mov r8, [letterLength]		
+	mov rcx, [delimiter]
+	call letters.letterLength
+	add rsp, 8*8
 	mov rdx, [endIndex]
-	add rdx, 10b					; Non-inclusive, was decremented before as end, must be advanced as start
+	add rdx, 1b					; Skip back ahead
+	add rdx, rax					; Non-inclusive, skip ahead size of delimiter, swap on next run
+	sub rsp, 8*8
+	mov r8, [letterLength]		
 	mov rcx, [lettersAlloc]
 	call letters.betweenIndices
 	add rsp, 8*8

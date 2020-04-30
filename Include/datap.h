@@ -46,7 +46,17 @@ typedef struct Record {
 	char* location;
 	char* builtLocation;
 	HANDLE handle;
+	_int64	allocFlags;
+	char* jDelimiter;
+	char* iDelimiter;
 } Record;
+
+typedef enum StorageAllocFlags {
+	STORAGE_ALLOC_LETTERS = 1,
+	STORAGE_ALLOC_LIST = 2,
+	STORAGE_ALLOC_FLOW = 4,
+	STORAGE_ALLOC_BINARY = 8,
+} StorageAllocFlags;
 
 typedef struct Matches {
 	_int64	flags;
@@ -209,6 +219,7 @@ extern "C" {
 	//Flow
 	Flow* newFlow();
 	void newLastFlowList(Flow* flow, List* list);
+	void newLastFlowIVals(Flow* flow, List* iVals);
 	void increaseFlowWidth(Flow* flow, _int64 width);
 	void resetFlowIJ(Flow*);
 	void* getNextFlowItem(Flow*);
@@ -221,6 +232,9 @@ extern "C" {
 	Record* restoreLetters(Record* record, char* letters);
 	List* retrieveRecordNames(Record* record);
 	void removeRecord(Record* record);
+	Record* storeList(Record* record, List* list);
+	Record* restoreList(Record* record, List* list);
+	
 	void debugNum(_int64 num);
 	void debugLetters(char* letters);
 	void debugNumMsg(_int64 num);
@@ -241,6 +255,7 @@ extern "C" {
 	//Replacement
 	char* replaceLettersWithList(ReplaceFlags flags, char* letters, List* list, List* matchResultsList);
 	char* replaceContainsLettersWithList(char* letters, List* list, char* containsLetters);
+	List* replaceContainsLettersWithFlow(char* letters, Flow* flow, char* containsLetters);
 
 	//Time
 	Time* newTime();

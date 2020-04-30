@@ -1,18 +1,24 @@
 
 
 
-Filtering appending?
-
 
 filtered	acPerTask	acPerTaskCond	= first perf.timestamp listRef/appendingRef?
 
 
 
+Or put this in filtered only? list as columns description when retreiving
+retrieveflow	flowref	columnslist
+column1appended	flowref.col3	commaref
+filtered	flowref	= column1appended
 
-appending on a filter:
+
+appending on a filter, any appending that has a filter being appended:
 
 appendedVal	filter.v1	commaref
 
+Listref(Flow)
+	appendedVal
+	val2
 
 
 list with filter vals in it
