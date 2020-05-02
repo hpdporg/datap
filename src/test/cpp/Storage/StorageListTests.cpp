@@ -8,6 +8,7 @@ TEST_F(StorageTest, RetrievesList) {
 	Record* record = newStorage();
 	fprintf(stdout, "\nOutput: %d\n", (int)record);
 	defineRecordPath(record, (char*)"TestCSV.csv", (char*)"..\\..\\..\\..\\src\\resources");
+	//record->builtLocation = (char*)"..\\..\\..\\..\\src\\resources\\TestCSV.csv";
 	fprintf(stdout, "\nOutput: %s\n", (record->builtLocation));
 	record->allocFlags = STORAGE_ALLOC_LETTERS | STORAGE_ALLOC_LIST;
 	record->jDelimiter = (char*)"\r\n";
@@ -18,6 +19,14 @@ TEST_F(StorageTest, RetrievesList) {
 	EXPECT_TRUE(record->allocSize != 0);
 	fprintf(stdout, "\nList Size: %d\n", ((List*)record->allocAddr)->itemsCount);
 	EXPECT_EQ(3, ((List*)record->allocAddr)->itemsCount);
+
+	List* list = (List*)record->allocAddr;
+	resetIndex(list);
+	while (list->index < list->itemsCount) {
+		char* item = (char*)getNextItem(list);
+		fprintf(stdout, "\nNextItem: %s.\n", item);
+	}
+
 }
 
 
