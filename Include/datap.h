@@ -275,6 +275,15 @@ extern "C" {
 
 	NumericParsing* newNumericParsing();
 
+	//Numeric
+	double sine(double val);
+	double cosine(double val);
+	double tangent(double val);
+	double arctangent(double val);
+
+
+
+
 }
 
 

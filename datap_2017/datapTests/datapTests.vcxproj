@@ -135,6 +135,7 @@
     <ClCompile Include="..\..\src\test\cpp\NumericExpressions\NumericParsing.cpp" />
     <ClCompile Include="..\..\src\test\cpp\NumericExpressions\NumExpRefValProcessingTests.cpp" />
     <ClCompile Include="..\..\src\test\cpp\NumericExpressions\NumExpRefValTests.cpp" />
+    <ClCompile Include="..\..\src\test\cpp\Numeric\Transcendental.cpp" />
     <ClCompile Include="..\..\src\test\cpp\ReplacementTests.cpp" />
     <ClCompile Include="..\..\src\test\cpp\Storage\StorageFlowTests.cpp" />
     <ClCompile Include="..\..\src\test\cpp\Storage\StorageListTests.cpp" />
@@ -153,6 +154,7 @@
     <ClInclude Include="..\..\src\test\cpp\NumericExpressions\NumericParsing.h" />
     <ClInclude Include="..\..\src\test\cpp\NumericExpressions\NumExpRefValProcessingTests.h" />
     <ClInclude Include="..\..\src\test\cpp\NumericExpressions\NumExpRefValTests.h" />
+    <ClInclude Include="..\..\src\test\cpp\Numeric\Transcendental.h" />
     <ClInclude Include="..\..\src\test\cpp\ReplacementTests.h" />
     <ClInclude Include="..\..\src\test\cpp\Storage\StorageFlowTests.h" />
     <ClInclude Include="..\..\src\test\cpp\Storage\StorageListTests.h" />

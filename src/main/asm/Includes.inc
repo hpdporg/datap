@@ -1,5 +1,6 @@
 include 'Include/Allocate.inc'
 include 'Include/List.inc'
+include 'Include/Numeric.inc'
 include 'Include/NumericExpressions/NumericExpressions.inc'
 include 'Include/Flow.inc'
 include 'Include/Letters.inc'
