@@ -3,7 +3,8 @@
 section '.text' code readable writeable executable align 16
 
 
-; Big angles may be incorrect (3.2)
+; Angles are in radians
+; Big angles need testing (3.2)
 sine:
 	push rbp
 	mov rbp, rsp
@@ -11,7 +12,7 @@ sine:
 
 	movq xmm0, xmm0
 	;mov rcx, rcx;		[rbp+8]		;Angle
-	;mov edx, [rbp+12]			;Tensor 2 address
+	;mov edx, [rbp+12]			;
 	label .factorial qword at rbp-8
 	;label .factorial qword at rbp-16
 
@@ -24,7 +25,7 @@ sine:
 	;movsd xmm0, [rcx]	; Destination
 	movsd xmm1, xmm0	; Reference
 	movsd xmm2, xmm0
-	movsd xmm3, xmm0	; Power Reference
+	movsd xmm3, xmm0	; 
 	movsd xmm4, xmm0
 	movsd xmm5, xmm0
 
@@ -93,20 +94,13 @@ cosine:
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
 	;label .angleAddress qword at rbp-8
-	;virtual at rbp-104;56
-	;	.app APP
-	;end virtual	
+
 
 
 	and rsp, -32
 	push rbx rbp rdi rsi rsp r12 r13 r14 r15
 	sub rsp, 8
 	;align 16
-
-	;mov [cosine.angleAddress], rcx
-	;mov [newAPPKernel.APPAllocation], rdx
-	;mov [newAPPKernel.app], r8
-	;mov [newAPPKernel.spirvSize], r9
 
 	movq xmm1, xmm0
 	;movq xmm1, [cosine.angleAddress]
@@ -192,9 +186,7 @@ tangent:
 	;mov rdx, [rbp+12] 
 	label .sine qword at rbp-8
 	label .angle qword at rbp-16
-	;virtual at rbp-104;56
-	;	.app APP
-	;end virtual	
+
 
 
 	and rsp, -32
@@ -250,11 +242,7 @@ arctangent:
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
-	;label .sine qword at rbp-8
-	;label .angle qword at rbp-16
-	;virtual at rbp-104;56
-	;	.app APP
-	;end virtual	
+
 
 
 	and rsp, -32

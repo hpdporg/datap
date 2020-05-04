@@ -276,6 +276,8 @@ extern "C" {
 	NumericParsing* newNumericParsing();
 
 	//Numeric
+
+	//Angles are in radians
 	double sine(double val);
 	double cosine(double val);
 	double tangent(double val);
