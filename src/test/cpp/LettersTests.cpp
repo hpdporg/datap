@@ -1,4 +1,4 @@
-#include "AsmIncludes.h"
+#include "datap.h"
 #include "LettersTests.h"
 
 TEST(LettersTests, NumberReturnedAsLetters) {
@@ -58,4 +58,16 @@ TEST(LettersTests, ReturnsLettersBetweenIndices) {
 	char* lettersBetween = lettersBetweenIndices(letters,index1,index2);
 	fprintf(stdout, "\nLetters between: %s\n", lettersBetween);
 	EXPECT_STREQ("ers1",lettersBetween);
+}
+
+TEST(LettersTests, LettersReturnedAsNumbers) {
+	_int64 num = lettersAsNum((char*)"48");
+	fprintf(stdout, "\nOutput: %d\n", num);
+	EXPECT_EQ(48, num);
+}
+
+TEST(LettersTests, LettersReturnedAsNumbersFourDigit) {
+	_int64 num = lettersAsNum((char*)"4821");
+	fprintf(stdout, "\nOutput: %d\n", num);
+	EXPECT_EQ(4821, num);
 }

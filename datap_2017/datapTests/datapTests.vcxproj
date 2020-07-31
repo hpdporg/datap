@@ -81,7 +81,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\external\googletest\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\external\googletest\include;$(SolutionDir)..\Include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -89,6 +89,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)\datapTests\$(Platform)\$(Configuration)\;$(SolutionDir)..\external\googleTestBuild\lib\Release</AdditionalLibraryDirectories>
       <AdditionalDependencies>gtest.lib;datap.obj;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <LargeAddressAware>true</LargeAddressAware>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -123,21 +124,41 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\test\cpp\AllocateTests.cpp" />
+    <ClCompile Include="..\..\src\test\cpp\FlowTests.cpp" />
     <ClCompile Include="..\..\src\test\cpp\LettersTests.cpp" />
     <ClCompile Include="..\..\src\test\cpp\ListTests.cpp" />
     <ClCompile Include="..\..\src\test\cpp\Main.cpp" />
     <ClCompile Include="..\..\src\test\cpp\MatchingTests.cpp" />
+    <ClCompile Include="..\..\src\test\cpp\NumericExpressions\NumericExpressions.cpp" />
+    <ClCompile Include="..\..\src\test\cpp\NumericExpressions\NumericExpressionsParsing.cpp" />
+    <ClCompile Include="..\..\src\test\cpp\NumericExpressions\NumericExpressionsParsingFlags.cpp" />
+    <ClCompile Include="..\..\src\test\cpp\NumericExpressions\NumericParsing.cpp" />
+    <ClCompile Include="..\..\src\test\cpp\NumericExpressions\NumExpRefValProcessingTests.cpp" />
+    <ClCompile Include="..\..\src\test\cpp\NumericExpressions\NumExpRefValTests.cpp" />
+    <ClCompile Include="..\..\src\test\cpp\Numeric\Transcendental.cpp" />
     <ClCompile Include="..\..\src\test\cpp\ReplacementTests.cpp" />
-    <ClCompile Include="..\..\src\test\cpp\StorageTest.cpp" />
-    <ClCompile Include="..\..\src\test\cpp\StorageTests.cpp" />
+    <ClCompile Include="..\..\src\test\cpp\Storage\StorageFlowTests.cpp" />
+    <ClCompile Include="..\..\src\test\cpp\Storage\StorageListTests.cpp" />
+    <ClCompile Include="..\..\src\test\cpp\Storage\StorageTest.cpp" />
+    <ClCompile Include="..\..\src\test\cpp\Storage\StorageTests.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Include\datap.h" />
     <ClInclude Include="..\..\src\test\cpp\AllocateTests.h" />
-    <ClInclude Include="..\..\src\test\cpp\AsmIncludes.h" />
+    <ClInclude Include="..\..\src\test\cpp\FlowTests.h" />
     <ClInclude Include="..\..\src\test\cpp\LettersTests.h" />
     <ClInclude Include="..\..\src\test\cpp\MatchingTests.h" />
+    <ClInclude Include="..\..\src\test\cpp\NumericExpressions\NumericExpressions.h" />
+    <ClInclude Include="..\..\src\test\cpp\NumericExpressions\NumericExpressionsParsing.h" />
+    <ClInclude Include="..\..\src\test\cpp\NumericExpressions\NumericExpressionsParsingFlags.h" />
+    <ClInclude Include="..\..\src\test\cpp\NumericExpressions\NumericParsing.h" />
+    <ClInclude Include="..\..\src\test\cpp\NumericExpressions\NumExpRefValProcessingTests.h" />
+    <ClInclude Include="..\..\src\test\cpp\NumericExpressions\NumExpRefValTests.h" />
+    <ClInclude Include="..\..\src\test\cpp\Numeric\Transcendental.h" />
     <ClInclude Include="..\..\src\test\cpp\ReplacementTests.h" />
-    <ClInclude Include="..\..\src\test\cpp\StorageTests.h" />
+    <ClInclude Include="..\..\src\test\cpp\Storage\StorageFlowTests.h" />
+    <ClInclude Include="..\..\src\test\cpp\Storage\StorageListTests.h" />
+    <ClInclude Include="..\..\src\test\cpp\Storage\StorageTests.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

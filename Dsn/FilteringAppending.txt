@@ -1,0 +1,44 @@
+
+
+
+
+filtered	acPerTask	acPerTaskCond	= first perf.timestamp listRef/appendingRef?
+
+
+
+Or put this in filtered only? list as columns description when retreiving
+retrieveflow	flowref	columnslist
+column1appended	flowref.col3	commaref
+filtered	flowref	= column1appended
+
+
+appending on a filter, any appending that has a filter being appended:
+
+appendedVal	filter.v1	commaref
+
+Listref(Flow)
+	appendedVal
+	val2
+
+
+list with filter vals in it
+
+
+listRef
+	block1
+	appendedValBlock
+	block3
+
+block3	 	filter.v3
+
+appendedValBlock	filter.v1	parenthesesRef
+
+---
+
+Replace one filter with another's vals? two reference filters/tsvs
+	perhaps just start at first element, proceed to end
+	yes, only apply when using filtered term, otherwise the original flow would be destroyed
+
+
+filtered	acpertask	acpertaskcond	= appendedVal	= listRef
+

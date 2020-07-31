@@ -17,33 +17,34 @@ section '.text' code readable writeable executable align 16
 
 replacement:
 namespace replacement
-replacement.lettersWithList:
+lettersWithList:
+namespace lettersWithList
 	push rbp 
 	mov rbp, rsp 
 	sub rsp, (8*20);+(8*6)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
-	label lettersWithList.heapAddress qword at rbp-8  
-	label lettersWithList.handleAllocatedMemory qword at rbp-16
-	label lettersWithList.matchFlow qword at rbp-24 
-	label lettersWithList.list qword at rbp-32
-	label lettersWithList.matchAddr qword at rbp-40
-	label lettersWithList.letters qword at rbp-48
-	label lettersWithList.flags qword at rbp-56
-	label lettersWithList.lettersAlloc qword at rbp-64
-	label lettersWithList.matchingIndex qword at rbp-72
-	label lettersWithList.matchResultsList qword at rbp-80
-	label lettersWithList.startMatchFound qword at rbp-88
-	label lettersWithList.matchFoundCount qword at rbp-96
-	label lettersWithList.lettersLength qword at rbp-104
-	label lettersWithList.matchingEnd qword at rbp-112
-	label lettersWithList.startIndex qword at rbp-120
-	label lettersWithList.endIndex qword at rbp-128
-	label lettersWithList.lettersIndex qword at rbp-136
-	label lettersWithList.newLetters qword at rbp-144
-	label lettersWithList.nextListVal qword at rbp-152
-	label lettersWithList.lettersBetweenIndices qword at rbp-160
+	label heapAddress qword at rbp-8  
+	label handleAllocatedMemory qword at rbp-16
+	label matchFlow qword at rbp-24 
+	label listAlloc qword at rbp-32
+	label matchAddr qword at rbp-40
+	label nextLetters qword at rbp-48
+	label flags qword at rbp-56
+	label lettersAlloc qword at rbp-64
+	label matchingIndex qword at rbp-72
+	label matchResultsList qword at rbp-80
+	label startMatchFound qword at rbp-88
+	label matchFoundCount qword at rbp-96
+	label lettersLength qword at rbp-104
+	label matchingEnd qword at rbp-112
+	label startIndex qword at rbp-120
+	label endIndex qword at rbp-128
+	label lettersIndex qword at rbp-136
+	label newLetters qword at rbp-144
+	label nextListVal qword at rbp-152
+	label lettersBetweenIndices qword at rbp-160
 	
 	
 	;virtual at rbp-64
@@ -51,10 +52,10 @@ replacement.lettersWithList:
 	;end virtual	
 
 
-	mov [lettersWithList.flags], rcx
-	mov [lettersWithList.letters], rdx
-	mov [lettersWithList.list], r8
-	mov [lettersWithList.matchResultsList], r9
+	mov [flags], rcx
+	mov [lettersAlloc], rdx
+	mov [listAlloc], r8
+	mov [matchResultsList], r9
 
 
 	and rsp, -32
@@ -71,82 +72,82 @@ replacement.lettersWithList:
 
 
 	mov rcx, 0
-	mov [lettersWithList.lettersIndex], rcx		; Begin as 0
-	mov [lettersWithList.newLetters], rcx
-	mov [lettersWithList.nextListVal], rcx
+	mov [lettersIndex], rcx		; Begin as 0
+	mov [newLetters], rcx
+	mov [nextListVal], rcx
 
 
 	
 
-	mov r8, [lettersWithList.flags]
+	mov r8, [flags]
 	bt r8, 0b					; REPLACE between
-	jnc lettersWithList.replaceInsert		; Replace as insert at indices
+	jnc replaceInsert		; Replace as insert at indices
 	
 
 	sub rsp, 8*8
-	mov rcx, [lettersWithList.letters]
+	mov rcx, [lettersAlloc]
 	call letters.letterLength
 	add rsp, 8*8
-	mov [lettersWithList.lettersLength], rax
+	mov [lettersLength], rax
 
 
 
-	.nextMatchResult:
-	mov rcx, [lettersWithList.lettersIndex]
-	mov rdx, [lettersWithList.lettersLength]
+	nextMatchResult:
+	mov rcx, [lettersIndex]
+	mov rdx, [lettersLength]
 	cmp rcx, rdx
-	jnl lettersWithList.endMatchResultsList
+	jnl endMatchResultsList
 	
-	mov rbx,  [lettersWithList.matchResultsList]
+	mov rbx,  [matchResultsList]
 	mov r8, rbx
 	add rbx, List.index
 	add r8, List.itemsCount
 	mov rcx, [rbx]
 	mov rdx, [r8]
 	cmp rcx, rdx
-	jl lettersWithList.replacingOrNotReplacingVal
+	jl replacingOrNotReplacingVal
 
-	mov r10, [lettersWithList.lettersLength]
-	mov r11,  [lettersWithList.lettersIndex]
+	mov r10, [lettersLength]
+	mov r11,  [lettersIndex]
 	add r10, r11
 	add r10, 1b								; Decreased later
-	mov [lettersWithList.startIndex], r10
+	mov [startIndex], r10
 
 
 
-	jmp lettersWithList.nonReplacedVal
+	jmp nonReplacedVal
 
-	.replacingOrNotReplacingVal:
-
-
+	replacingOrNotReplacingVal:
 
 
 
-	sub rsp, 8*8
-	mov rcx, [lettersWithList.matchResultsList]
-	call list.getNextItem
-	add rsp, 8*8
-	mov [lettersWithList.startIndex], rax
 
 
 	sub rsp, 8*8
-	mov rcx, [lettersWithList.matchResultsList]
+	mov rcx, [matchResultsList]
 	call list.getNextItem
 	add rsp, 8*8
-	mov [lettersWithList.endIndex], rax
+	mov [startIndex], rax
+
+
+	sub rsp, 8*8
+	mov rcx, [matchResultsList]
+	call list.getNextItem
+	add rsp, 8*8
+	mov [endIndex], rax
 
 
 
 
 	
 
-	mov rcx, [lettersWithList.lettersIndex]
-	mov rdx, [lettersWithList.startIndex]
+	mov rcx, [lettersIndex]
+	mov rdx, [startIndex]
 	cmp rcx, rdx
-	jnl lettersWithList.appendListVal
-	.nonReplacedVal:
+	jnl appendListVal
+	nonReplacedVal:
 
-	mov rbx, [lettersWithList.matchResultsList]
+	mov rbx, [matchResultsList]
 	add rbx, List.index
 	mov rcx, [rbx]
 	sub rcx, 10b
@@ -156,92 +157,92 @@ replacement.lettersWithList:
 
 
 	sub rsp, 8*8
-	mov r8, [lettersWithList.startIndex]
+	mov r8, [startIndex]
 	sub r8, 1b
-	mov rdx, [lettersWithList.lettersIndex]
-	mov rcx, [lettersWithList.letters]
+	mov rdx, [lettersIndex]
+	mov rcx, [lettersAlloc]
 	call letters.betweenIndices
 	add rsp, 8*8
-	mov [lettersWithList.lettersBetweenIndices], rax
+	mov [lettersBetweenIndices], rax
 	
 	sub rsp, 8*8
-	mov rdx, [lettersWithList.lettersBetweenIndices]
-	mov rcx, [lettersWithList.newLetters]
+	mov rdx, [lettersBetweenIndices]
+	mov rcx, [newLetters]
 	call letters.appendLetters
 	add rsp, 8*8
-	mov [lettersWithList.newLetters], rax
+	mov [newLetters], rax
 
 	sub rsp, 8*8
-	mov rcx, [lettersWithList.lettersBetweenIndices]
+	mov rcx, [lettersBetweenIndices]
 	call letters.letterLength
 	add rsp, 8*8
-	mov r8, [lettersWithList.lettersIndex]
+	mov r8, [lettersIndex]
 	add r8, rax
-	mov [lettersWithList.lettersIndex], r8
+	mov [lettersIndex], r8
 
 
 
 
 
 
-	jmp lettersWithList.nextMatchResult
-	.appendListVal:
+	jmp nextMatchResult
+	appendListVal:
 
 
 
 
 
-	mov rbx, [lettersWithList.list]
+	mov rbx, [listAlloc]
 	mov r9, rbx
 	add rbx, List.index
 	add r9, List.itemsCount
 	mov rcx, [rbx]
 	mov rdx, [r9]
 	cmp rcx, rdx
-	jl lettersWithList.getNextListVal
+	jl getNextListVal
 
 	sub rsp, 8*8
-	mov rcx, [lettersWithList.list]
+	mov rcx, [listAlloc]
 	call list.resetIndex
 	add rsp, 8*8
 
-	.getNextListVal:
+	getNextListVal:
 
 	sub rsp, 8*8
-	mov rcx, [lettersWithList.list]
+	mov rcx, [listAlloc]
 	call list.getNextItem
 	add rsp, 8*8
-	mov [lettersWithList.nextListVal], rax
+	mov [nextListVal], rax
 
 
 	sub rsp, 8*8
-	mov rdx, [lettersWithList.nextListVal]
-	mov rcx, [lettersWithList.newLetters]
+	mov rdx, [nextListVal]
+	mov rcx, [newLetters]
 	call letters.appendLetters
 	add rsp, 8*8
-	mov [lettersWithList.newLetters], rax
+	mov [newLetters], rax
 
 
 
 
-	mov rdx, [lettersWithList.endIndex]
+	mov rdx, [endIndex]
 	add rdx, 1b
-	mov [lettersWithList.lettersIndex], rdx
+	mov [lettersIndex], rdx
 
 
 	
 
-	jmp lettersWithList.nextMatchResult
-	.endMatchResultsList:
+	jmp nextMatchResult
+	endMatchResultsList:
 
 
-	.replaceInsert:					; TO-DO
+	replaceInsert:					; TO-DO
 
 
-	mov rax, [lettersWithList.newLetters]
+	mov rax, [newLetters]
 
 
-	lettersWithList.end:
+	completed:
 
 
 	add rsp, 8	
@@ -259,35 +260,37 @@ replacement.lettersWithList:
 	pop rbp
 
 	retn 0
+end namespace
 
 ; Convenience wrapper around lettersWithList using contains assumptions
-replacement.containsLettersWithList:
+containsLettersWithList:
+namespace containsLettersWithList
 	push rbp 
 	mov rbp, rsp 
 	sub rsp, (8*20);+(8*6)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
-	label containsLettersWithList.heapAddress qword at rbp-8  
-	label containsLettersWithList.handleAllocatedMemory qword at rbp-16
-	label containsLettersWithList.matchFlow qword at rbp-24 
-	label containsLettersWithList.list qword at rbp-32
-	label containsLettersWithList.matchAddr qword at rbp-40
-	label containsLettersWithList.letters qword at rbp-48
-	label containsLettersWithList.flags qword at rbp-56
-	label containsLettersWithList.lettersAlloc qword at rbp-64
-	label containsLettersWithList.matchingIndex qword at rbp-72
-	label containsLettersWithList.matchResultsList qword at rbp-80
-	label containsLettersWithList.startMatchFound qword at rbp-88
-	label containsLettersWithList.matchFoundCount qword at rbp-96
-	label containsLettersWithList.lettersLength qword at rbp-104
-	label containsLettersWithList.matchingEnd qword at rbp-112
-	label containsLettersWithList.startIndex qword at rbp-120
-	label containsLettersWithList.endIndex qword at rbp-128
-	label containsLettersWithList.containsLetters qword at rbp-136
-	label containsLettersWithList.newLetters qword at rbp-144
-	label containsLettersWithList.nextListVal qword at rbp-152
-	label containsLettersWithList.lettersBetweenIndices qword at rbp-160
+	label containsheapAddress qword at rbp-8  
+	label containshandleAllocatedMemory qword at rbp-16
+	label containsmatchFlow qword at rbp-24 
+	label containslist qword at rbp-32
+	label containsmatchAddr qword at rbp-40
+	label containsletters qword at rbp-48
+	label containsflags qword at rbp-56
+	label containslettersAlloc qword at rbp-64
+	label containsmatchingIndex qword at rbp-72
+	label containsmatchResultsList qword at rbp-80
+	label containsstartMatchFound qword at rbp-88
+	label containsmatchFoundCount qword at rbp-96
+	label containslettersLength qword at rbp-104
+	label containsmatchingEnd qword at rbp-112
+	label containsstartIndex qword at rbp-120
+	label containsendIndex qword at rbp-128
+	label containscontainsLetters qword at rbp-136
+	label containsnewLetters qword at rbp-144
+	label containsnextListVal qword at rbp-152
+	label containslettersBetweenIndices qword at rbp-160
 	
 	
 	;virtual at rbp-64
@@ -296,9 +299,9 @@ replacement.containsLettersWithList:
 
 
 
-	mov [containsLettersWithList.letters], rcx
-	mov [containsLettersWithList.list], rdx
-	mov [containsLettersWithList.containsLetters], r8
+	mov [containsletters], rcx
+	mov [containslist], rdx
+	mov [containscontainsLetters], r8
 
 
 	and rsp, -32
@@ -317,10 +320,10 @@ replacement.containsLettersWithList:
 	sub rsp, 8*8
 	call matching.new
 	add rsp, 8*8	
-	mov [containsLettersWithList.matchAddr], rax
+	mov [containsmatchAddr], rax
 	
 
-	mov rbx, [containsLettersWithList.matchAddr]
+	mov rbx, [containsmatchAddr]
 	mov rdx, rbx
 	add rbx, Matches.flags
 	mov r8, 11011b							;MATCH_START  MATCH_END  MATCH_EVERY  MATCH_TRANSFORM
@@ -330,8 +333,8 @@ replacement.containsLettersWithList:
 	mov [rdx], r9
 	
 	sub rsp, 8*8
-	mov rdx, [containsLettersWithList.containsLetters]
-	mov rbx, [containsLettersWithList.matchAddr]
+	mov rdx, [containscontainsLetters]
+	mov rbx, [containsmatchAddr]
 	add rbx, Matches.containsRangeList
 	mov rcx, [rbx]
 	call list.newLastItem
@@ -339,8 +342,8 @@ replacement.containsLettersWithList:
 
 
 	sub rsp, 8*8
-	mov rdx, [containsLettersWithList.letters]
-	mov rcx, [containsLettersWithList.matchAddr]
+	mov rdx, [containsletters]
+	mov rcx, [containsmatchAddr]
 	call matching.get
 	add rsp, 8*8
 
@@ -348,19 +351,18 @@ replacement.containsLettersWithList:
 
 	sub rsp, 8*8
 	mov r9, rax
-	mov r8, [containsLettersWithList.list]
-	mov rdx, [containsLettersWithList.letters]
+	mov r8, [containslist]
+	mov rdx, [containsletters]
 	mov rcx, 1b 					; REPLACE_BETWEEN
 	call lettersWithList
 	add rsp, 8*8
-	mov [containsLettersWithList.newLetters], rax
+	mov [containsnewLetters], rax
+
+	
 
 
-
-
-
-	.end:
-	mov rax, [containsLettersWithList.newLetters]
+	completed:
+	mov rax, [containsnewLetters]
 
 	add rsp, 8	
 	pop r15 
@@ -377,6 +379,141 @@ replacement.containsLettersWithList:
 	pop rbp
 
 	retn 0
+end namespace
+
+; containsLettersWithList but using Flow
+; Contains Letters will be replaced using a List of Flow i (horizontal values)
+; Result is a List the size of Flow length (j, row count)
+containsLettersWithFlow:
+namespace containsLettersWithFlow
+	push rbp 
+	mov rbp, rsp 
+	sub rsp, (8*20);+(8*6)
+
+	;mov rcx, [rbp+8] 
+	;mov rdx, [rbp+12] 
+	label containsheapAddress qword at rbp-8  
+	label containshandleAllocatedMemory qword at rbp-16
+	label containsmatchFlow qword at rbp-24 
+	label containsList qword at rbp-32
+	label containsmatchAddr qword at rbp-40
+	label containsLetters qword at rbp-48
+	label replacedLettersAlloc qword at rbp-56
+	label lettersAddr qword at rbp-64
+	label containsmatchingIndex qword at rbp-72
+	label containsmatchResultsList qword at rbp-80
+	label containsstartMatchFound qword at rbp-88
+	label containsmatchFoundCount qword at rbp-96
+	label containslettersLength qword at rbp-104
+	label containsmatchingEnd qword at rbp-112
+	label containsstartIndex qword at rbp-120
+	label containsendIndex qword at rbp-128
+	label containscontainsLetters qword at rbp-136
+	label replacedLettersList qword at rbp-144
+	label flowAddr qword at rbp-152
+	label containslettersBetweenIndices qword at rbp-160
+	
+	
+	;virtual at rbp-64
+	;	.list List
+	;end virtual	
+
+
+
+	mov [lettersAddr], rcx
+	mov [flowAddr], rdx
+	mov [containsLetters], r8
+
+
+
+	and rsp, -32
+	push rbx 
+	push rbp 
+	push rdi 
+	push rsi
+	push rsp 
+	push r12 
+	push r13 
+	push r14 
+	push r15
+	sub rsp, 8
+
+	sub rsp, 8*8
+	call list.new
+	add rsp, 8*8
+	mov [replacedLettersList], rax
+
+
+
+	sub rsp, 8*8
+	mov rcx, [flowAddr]
+	call flow.resetIJ
+	add rsp, 8*8
+
+
+
+	nextFlowJReplaceItems:
+	mov r11, [flowAddr]
+	mov r12, r11
+	add r11, Flow.j
+	add r12, Flow.length
+	mov rcx, [r11]
+	mov rdx, [r12]
+	cmp rcx, rdx
+	jnl endFlowJReplaceItems
+
+
+
+
+	sub rsp, 8*8
+	mov rcx, [flowAddr]
+	call flow.getNextJVals
+	add rsp, 8*8
+	mov [containsList], rax
+
+
+	sub rsp, 8*8
+	mov r8, [containsLetters]
+	mov rdx, [containsList]
+	mov rcx, [lettersAddr]
+	call containsLettersWithList
+	add rsp, 8*8
+	mov [replacedLettersAlloc], rax
+
+
+
+	sub rsp, 8*8
+	mov rdx, [replacedLettersAlloc]
+	mov rcx, [replacedLettersList]
+	call list.newLastItem
+	add rsp, 8*8
+
+
+	jmp nextFlowJReplaceItems
+	endFlowJReplaceItems:
+
+
+
+
+	completed:
+	mov rax, [replacedLettersList]
+
+	add rsp, 8	
+	pop r15 
+	pop r14 
+	pop r13 
+	pop r12 
+	pop rsp 
+	pop rsi 
+	pop rdi 
+	pop rbp 
+	pop rbx
+
+	mov rsp, rbp
+	pop rbp
+
+	retn 0
+end namespace
 
 
 

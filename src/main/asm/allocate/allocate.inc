@@ -26,31 +26,32 @@ section '.data' data readable writeable align 16
 	bytesWritten dq 0
 	valueSize dq 0
 	;newElementMsg db 'New Element',0
-	linear.filePathAddr dq 0
+	filePathAddr dq 0
 
 section '.text' code readable writeable executable align 16
 
 
-; linear.defineFilePath
-; linear.newFile
+; defineFilePath
+; newFile
 
 allocate:
 namespace allocate
-allocate.linear:
+linear:
+namespace linear
 	push rbp 
 	mov rbp, rsp 
 	sub rsp, (8*3);+(8*0)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
-	label linear.handleAddr qword at rbp-8  
-	label linear.size qword at rbp-16
-	label linear.heapAddress qword at rbp-24
+	label handleAddr qword at rbp-8  
+	label size qword at rbp-16
+	label heapAddress qword at rbp-24
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
 
-	mov [linear.size], rcx
+	mov [size], rcx
 
 	and rsp, -32
 	push rbx 
@@ -68,19 +69,19 @@ allocate.linear:
 
 	sub rsp, 8*8
 	call [GetProcessHeap]
-	mov [linear.heapAddress], rax
+	mov [heapAddress], rax
 	add rsp, 8*8
 	
 
 	sub rsp, 8*8
-	mov r8, [linear.size]	
+	mov r8, [size]	
 	mov rdx, 000001000b
-	mov rcx, [linear.heapAddress]
+	mov rcx, [heapAddress]
 	call [ HeapAlloc] 
-	mov [linear.handleAddr], rax
+	mov [handleAddr], rax
 	add rsp, 8*8
 
-	mov rax, [linear.handleAddr]
+	mov rax, [handleAddr]
 
 
 	add rsp, 8	
@@ -98,5 +99,88 @@ allocate.linear:
 	pop rbp
 
 	retn 0
+end namespace
+
+; Takes last member offset as a param i.e. strucName.member5
+new:
+namespace new
+	push rbp 
+	mov rbp, rsp 
+	sub rsp, (8*3);+(8*0)
+
+	;mov rcx, [rbp+8] 
+	;mov rdx, [rbp+12] 
+	label heapAddress qword at rbp-8  
+	label handleAllocatedMemory qword at rbp-16
+	label size qword at rbp-24
+	;virtual at rbp-64
+	;	.list List
+	;end virtual	
+
+	mov [size], rcx			; Last Member offset
+
+	and rsp, -32
+	push rbx 
+	push rbp 
+	push rdi 
+	push rsi
+	push rsp 
+	push r12 
+	push r13 
+	push r14 
+	push r15
+	sub rsp, 8
+
+
+	mov rdx, [size]
+	mov rcx, 0
+	add rcx, rdx
+	add rcx, 1000b
+	mov [size], rcx
+
+	sub rsp, 8*4
+	call [GetProcessHeap]
+	mov [heapAddress], rax
+	add rsp, 8*4
+	
+
+	sub rsp, 8*4
+	mov r8, [size]
+	mov rdx, 000001000b
+	mov rcx, [heapAddress]
+	call [ HeapAlloc] 
+	mov [handleAllocatedMemory], rax
+	add rsp, 8*4
+
+
+
+	mov rcx, [size]
+	cld
+	mov rax, 0
+
+	mov rdi, [handleAllocatedMemory]
+
+	rep stosb					; Zero out (initialize).
+
+
+	mov rax, [handleAllocatedMemory]
+
+
+	add rsp, 8	
+	pop r15 
+	pop r14 
+	pop r13 
+	pop r12 
+	pop rsp 
+	pop rsi 
+	pop rdi 
+	pop rbp 
+	pop rbx
+
+	mov rsp, rbp
+	pop rbp
+
+	retn 0
+end namespace
 
 end namespace

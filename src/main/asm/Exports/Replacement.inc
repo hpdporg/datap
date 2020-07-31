@@ -2,3 +2,4 @@
 
 public replacement.lettersWithList as 'replaceLettersWithList'
 public replacement.containsLettersWithList as 'replaceContainsLettersWithList'
+public replacement.containsLettersWithFlow as 'replaceContainsLettersWithFlow'

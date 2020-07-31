@@ -10,34 +10,60 @@ section '.data' data readable writeable
 	containingDirLetters db '..',0
 	newlineWinLetters db 13,10,0		; '\r\n',0
 	tabLetters db 9,0			;'\t',0
-		
+	spaceLetter db ' ',0
+
+	moreCondLetter db '>',0
+	lessCondLetter db '<',0
+	sameLetters db 'same',0		
+	sameLetter db '=',0
+	containsLetters db 'contains',0
+	withinLetters db 'within',0
+
+	moreLetters db '+',0
+	lessLetters db '-',0
+	divLetters db '/',0
+	mulLetters db '*',0
+	floatSepLetters db '.',0
+	filterSepLetters db '.',0
+
+	firstLetters db 'first',0
+	averageLetters db 'average',0
+	lastLetters db 'last',0
+
+	sineLetters db 'sine',0
+	cosineLetters db 'cosine',0
+	tangentLetters db 'tangent',0
+	arcTangentLetters db 'arctangent',0
+
+
 section '.text' code readable writeable executable ;align 16
 
 
 
 letters:
 namespace letters
-letters.numAsLetters:
+numAsLetters:
+namespace numAsLetters
 	push rbp 
 	mov rbp, rsp 
 	sub rsp, (8*8);+(8*6)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
-	label numAsLetters.debugMsgSize qword at rbp-8 
-	label numAsLetters.heapAddress qword at rbp-16
-	label numAsLetters.linearAllocationSize qword at rbp-24
-	label numAsLetters.num qword at rbp-32
-	label numAsLetters.lettersLength qword at rbp-40
-	label numAsLetters.numberNegative qword at rbp-48
-	label numAsLetters.lettersBufferReverse qword at rbp-56
-	label numAsLetters.lettersBufferForward qword at rbp-64
+	label debugMsgSize qword at rbp-8 
+	label heapAddress qword at rbp-16
+	label linearAllocationSize qword at rbp-24
+	label num qword at rbp-32
+	label lettersLength qword at rbp-40
+	label numberNegative qword at rbp-48
+	label lettersBufferReverse qword at rbp-56
+	label lettersBufferForward qword at rbp-64
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
 
 
-	mov [numAsLetters.num], rcx
+	mov [num], rcx
 
 
 	and rsp, -32
@@ -56,7 +82,7 @@ letters.numAsLetters:
 
 	sub rsp, 8*4
 	call [GetProcessHeap]
-	mov [numAsLetters.heapAddress], rax
+	mov [heapAddress], rax
 	add rsp, 8*4
 
 
@@ -67,55 +93,55 @@ letters.numAsLetters:
 	sub rsp, 8*4
 	mov r8, 200			; 200 bytes		
 	mov rdx, 000001000b
-	mov rcx, [numAsLetters.heapAddress]
+	mov rcx, [heapAddress]
 	call [ HeapAlloc] 
-	mov [numAsLetters.lettersBufferReverse], rax
+	mov [lettersBufferReverse], rax
 	add rsp, 8*4
 
 	sub rsp, 8*4
 	mov r8, 200			; 200 bytes		
 	mov rdx, 000001000b
-	mov rcx, [numAsLetters.heapAddress]
+	mov rcx, [heapAddress]
 	call [ HeapAlloc] 
-	mov [numAsLetters.lettersBufferForward], rax
+	mov [lettersBufferForward], rax
 	add rsp, 8*4
 
 	mov rax, 0
-	mov [numAsLetters.lettersLength], rax
-	mov [numAsLetters.numberNegative], rax
+	mov [lettersLength], rax
+	mov [numberNegative], rax
 
-	mov rcx, [numAsLetters.num]
+	mov rcx, [num]
 
 
 	cmp rcx, rax
-	jns numAsLetters.notNegativeNum
+	jns notNegativeNum
 
-	mov [numAsLetters.numberNegative], 1
-	mov rcx, [numAsLetters.num]
+	mov [numberNegative], 1
+	mov rcx, [num]
 	neg rcx
-	mov [numAsLetters.num], rcx
+	mov [num], rcx
 
-	numAsLetters.notNegativeNum:
+	notNegativeNum:
 
 
-	mov rax, [numAsLetters.num]
+	mov rax, [num]
 	mov rdx, 0
 	mov rbx, 10
 	
-	mov r9, [numAsLetters.lettersBufferReverse]
+	mov r9, [lettersBufferReverse]
 	mov rdi, r9
 	cld
 
 
-	numAsLetters.divideDigit:
+	divideDigit:
 
 
 	idiv rbx
 
 	cmp al, 0
-	je numAsLetters.terminateNumString
+	je terminateNumString
 
-	add [numAsLetters.lettersLength], 1
+	add [lettersLength], 1
 	
 	mov rbx, rax
 
@@ -127,12 +153,12 @@ letters.numAsLetters:
 	mov rax, rbx
 	mov rdx, 0
 	mov rbx, 10
-	jmp numAsLetters.divideDigit
+	jmp divideDigit
 
 
-	numAsLetters.terminateNumString:
+	terminateNumString:
 	
-	add [numAsLetters.lettersLength], 1
+	add [lettersLength], 1
 
 	add dl, 48
 	mov rax, rdx
@@ -144,18 +170,18 @@ letters.numAsLetters:
 	db 10101010b	;db 0xaa	;stosb
 
 
-	cmp [numAsLetters.numberNegative], 1
-	jne numAsLetters.notNegativeLength
+	cmp [numberNegative], 1
+	jne notNegativeLength
 
-	add [numAsLetters.lettersLength], 1
+	add [lettersLength], 1
 
-	numAsLetters.notNegativeLength:
+	notNegativeLength:
 
-	mov rax, [numAsLetters.lettersLength]
+	mov rax, [lettersLength]
 
 
-	mov r9, [numAsLetters.lettersBufferReverse]
-	mov r10, [numAsLetters.lettersBufferForward]
+	mov r9, [lettersBufferReverse]
+	mov r10, [lettersBufferForward]
 	mov rsi, r9
 	mov r8, r10
 	add r8, rax
@@ -165,7 +191,7 @@ letters.numAsLetters:
 
 	mov rax, 0
 
-	numAsLetters.retrieveReverseNumString:
+	retrieveReverseNumString:
 
 	std
 	mov rcx, 1
@@ -178,11 +204,11 @@ letters.numAsLetters:
 	lodsb
 	
 	cmp rax, 0
-	jne numAsLetters.retrieveReverseNumString
+	jne retrieveReverseNumString
 
 
-	cmp [numAsLetters.numberNegative], 1
-	jne numAsLetters.noSign
+	cmp [numberNegative], 1
+	jne noSign
 	
 	mov rax, 0
 	mov al, 150
@@ -191,11 +217,11 @@ letters.numAsLetters:
 	db 10101010b	;db 0xaa	;stosb
 
 
-	numAsLetters.noSign:
+	noSign:
 
 
 
-	mov rax, [numAsLetters.lettersBufferForward]
+	mov rax, [lettersBufferForward]
 
 	
 
@@ -215,31 +241,182 @@ letters.numAsLetters:
 	pop rbp
 
 	retn 0
+end namespace
+
+
+lettersAsNum:
+namespace lettersAsNum
+	push rbp 
+	mov rbp, rsp 
+	sub rsp, (8*11);+(8*6)
+
+	;mov rcx, [rbp+8] 
+	;mov rdx, [rbp+12] 
+	label debugMsgSize qword at rbp-8 
+	label heapAddress qword at rbp-16
+	label linearAllocationSize qword at rbp-24
+	label num qword at rbp-32
+	label lettersLength qword at rbp-40
+	label lettersIndex qword at rbp-48
+	label lettersBufferReverse qword at rbp-56
+	label lettersBufferForward qword at rbp-64
+	label lettersAddr qword at rbp-72
+	label numIndex qword at rbp-80
+	label digit qword at rbp-88
+	;virtual at rbp-64
+	;	.list List
+	;end virtual	
+
+
+	mov [lettersAddr], rcx
+
+
+	and rsp, -32
+	push rbx 
+	push rbp 
+	push rdi 
+	push rsi
+	push rsp 
+	push r12 
+	push r13 
+	push r14 
+	push r15
+	sub rsp, 8
+
+	mov rcx, 0
+	mov [lettersIndex], rcx			; Begin as 0
+	mov [num], rcx
+	mov [numIndex], rcx
+
+
+	sub rsp, 8*8
+	mov rcx, [lettersAddr]
+	call letterLength
+	add rsp, 8*8
+	mov [lettersLength], rax
+
+	mov r8, [lettersLength]
+	sub r8, 1b
+	mov [lettersIndex], r8
+
+	nextLetter:				; Start at end, work upwards
+	mov rcx, [numIndex]
+	mov rdx, [lettersLength]
+	cmp rcx, rdx
+	jnl endLetters
+
+
+	mov rbx, [lettersAddr]
+	mov r8, [lettersIndex]
+	add rbx, r8
+	mov r12, 0
+	mov r12b, byte [rbx]
+
+
+
+	sub r12, 48				; 48 is 0
+	mov [digit], r12
+
+	mov rax,[numIndex]
+	cmp rax, 0
+	je indexZero
+
+	mov r15, [numIndex]
+	mov rax, 1
+	mov rcx, 10
+	multiplyByTen:
+	mov rdx, 0
+	imul rcx
+	sub r15, 1
+	cmp r15, 0
+	jne multiplyByTen
+
+	mov rdx, 0
+	mov r12, [digit]
+	mov rcx, r12
+	imul rcx				; Multiply by factor of 10 (10s place, 100s, etc)
+	mov r12, rax
+	mov [digit], r12
+
+	indexZero:
+
+	;mov r12, [digit]
+	;mov rcx, r12
+	;sub rsp, 8*8
+	;call storage.debugNumMsg
+	;add rsp, 8*8
+
+	mov r12, [digit]
+	mov r13, [num]
+	add r13, r12
+	mov [num], r13
+	
+
+	mov rcx, [numIndex]
+	add rcx, 1b
+	mov [numIndex], rcx
+
+	mov rcx, [lettersIndex]
+	sub rcx, 1b
+	mov [lettersIndex], rcx
+
+	jmp nextLetter
+
+
+
+	endLetters:
 
 
 
 
-letters.letterLength:
+
+
+
+
+	mov rax, [num];[lettersLength];[num]
+
+	
+
+
+	add rsp, 8	
+	pop r15 
+	pop r14 
+	pop r13 
+	pop r12 
+	pop rsp 
+	pop rsi 
+	pop rdi 
+	pop rbp 
+	pop rbx
+
+	mov rsp, rbp
+	pop rbp
+
+	retn 0
+end namespace
+
+letterLength:
+namespace letterLength
 	push rbp 
 	mov rbp, rsp 
 	sub rsp, (8*4);+(8*6)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
-	label letterLength.letters qword at rbp-8 
-	label letterLength.lettersLength qword at rbp-16
-	label letterLength.linearAllocationSize qword at rbp-24
-	label letterLength.num qword at rbp-32
-	;label letterLength.lettersLength qword at rbp-40
-	;label letterLength.numberNegative qword at rbp-48
-	;label letterLength.lettersBufferReverse qword at rbp-56
-	;label letterLength.lettersBufferForward qword at rbp-64
+	label letters qword at rbp-8 
+	label lettersLength qword at rbp-16
+	label linearAllocationSize qword at rbp-24
+	label num qword at rbp-32
+	;label lettersLength qword at rbp-40
+	;label numberNegative qword at rbp-48
+	;label lettersBufferReverse qword at rbp-56
+	;label lettersBufferForward qword at rbp-64
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
 
 
-	mov [letterLength.letters], rcx
+	mov [letters], rcx
 
 
 
@@ -256,13 +433,13 @@ letters.letterLength:
 	sub rsp, 8
 
 	mov rcx, 0
-	mov [letterLength.lettersLength], rcx 		; Begin as 0
+	mov [lettersLength], rcx 		; Begin as 0
 
-	mov rdx, [letterLength.letters]
+	mov rdx, [letters]
 
 	mov rbx, [rdx]
 	cmp bl, 0
-	je letterLength.end			; Blank
+	je completed			; Blank
 
 
 	mov rax, 0
@@ -276,11 +453,11 @@ letters.letterLength:
 	
 	not rcx
 	dec rcx
-	mov [letterLength.lettersLength], rcx
+	mov [lettersLength], rcx
 
 
-	.end:
-	mov rax, [letterLength.lettersLength]
+	completed:
+	mov rax, [lettersLength]
 
 
 	add rsp, 8	
@@ -298,30 +475,32 @@ letters.letterLength:
 	pop rbp
 
 	retn 0
+end namespace
 
-
-letters.appendLetters:
+appendLetters:
+namespace appendLetters
 	push rbp 
 	mov rbp, rsp 
 	sub rsp, (8*7);+(8*6)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
-	label appendLetters.letters qword at rbp-8 
-	label appendLetters.lettersLength qword at rbp-16
-	label appendLetters.linearAllocationSize qword at rbp-24
-	label appendLetters.newLetters qword at rbp-32
-	label appendLetters.newLettersLength qword at rbp-40
-	label appendLetters.lettersLengthSum qword at rbp-48
-	label appendLetters.appendedLetters qword at rbp-56
-	;label appendLetters.lettersBufferForward qword at rbp-64
+	label letters qword at rbp-8 
+	label lettersLength qword at rbp-16
+	label linearAllocationSize qword at rbp-24
+	label newLetters qword at rbp-32
+	label newLettersLength qword at rbp-40
+	label lettersLengthSum qword at rbp-48
+	label appendedLetters qword at rbp-56
+
+	;label lettersBufferForward qword at rbp-64
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
 
 
-	mov [appendLetters.letters], rcx
-	mov [appendLetters.newLetters], rdx
+	mov [letters], rcx
+	mov [newLetters], rdx
 
 
 	and rsp, -32
@@ -336,68 +515,68 @@ letters.appendLetters:
 	push r15
 	sub rsp, 8
 
-	mov rcx, [appendLetters.letters]
+	mov rcx, [letters]
 	cmp rcx, 0					; Not appending on anything
-	jne appendLetters.lettersNotZero
+	jne lettersNotZero
 
-	mov rdx, [appendLetters.newLetters]
-	mov [appendLetters.appendedLetters], rdx
-	jmp appendLetters.end
+	mov rdx, [newLetters]
+	mov [appendedLetters], rdx
+	jmp completed
 
 
-	.lettersNotZero:
+	lettersNotZero:
 
 	
 	sub rsp, 8*8
-	mov rcx, [appendLetters.letters]	
+	mov rcx, [letters]	
 	call letterLength
 	add rsp, 8*8
-	mov [appendLetters.lettersLength], rax
+	mov [lettersLength], rax
 
 	sub rsp, 8*8
-	mov rcx, [appendLetters.newLetters]	
+	mov rcx, [newLetters]	
 	call letterLength
 	add rsp, 8*8
-	mov [appendLetters.newLettersLength], rax
+	mov [newLettersLength], rax
 
-	mov rax, [appendLetters.lettersLength]
-	mov rcx, [appendLetters.newLettersLength]
+	mov rax, [lettersLength]
+	mov rcx, [newLettersLength]
 
 	add rax, rcx
-	mov [appendLetters.lettersLengthSum], rax
+	mov [lettersLengthSum], rax
 
-	mov rcx, [appendLetters.lettersLengthSum]
+	mov rcx, [lettersLengthSum]
 	add rcx, 1b							; Trailing 0
 	sub rsp, 8*8
 	call allocate.linear
 	add rsp, 8*8
-	mov [appendLetters.appendedLetters], rax
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;allocate rcx, appendLetters.appendedLetters
+	mov [appendedLetters], rax
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;allocate rcx, appendedLetters
 
-	mov rsi, [appendLetters.letters]
-	mov rdi, [appendLetters.appendedLetters]
+	mov rsi, [letters]
+	mov rdi, [appendedLetters]
 	cld
-	mov rcx, [appendLetters.lettersLength]
+	mov rcx, [lettersLength]
 	rep movsb
 
-	mov rsi, [appendLetters.newLetters]
-	mov rdi, [appendLetters.appendedLetters]
-	add rdi, [appendLetters.lettersLength]
+	mov rsi, [newLetters]
+	mov rdi, [appendedLetters]
+	add rdi, [lettersLength]
 	cld
-	mov rcx, [appendLetters.newLettersLength]
+	mov rcx, [newLettersLength]
 	rep movsb
 
 	mov rsi, letterTerminator
-	mov rdi, [appendLetters.appendedLetters]
-	add rdi, [appendLetters.lettersLength]
-	add rdi, [appendLetters.newLettersLength]
+	mov rdi, [appendedLetters]
+	add rdi, [lettersLength]
+	add rdi, [newLettersLength]
 	mov rcx, 1
 	cld
 	rep movsb
 
-	.end:
+	completed:
 
-	mov rax, [appendLetters.appendedLetters]
+	mov rax, [appendedLetters]
 
 	add rsp, 8	
 	pop r15 
@@ -414,35 +593,36 @@ letters.appendLetters:
 	pop rbp
 
 	retn 0
+end namespace
 
 ; Expects StartIndex, EndIndex as next two Items in indicesList
 ; Will not resetIndex on indicesList in case there are more unrelated Items in List
-
-letters.betweenListsIndices:
+betweenListsIndices:
+namespace betweenListsIndices
 	push rbp 
 	mov rbp, rsp 
 	sub rsp, (8*11);+(8*6)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
-	label betweenListsIndices.letters qword at rbp-8 
-	label betweenListsIndices.lettersLength qword at rbp-16
-	label betweenListsIndices.linearAllocationSize qword at rbp-24
-	label betweenListsIndices.newLetters qword at rbp-32
-	label betweenListsIndices.newLettersLength qword at rbp-40
-	label betweenListsIndices.lettersLengthSum qword at rbp-48
-	label betweenListsIndices.indicesList qword at rbp-56
-	label betweenListsIndices.lettersBetween qword at rbp-64
-	label betweenListsIndices.startIndex qword at rbp-72
-	label betweenListsIndices.endIndex qword at rbp-80
-	label betweenListsIndices.betweenLength qword at rbp-88
+	label letters qword at rbp-8 
+	label lettersLength qword at rbp-16
+	label linearAllocationSize qword at rbp-24
+	label newLetters qword at rbp-32
+	label newLettersLength qword at rbp-40
+	label lettersLengthSum qword at rbp-48
+	label indicesList qword at rbp-56
+	label lettersBetween qword at rbp-64
+	label startIndex qword at rbp-72
+	label endIndex qword at rbp-80
+	label betweenLength qword at rbp-88
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
 
 
-	mov [betweenListsIndices.letters], rcx
-	mov [betweenListsIndices.indicesList], rdx
+	mov [letters], rcx
+	mov [indicesList], rdx
 
 
 	and rsp, -32
@@ -460,59 +640,59 @@ letters.betweenListsIndices:
 
 	
 	sub rsp, 8*8
-	mov rcx, [betweenListsIndices.letters]	
+	mov rcx, [letters]	
 	call letterLength
 	add rsp, 8*8
-	mov [betweenListsIndices.lettersLength], rax
+	mov [lettersLength], rax
 
 	sub rsp, 8*8
-	mov rcx, [betweenListsIndices.indicesList]
+	mov rcx, [indicesList]
 	call list.getNextItem
 	add rsp, 8*8	
-	mov [betweenListsIndices.startIndex], rax
+	mov [startIndex], rax
 
 	sub rsp, 8*8
-	mov rcx, [betweenListsIndices.indicesList]
+	mov rcx, [indicesList]
 	call list.getNextItem
 	add rsp, 8*8	
-	mov [betweenListsIndices.endIndex], rax
+	mov [endIndex], rax
 
-	mov r8, [betweenListsIndices.endIndex]
-	mov r9, [betweenListsIndices.startIndex]
+	mov r8, [endIndex]
+	mov r9, [startIndex]
 	sub r8, r9
 	add r8, 1b
-	mov [betweenListsIndices.betweenLength], r8
+	mov [betweenLength], r8
 
 
-	mov rcx, [betweenListsIndices.betweenLength]
+	mov rcx, [betweenLength]
 	add rcx, 1b							; Trailing 0
 	sub rsp, 8*8
 	call allocate.linear
 	add rsp, 8*8
-	mov [betweenListsIndices.lettersBetween], rax
+	mov [lettersBetween], rax
 
 
-	mov rsi, [betweenListsIndices.letters]
-	mov r9, [betweenListsIndices.startIndex]
+	mov rsi, [letters]
+	mov r9, [startIndex]
 	add rsi, r9
 
-	mov rdi, [betweenListsIndices.lettersBetween]
-	mov rcx, [betweenListsIndices.betweenLength]
+	mov rdi, [lettersBetween]
+	mov rcx, [betweenLength]
 	cld
 	rep movsb
 
 	
 
 	mov rsi, letterTerminator
-	mov rdi, [betweenListsIndices.lettersBetween]
-	add rdi, [betweenListsIndices.betweenLength]
+	mov rdi, [lettersBetween]
+	add rdi, [betweenLength]
 	mov rcx, 1
 	cld
 	rep movsb
 
 
 
-	mov rax, [betweenListsIndices.lettersBetween]
+	mov rax, [lettersBetween]
 
 	add rsp, 8	
 	pop r15 
@@ -529,36 +709,37 @@ letters.betweenListsIndices:
 	pop rbp
 
 	retn 0
+end namespace
 
 ; Expects StartIndex, EndIndex as params
 
-
-letters.betweenIndices:
+betweenIndices:
+namespace betweenIndices
 	push rbp 
 	mov rbp, rsp 
 	sub rsp, (8*11);+(8*6)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
-	label betweenIndices.letters qword at rbp-8 
-	label betweenIndices.lettersLength qword at rbp-16
-	label betweenIndices.linearAllocationSize qword at rbp-24
-	label betweenIndices.newLetters qword at rbp-32
-	label betweenIndices.newLettersLength qword at rbp-40
-	label betweenIndices.lettersLengthSum qword at rbp-48
-	label betweenIndices.indicesList qword at rbp-56
-	label betweenIndices.lettersBetween qword at rbp-64
-	label betweenIndices.startIndex qword at rbp-72
-	label betweenIndices.endIndex qword at rbp-80
-	label betweenIndices.betweenLength qword at rbp-88
+	label letters qword at rbp-8 
+	label lettersLength qword at rbp-16
+	label linearAllocationSize qword at rbp-24
+	label newLetters qword at rbp-32
+	label newLettersLength qword at rbp-40
+	label lettersLengthSum qword at rbp-48
+	label indicesList qword at rbp-56
+	label lettersBetween qword at rbp-64
+	label startIndex qword at rbp-72
+	label endIndex qword at rbp-80
+	label betweenLength qword at rbp-88
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
 
 
-	mov [betweenIndices.letters], rcx
-	mov [betweenIndices.startIndex], rdx
-	mov [betweenIndices.endIndex], r8
+	mov [letters], rcx
+	mov [startIndex], rdx
+	mov [endIndex], r8
 
 
 	and rsp, -32
@@ -576,50 +757,50 @@ letters.betweenIndices:
 
 	
 	sub rsp, 8*8
-	mov rcx, [betweenIndices.letters]	
+	mov rcx, [letters]	
 	call letterLength
 	add rsp, 8*8
-	mov [betweenIndices.lettersLength], rax
+	mov [lettersLength], rax
 
 
 
 
-	mov r8, [betweenIndices.endIndex]
-	mov r9, [betweenIndices.startIndex]
+	mov r8, [endIndex]
+	mov r9, [startIndex]
 	sub r8, r9
 	add r8, 1b
-	mov [betweenIndices.betweenLength], r8
+	mov [betweenLength], r8
 
 
-	mov rcx, [betweenIndices.betweenLength]
+	mov rcx, [betweenLength]
 	add rcx, 1b							; Trailing 0
 	sub rsp, 8*8
 	call allocate.linear
 	add rsp, 8*8
-	mov [betweenIndices.lettersBetween], rax
+	mov [lettersBetween], rax
 
 
-	mov rsi, [betweenIndices.letters]
-	mov r9, [betweenIndices.startIndex]
+	mov rsi, [letters]
+	mov r9, [startIndex]
 	add rsi, r9
 
-	mov rdi, [betweenIndices.lettersBetween]
-	mov rcx, [betweenIndices.betweenLength]
+	mov rdi, [lettersBetween]
+	mov rcx, [betweenLength]
 	cld
 	rep movsb
 
 	
 
 	mov rsi, letterTerminator
-	mov rdi, [betweenIndices.lettersBetween]
-	add rdi, [betweenIndices.betweenLength]
+	mov rdi, [lettersBetween]
+	add rdi, [betweenLength]
 	mov rcx, 1
 	cld
 	rep movsb
 
 
 
-	mov rax, [betweenIndices.lettersBetween]
+	mov rax, [lettersBetween]
 
 	add rsp, 8	
 	pop r15 
@@ -636,29 +817,31 @@ letters.betweenIndices:
 	pop rbp
 
 	retn 0
+end namespace
 
-
-letters.copyLetters:
+copyLetters:
+namespace copyLetters
 	push rbp 
 	mov rbp, rsp 
 	sub rsp, (8*7);+(8*6)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
-	label copyLetters.letters qword at rbp-8 
-	label copyLetters.lettersLength qword at rbp-16
-	label copyLetters.linearAllocationSize qword at rbp-24
-	label copyLetters.newLetters qword at rbp-32
-	label copyLetters.newLettersLength qword at rbp-40
-	label copyLetters.lettersLengthSum qword at rbp-48
-	label copyLetters.appendedLetters qword at rbp-56
-	;label copyLetters.lettersBufferForward qword at rbp-64
+	label letters qword at rbp-8 
+	label lettersLength qword at rbp-16
+	label linearAllocationSize qword at rbp-24
+	label newLetters qword at rbp-32
+	label newLettersLength qword at rbp-40
+	label lettersLengthSum qword at rbp-48
+	label appendedLetters qword at rbp-56
+	
+	;label lettersBufferForward qword at rbp-64
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
 
 
-	mov [copyLetters.letters], rcx
+	mov [letters], rcx
 
 
 
@@ -678,39 +861,39 @@ letters.copyLetters:
 
 	
 	sub rsp, 8*8
-	mov rcx, [copyLetters.letters]	
+	mov rcx, [letters]	
 	call letterLength
 	add rsp, 8*8
-	mov [copyLetters.lettersLength], rax
+	mov [lettersLength], rax
 
 	
 
-	mov rcx, [copyLetters.lettersLength]
+	mov rcx, [lettersLength]
 	add rcx, 1b							; Trailing 0
 	sub rsp, 8*8
 	call allocate.linear
 	add rsp, 8*8
-	mov [copyLetters.newLetters], rax
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;allocate rcx, copyLetters.newLetters
+	mov [newLetters], rax
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;allocate rcx, newLetters
 
-	mov rsi, [copyLetters.letters]
-	mov rdi, [copyLetters.newLetters]
+	mov rsi, [letters]
+	mov rdi, [newLetters]
 	cld
-	mov rcx, [copyLetters.lettersLength]
+	mov rcx, [lettersLength]
 	rep movsb
 
 
 
 	mov rsi, letterTerminator
-	mov rdi, [copyLetters.newLetters]
-	add rdi, [copyLetters.lettersLength]
+	mov rdi, [newLetters]
+	add rdi, [lettersLength]
 	mov rcx, 1
 	cld
 	rep movsb
 
-	.end:
+	completed:
 
-	mov rax, [copyLetters.newLetters]
+	mov rax, [newLetters]
 
 	add rsp, 8	
 	pop r15 
@@ -727,30 +910,31 @@ letters.copyLetters:
 	pop rbp
 
 	retn 0
+end namespace
 
-
-letters.appendZero:
+appendZero:
+namespace appendZero
 	push rbp 
 	mov rbp, rsp 
 	sub rsp, (8*8);+(8*6)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
-	label appendZero.debugMsgSize qword at rbp-8 
-	label appendZero.heapAddress qword at rbp-16
-	label appendZero.linearAllocationSize qword at rbp-24
-	label appendZero.num qword at rbp-32
-	label appendZero.lettersLength qword at rbp-40
-	label appendZero.numberNegative qword at rbp-48
-	label appendZero.letters qword at rbp-56
-	label appendZero.lettersBufferForward qword at rbp-64
+	label debugMsgSize qword at rbp-8 
+	label heapAddress qword at rbp-16
+	label linearAllocationSize qword at rbp-24
+	label num qword at rbp-32
+	label lettersLength qword at rbp-40
+	label numberNegative qword at rbp-48
+	label letters qword at rbp-56
+	label lettersBufferForward qword at rbp-64
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
 
 
-	mov [appendZero.letters], rcx
-	mov [appendZero.lettersLength], rdx
+	mov [letters], rcx
+	mov [lettersLength], rdx
 
 	and rsp, -32
 	push rbx 
@@ -768,7 +952,7 @@ letters.appendZero:
 
 	sub rsp, 8*4
 	call [GetProcessHeap]
-	mov [appendZero.heapAddress], rax
+	mov [heapAddress], rax
 	add rsp, 8*4
 
 
@@ -777,27 +961,27 @@ letters.appendZero:
 	add rcx, 1000b
 
 	sub rsp, 8*4
-	mov r8, [appendZero.lettersLength]	; Length + 1 (zero)
+	mov r8, [lettersLength]	; Length + 1 (zero)
 	add r8, 1b
 	mov rdx, 000001000b
-	mov rcx, [appendZero.heapAddress]
+	mov rcx, [heapAddress]
 	call [ HeapAlloc] 
-	mov [appendZero.lettersBufferForward], rax
+	mov [lettersBufferForward], rax
 	add rsp, 8*4
 
 
 
-	mov rsi, [appendZero.letters]
-	mov rcx, [appendZero.lettersLength]
+	mov rsi, [letters]
+	mov rcx, [lettersLength]
 	
-	mov rdi, [appendZero.lettersBufferForward]
+	mov rdi, [lettersBufferForward]
 	cld
 	rep movsb
 
 
 	mov rsi, letterTerminator
-	mov rdi, [appendZero.lettersBufferForward]
-	add rdi, [appendZero.lettersLength]
+	mov rdi, [lettersBufferForward]
+	add rdi, [lettersLength]
 	mov rcx, 1
 	cld
 	rep movsb
@@ -805,7 +989,7 @@ letters.appendZero:
 
 
 
-	mov rax, [appendZero.lettersBufferForward]
+	mov rax, [lettersBufferForward]
 
 	
 
@@ -825,28 +1009,30 @@ letters.appendZero:
 	pop rbp
 
 	retn 0
+end namespace
 
-letters.listAsLetters:
+listAsLetters:
+namespace listAsLetters
 	push rbp 
 	mov rbp, rsp 
 	sub rsp, (8*8);+(8*6)
 
 	;mov rcx, [rbp+8] 
 	;mov rdx, [rbp+12] 
-	label listAsLetters.debugMsgSize qword at rbp-8 
-	label listAsLetters.heapAddress qword at rbp-16
-	label listAsLetters.linearAllocationSize qword at rbp-24
-	label listAsLetters.list qword at rbp-32
-	label listAsLetters.lettersLength qword at rbp-40
-	label listAsLetters.numberNegative qword at rbp-48
-	label listAsLetters.letters qword at rbp-56
-	label listAsLetters.nextLetters qword at rbp-64
+	label debugMsgSize qword at rbp-8 
+	label heapAddress qword at rbp-16
+	label linearAllocationSize qword at rbp-24
+	label lettersList qword at rbp-32
+	label lettersLength qword at rbp-40
+	label numberNegative qword at rbp-48
+	label letters qword at rbp-56
+	label nextLetters qword at rbp-64
 	;virtual at rbp-64
 	;	.list List
 	;end virtual	
 
 
-	mov [listAsLetters.list], rcx
+	mov [lettersList], rcx
 
 	and rsp, -32
 	push rbx 
@@ -861,62 +1047,62 @@ letters.listAsLetters:
 	sub rsp, 8
 
 	mov rcx, 0
-	mov [listAsLetters.letters], 0		; Begin as 0
+	mov [letters], 0		; Begin as 0
 
 
 	sub rsp, 8*8
-	mov rcx, [listAsLetters.list]
+	mov rcx, [lettersList]
 	call list.resetIndex
 	add rsp, 8*8
 
-	.nextListItem:
-	mov rbx, [listAsLetters.list]
+	nextListItem:
+	mov rbx, [lettersList]
 	mov r8, rbx
 	add rbx, List.index
 	add r8, List.itemsCount
 	mov rcx, [rbx]
 	mov rdx, [r8]
 	cmp rcx, rdx
-	jnl listAsLetters.end
+	jnl completed
 
 
 	sub rsp, 8*8
-	mov rcx, [listAsLetters.list]
+	mov rcx, [lettersList]
 	call list.getNextItem
 	add rsp, 8*8
-	mov [listAsLetters.nextLetters], rax
+	mov [nextLetters], rax
 
-	mov rcx, [listAsLetters.letters]
+	mov rcx, [letters]
 	cmp rcx, 0
-	jne listAsLetters.notFirstLetters
+	jne notFirstLetters
 
 	sub rsp, 8*8
-	mov rcx, [listAsLetters.nextLetters]
+	mov rcx, [nextLetters]
 	call copyLetters				; allocate first, do not append
 	add rsp, 8*8
-	mov [listAsLetters.letters], rax
+	mov [letters], rax
 
-	jmp listAsLetters.nextListItem
-	.notFirstLetters:
+	jmp nextListItem
+	notFirstLetters:
 
 	sub rsp, 8*8
-	mov rcx, [listAsLetters.nextLetters]
+	mov rcx, [nextLetters]
 	call copyLetters				; allocate first, do not append
 	add rsp, 8*8
 	
 
 	sub rsp, 8*8
 	mov rdx,rax
-	mov rcx, [listAsLetters.letters]
+	mov rcx, [letters]
 	call appendLetters				; Append
 	add rsp, 8*8
-	mov [listAsLetters.letters], rax
+	mov [letters], rax
 
 
-	jmp listAsLetters.nextListItem
-	.end:
+	jmp nextListItem
+	completed:
 
-	mov rax, [listAsLetters.letters]
+	mov rax, [letters]
 
 	
 
@@ -936,6 +1122,7 @@ letters.listAsLetters:
 	pop rbp
 
 	retn 0
+end namespace
 
 
 end namespace

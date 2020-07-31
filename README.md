@@ -2,7 +2,7 @@
 
 # datap #
 
-**datap** provides data processing utilities. This library is used in other projects as a dependency. It is not meant as a standalone project.
+**datap** provides data processing utilities. x86_64 assembly with [fasmg](http://flatassembler.net) macro assembler. This library is used in other projects as a dependency. It is not meant as a standalone project.
 
 
 ## Features ##
@@ -26,5 +26,5 @@
 
 ## Platforms ##
 * x86_64, Windows only
-* (Other platform support may follow)
+* (Other platform support may follow.)
 

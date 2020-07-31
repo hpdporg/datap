@@ -102,7 +102,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\external\googletest_2010\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\external\googletest_2010\include;$(SolutionDir)..\Include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -114,8 +114,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Include\datap.h" />
     <ClInclude Include="..\..\src\test\cpp\AllocateTests.h" />
-    <ClInclude Include="..\..\src\test\cpp\AsmIncludes.h" />
+    <ClInclude Include="..\..\src\test\cpp\FlowTests.h" />
     <ClInclude Include="..\..\src\test\cpp\LettersTests.h" />
     <ClInclude Include="..\..\src\test\cpp\ListNestingTests.h" />
     <ClInclude Include="..\..\src\test\cpp\ListTests.h" />
@@ -125,6 +126,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\test\cpp\AllocateTests.cpp" />
+    <ClCompile Include="..\..\src\test\cpp\FlowTests.cpp" />
     <ClCompile Include="..\..\src\test\cpp\LettersTests.cpp" />
     <ClCompile Include="..\..\src\test\cpp\ListNestingTests.cpp" />
     <ClCompile Include="..\..\src\test\cpp\ListTests.cpp" />

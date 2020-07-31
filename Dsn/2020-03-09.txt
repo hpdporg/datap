@@ -1,0 +1,105 @@
+
+
+
+Table data type?
+
+
+Parallel list?
+
+plane
+stream
+flow*
+sweep
+
+retrieveList
+	Hierarchical
+	Start as just list with lines, then include nesting
+
+
+tokenizing
+	getMatches
+	lettersBetweenIndices
+
+
+svg
+	table
+		defs header
+		header versus row
+				iDisplacement = iDisplacement + (((String)(table.getRows().get(0).get(columnIndex-1))).length()*5.0)+15.0;
+                            "       x=\"" + (position[0] + 3.0 +iDisplacement) + "\"\n" +
+                            "       y=\"" + (position[1]+8.0+(9.0*index)) + "\" "+
+
+0.5 letters to numeric
+	getFraction
+	getInteger
+
+
+chart
+	svg rect
+	svg line
+
+
+
+hpdp separate
+
+filter
+numeric expression
+	datap startswith
+
+datap
+	contains e.g. Highlight/Issue/Task contains T
+	lettersAsNum
+
+dateLettersAsTimestamp
+	lettersAsNum
+
+wbs, hierarchical
+
+Charts
+	Tasks/Day
+		Line
+	Issues/Day
+		Scatter
+	Work Packages/Day
+	Open Work Package Completion Percentage box
+		Light gray on bottom
+		[----] like area coverage chart, but 
+		Dark gray, gray, with darkest gray line in middle?
+
+
+List of categories at nesting level X
+	list1.1
+	list1.2 (level 2)
+
+	Descendants
+		e.g. Lets see product breakdown available just under suite 'x'.
+		e.g. Separate just projects and processes
+
+Maybe not needed:
+list.1 shows the val
+list.valName	aggregates the val
+
+= +1
+-> this is like +=
+
+
+Build list of descriptions from wbs, cross referencing, filtering, matching
+
+
+	sub rsp, 8*8
+	mov rbx, [processAppending.nextRef]
+	add rbx, Ref.valueAlloc
+	mov rcx, [rbx]
+	call [copyLetters]				; allocate first, do not append
+	add rsp, 8*8
+
+
+
+
+
+getRefValueAlloc
+
+	mov rbx, [processAppending.nextRef]
+	add rbx, Ref.ref
+	getFilterRef
+	getValueAlloc
